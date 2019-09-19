@@ -1,0 +1,6 @@
+[package]
+name = "holo-configure"
+version = "0.0.0"
+
+[dependencies]
+getopts = "0.2.19"
