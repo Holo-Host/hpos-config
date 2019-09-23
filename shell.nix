@@ -1,1 +1,7 @@
-(import ./. {}).holo-configure.override { shell = true; }
+{ pkgs ? import ./pkgs.nix {} }:
+
+with pkgs;
+
+mkShell {
+  inputsFrom = lib.attrValues (import ./. { inherit pkgs; });
+}
