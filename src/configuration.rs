@@ -2,6 +2,7 @@
 
 use ed25519_dalek::*;
 //use rand::{Rng, RngCore, CryptoRng};
+use rand;
 use std::time::{Duration, SystemTime};
 use crypto::{
     //aead::AeadEncryptor, chacha20poly1305::ChaCha20Poly1305,
@@ -78,22 +79,21 @@ impl std::fmt::Display for HoloPortConfiguration {
 impl HoloPortConfiguration {
     /// new -- Create a new config from provided email/password, + optional seed entropy
     /// 
-    ///     Deduces and creates the admin and seed blinding keys, and creates the config.
+    /// Deduces and creates the admin and seed blinding keys, and creates the config.
     pub fn new(
-        name_maybe:	&Option<String>,
-        email:		&str,
-        password:	&str,
+        name_maybe:	Option<String>,
+        email:		String,
+        password:	String,
         seed_maybe:	Option<[u8; HOLO_ENTROPY_SIZE]>
     ) -> Result<Self, ConfigurationError> {
         let seed_entropy = match seed_maybe {
             Some(s) => s,
             None => {
-                let mut out = [0u8; HOLO_ENTROPY_SIZE]; // = rand::random();
-                getrandom::getrandom(&mut out)?;
+                let out: [u8; HOLO_ENTROPY_SIZE] = rand::random();
                 out
             },
         };
-        let admin_keypair = admin_key_from(email, password, name_maybe)?;
+        let admin_keypair = admin_key_from(&email, &password, &name_maybe)?;
 
         // The raw seed entropy is signed by the admin private key, so we can ensure it's not
         // corrupt, or improperly decrypted.
@@ -107,8 +107,7 @@ impl HoloPortConfiguration {
          * 
         // Always encrypt the seed w/ the derived "blinding" key; the AEAD "tag" (Nonce, MAC and
         // size) is prefixed to the resultant encrypted seed.
-        let mut seed_nonce = [0u8; 8]; // = rand::random();
-        getrandom::getrandom(&mut seed_nonce).expect("system random number generator failed");
+        let seed_nonce: [u8; 8] = rand::random();
         let seed_aad = [0u8; 0]; // additional authenticated data
         let seed_key = blind_keypair.secret.to_bytes();
         let mut seed_encrypted = [0u8; HOLO_ENTROPY_SIZE];
@@ -265,9 +264,9 @@ pub fn keypair_from_seed(seed: &[u8]) -> Result<Keypair, ConfigurationError> {
 /// 
 /// authenticate_monotonically -- Tests the payload w/ supplied timestamp % duration
 /// 
-///     The JSON tested is simply: "[<modulo>, <payload>]", with the modulo allowing the current and
+/// The JSON tested is simply: "[<modulo>, <payload>]", with the modulo allowing the current and
 /// immediately previous time periods around `instant`, as defined by `duration`.
-///
+/// 
 pub fn sign_with_modulo(
     payload:		&str, // JSON
     modulo:		u64,
@@ -294,10 +293,28 @@ pub fn authenticate_monotonically(
 }
 
 /// Create a unique HoloPort configuration, w/ random seed entropy
+///
+/// Lets create a HoloPortConfiguration with a deterministic (all zeros) seed entropy:
+/// ```
+/// let config = holo_configure::holoport_configuration(
+///     Some("HP1".to_string()), "a@b.c".to_string(), "password".to_string(), Some([0u8; 32])
+/// );
+/// assert_eq!(serde_json::to_string_pretty( &config.unwrap() ).unwrap(),
+/// "{
+///   \"name\": \"HP1\",
+///   \"email\": \"a@b.c\",
+///   \"admin_pubkey\": \"HcAcIwy3I4KPhtwqhnBtPRMFhqzyasf8yW6SMeoQF5Hwxnhsafg5Qn33qyb7eda\",
+///   \"seed_key\": \"HcBCjuRDXiQy7oivv78z3Ozjq3YW97mpcj38UQcVQ4PYbxbtd84XVWjebm7vvwi\",
+///   \"seed\": \"HcCCJ6jX98BJRIrhba9T4s9WYIu5S3Qsg59ZfgBCA6ed8mkh8X7CqpHfGZmxv8a\",
+///   \"seed_sig\": \"Yt1EDgH39lbe4SLz1C6N6SS/b3o7qOgKAPKLbsZB3Q1ODqRr/OgSxnMMLlrJPEX4j5epZ2aSaWVEL7NQ76vaBg==\"
+/// }"
+/// );
+/// ```
+/// 
 pub fn holoport_configuration(
-    name_maybe:		&Option<String>,
-    email:		&str,
-    password:		&str,
+    name_maybe:		Option<String>,
+    email:		String,
+    password:		String,
     seed_maybe:		Option<[u8; HOLO_ENTROPY_SIZE]>
 ) -> Result<HoloPortConfiguration, ConfigurationError> {
     Ok(HoloPortConfiguration::new(name_maybe, email, password, seed_maybe)?)

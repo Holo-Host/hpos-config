@@ -1,8 +1,7 @@
 
 extern crate argon2;
 extern crate ed25519_dalek;
-extern crate getrandom; // WASM-compatible source of randomness
-//extern crate rand;
+extern crate rand;
 extern crate hcid;
 extern crate base64;
 extern crate crypto;

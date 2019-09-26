@@ -10,7 +10,6 @@ pub enum ConfigurationError {
     HcidError(HcidError),
     SystemTimeError(SystemTimeError),
     Argon2Error(argon2::Error),
-    RandomError(getrandom::Error),
     SymmetricCipherError(SymmetricCipherError),
     Base64DecodeError(base64::DecodeError),
 }
@@ -36,12 +35,6 @@ impl From<SignatureError> for ConfigurationError {
 impl From<argon2::Error> for ConfigurationError {
     fn from(e: argon2::Error) -> Self {
         ConfigurationError::Argon2Error(e)
-    }
-}
-
-impl From<getrandom::Error> for ConfigurationError {
-    fn from(e: getrandom::Error) -> Self {
-        ConfigurationError::RandomError(e)
     }
 }
 

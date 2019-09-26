@@ -13,22 +13,21 @@ which is then inserted into the HoloPortOS instance.  When the device boots, it 
 - Start the Holo services
 - Eject the USB and blacklist the kernel modules
 
-## Building
+## Building & Geneating a `HoloPortConfiguration`
+
+We'll generate a `HoloPortConfiguration` object in JSON form, into `holo.json`:
 
 ```
 $ nix-build -A holo-configure
+$ ./result/bin/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
 ```
 
-If that doesn't work:
+If that doesn't work, try using the nix-shell and manual build approach:
 ```
 $ nix-shell
-$ cargo build --lib --bin holo-configure
-```
+$ cargo build --release --lib --bin holo-configure
 
-## Generating a `HoloPortConfiguration`
-
-```
-$ ./target/debug/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
+$ ./target/release/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
 Generating HoloPort Configuration for email: a@b.ca
 {
   "name": "HP1",
@@ -55,19 +54,24 @@ The `password` is hashed (optionally, with any supplied `name`), and the resulta
 hashes are used to generate an argon2 password hash, which is used to generate the Admin and
 Blinding keypairs.
 
-### `admin_pubkey: String` "HcAcj..."
+### `admin_pubkey: String`: "HcAcj..."
 
 The Admin Private key is used to sign all HoloPort admin requests; the `admin_pubkey` is used to
 authenticate them.
 
-### `seed_key: Option<String>` "HcBci..."
+### `seed_key: Option<String>`: "HcBci..."
 
 A 256-bit AES ECB encryption key is *always* used to encrypt the seed; it is *optionally* supplied
 here in the config.
 
-### `seed: String` "HcCcf..."
+### `seed: String`: "HcCcf..."
 
 The encrypted seed entropy; decrypted using the `seed_key` (if supplied).
+
+### `seed_sig: String`: "WO0P....CA=="
+
+The base-64 encoded signature of the decrypted seed entropy, which can be validated with the
+`admin_pubkey` ed25519 Public Key.
 
 #### Future: Admin Decryption at Holo Boot
 
@@ -78,12 +82,12 @@ generate the Holo Agent and ZeroTier Keypairs, and continue to boot up.
 
 ## `holo-configure` APIs
 
-### `holoport_configuration`
+### `holoport_configuration(name_maybe, email, password, seed_maybe)`
 
 Returns the `HoloPortConfiguration` object, which can be serialized to JSON.
 
-#### `name_maybe: &Option<String>`
-#### `email:      &str,
-#### `password:   &str,
-#### `seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>
+#### `name_maybe: Option<String>`
+#### `email:      String`
+#### `password:   String`
+#### `seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>`
 

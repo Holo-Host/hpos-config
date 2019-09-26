@@ -36,7 +36,7 @@ fn main() {
     let mut opts = Options::new();
     opts.optopt("", "email", "User's email address", "EMAIL");
     opts.optopt("", "password", "Password to authorize HoloPort configurations", "PASSWORD");
-    opts.optopt("", "name", "Optional name, to generate unique HoloPort configuration", "NONCE");
+    opts.optopt("", "name", "Optional name, to generate unique HoloPort configuration", "NAME");
                 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -101,7 +101,7 @@ fn main() {
     // the corresponding private key, and sign a request.  If optional seed entropy is not provided,
     // a random seed will be computed.
     eprintln!("Generating HoloPort Configuration for email: {}", &email);
-    match holo_configure::holoport_configuration(&name, &email, &password, None) {
+    match holo_configure::holoport_configuration(name, email, password, None) {
         Ok(c) => println!("{}",  serde_json::to_string_pretty(&c).unwrap()),
         Err(e) => fail(&format!("Failed to generate HoloPort configuration: {}", e),
                        &program, opts),
