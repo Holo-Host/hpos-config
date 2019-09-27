@@ -1,13 +1,16 @@
-extern crate ed25519_dalek;
 extern crate crypto;
 extern crate getopts;
 
-use std::{env, io};
+use std::{env, io, fs};
 use std::process::exit;
 
 use self::getopts::Options;
 
 use holo_configure;
+
+use crypto:: {
+    sha2, digest::Digest,
+};
 
 const DETAIL: &str = "
 
@@ -37,7 +40,8 @@ fn main() {
     opts.optopt("", "email", "User's email address", "EMAIL");
     opts.optopt("", "password", "Password to authorize HoloPort configurations", "PASSWORD");
     opts.optopt("", "name", "Optional name, to generate unique HoloPort configuration", "NAME");
-                
+    opts.optopt("", "from", "Generate seed from entropy in the provided file", "FILE");
+
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
         Err(f) => {
@@ -46,7 +50,7 @@ fn main() {
     };
 
     // Collect the HoloPort name address; may be None (Some("") ==> None)
-    let name: Option<String> = match matches.opt_str("name") {
+    let name_maybe = match matches.opt_str("name") {
         None => None,
         Some(thing) => if thing.len() == 0 { None } else { Some(thing) },
     };
@@ -93,6 +97,23 @@ fn main() {
         eprintln!("WARNING: Proceeding with empty password");
     }
 
+    // Collect seed optionally from entropy in file
+    let seed_maybe = match matches.opt_str("from") {
+        None => None,
+        Some(filename) => {
+            let entropy = match fs::read_to_string(&filename) {
+                Ok(string) => string,
+                Err(e) => fail(&format!("Failed to read entropy from {:?}: {}", &filename, e),
+                               &program, opts),
+            };
+            let mut seed = [0u8; 32];
+            let mut hasher = sha2::Sha256::new();
+            hasher.input_str(&entropy);
+            hasher.result(&mut seed);
+            Some(seed)
+        },
+    };
+
     // Using the email address as salt, extend the password into a seed for a public/private signing
     // keypair, used to authenticate configuration requests to the HoloPort.  If an optional name is
     // supplied, it is also hashed into the password to produce a unique admin keypair and blinding
@@ -101,7 +122,7 @@ fn main() {
     // the corresponding private key, and sign a request.  If optional seed entropy is not provided,
     // a random seed will be computed.
     eprintln!("Generating HoloPort Configuration for email: {}", &email);
-    match holo_configure::holoport_configuration(name, email, password, None) {
+    match holo_configure::holoport_configuration(name_maybe, email, password, seed_maybe) {
         Ok(c) => println!("{}",  serde_json::to_string_pretty(&c).unwrap()),
         Err(e) => fail(&format!("Failed to generate HoloPort configuration: {}", e),
                        &program, opts),
