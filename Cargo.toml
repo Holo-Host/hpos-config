@@ -12,6 +12,7 @@ documentation = "https://docs.rs/holo-configuration"
 repository = "https://github.com/Holo-Host/holo-configuration"
 
 [dependencies]
+failure = "=0.1.5"
 getopts = "=0.2.19"
 hcid = "=0.0.6"
 rust-argon2 = "=0.5.1"

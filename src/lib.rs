@@ -11,6 +11,5 @@ extern crate serde_derive;
 extern crate serde_json;
 
 mod config;
-mod error;
 
 pub use config::{Config, Version};

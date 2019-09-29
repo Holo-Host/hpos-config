@@ -1,11 +1,10 @@
 use ed25519_dalek::*;
 //use rand::{Rng, RngCore, CryptoRng};
+use failure::Error;
 
 use rand;
 use serde_repr::*;
 use serde::ser::{Serialize, Serializer};
-
-use crate::error::*;
 
 pub const ARGON2_CONFIG: argon2::Config = argon2::Config {
     variant: argon2::Variant::Argon2id,
@@ -51,7 +50,7 @@ impl Config {
         email: String,
         password: String,
         seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>,
-    ) -> Result<Self, ConfigurationError> {
+    ) -> Result<Self, Error> {
         let seed = match seed_maybe {
             Some(s) => s,
             None => {
@@ -76,7 +75,7 @@ impl Config {
     }
 }
 
-pub fn public_key_from(email: &str, password: &str) -> Result<PublicKey, ConfigurationError> {
+pub fn public_key_from(email: &str, password: &str) -> Result<PublicKey, Error> {
     // Extend the email address to a 512-bit salt using SHA-512. This prevents
     // very short email addresses (such as a@b.ca) from triggering salt size
     // related failures in Argon2.
