@@ -42,8 +42,11 @@ impl Serialize for Version {
 }
 
 #[derive(Debug, Serialize)]
+struct EmailAddress(String);
+
+#[derive(Debug, Serialize)]
 pub struct Admin {
-    email: String,
+    email: EmailAddress,
     public_key: String,
 }
 
@@ -74,7 +77,7 @@ impl HoloPortConfiguration {
         let admin_keypair = admin_key_from(&email, &password)?;
 
         let admin = Admin {
-            email: email.to_string(),
+            email: EmailAddress(email),
             public_key: hcid::HcidEncoding::with_kind("hca0")?
                 .encode(&admin_keypair.public.to_bytes())?,
         };
