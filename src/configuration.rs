@@ -16,7 +16,7 @@ pub const HOLO_ADMIN_ARGON_CONFIG: argon2::Config = argon2::Config {
     lanes: 4,
     thread_mode: argon2::ThreadMode::Parallel,
     secret: &[],
-    ad: &[],
+    ad: "holo-config-v1".as_bytes(),
     hash_length: 32,
 };
 
