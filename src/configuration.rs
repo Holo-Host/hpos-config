@@ -13,23 +13,18 @@ use std::time::{Duration, SystemTime};
 
 use crate::error::*;
 
-// See: lib3h/crates/sodium/src/pwhash.rs, crypto_pwhash_argon2id_{OPS,MEM}LIMIT_INTERACTIVE
-pub const OPSLIMIT_INTERACTIVE: u32 = 2;
-pub const MEMLIMIT_INTERACTIVE: u32 = 1 << 16; // ~67MB
-pub const HASHBYTES: u32 = 32;
-pub const KEYBYTES: usize = 32;
 pub const AEAD_TAGBYTES: usize = 16; // AEAD encryption/authentication tag
 
 pub const HOLO_ADMIN_ARGON_CONFIG: argon2::Config = argon2::Config {
     variant: argon2::Variant::Argon2id,
     version: argon2::Version::Version13,
-    mem_cost: MEMLIMIT_INTERACTIVE,
-    time_cost: OPSLIMIT_INTERACTIVE,
+    mem_cost: 1 << 16, // 64 MB
+    time_cost: 2,
     lanes: 4,
     thread_mode: argon2::ThreadMode::Parallel,
     secret: &[],
     ad: &[],
-    hash_length: HASHBYTES,
+    hash_length: 32,
 };
 
 pub const HOLO_ENTROPY_SIZE: usize = 32;
