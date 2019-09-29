@@ -32,7 +32,7 @@ pub struct HoloPortConfiguration {
     // address (as salt) and password; authenticate requests
     name: Option<String>, // A unique name for the HoloPort (if any); hashed w/ password
     email: String,        // HoloPort admin/owner email; used as salt for argon2 password
-    admin_pubkey: String, // All Admin API requests are signed by the admin key
+    public_key: String, // All Admin API requests are signed by the admin key
     seed: String,             // The base-64 encoded AEAD tag + seed used to generate all IDs
 }
 
@@ -40,8 +40,8 @@ impl std::fmt::Display for HoloPortConfiguration {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(
             f,
-            "name: {:?}, email: {}, admin_pubkey: {}, seed: {}",
-            &self.name, &self.email, &self.admin_pubkey, &self.seed,
+            "name: {:?}, email: {}, public_key: {}, seed: {}",
+            &self.name, &self.email, &self.public_key, &self.seed,
         )
     }
 }
@@ -69,7 +69,7 @@ impl HoloPortConfiguration {
         Ok(HoloPortConfiguration {
             name: name_maybe.to_owned(),
             email: email.to_string(),
-            admin_pubkey: hcid::HcidEncoding::with_kind("hca0")?
+            public_key: hcid::HcidEncoding::with_kind("hca0")?
                 .encode(&admin_keypair.public.to_bytes())?,
             seed: hcid::HcidEncoding::with_kind("hcc0")?.encode(&seed)?,
         })
@@ -122,7 +122,7 @@ pub fn keypair_from_seed(seed: &[u8]) -> Result<Keypair, ConfigurationError> {
 /// "{
 ///   \"name\": \"HP1\",
 ///   \"email\": \"a@b.c\",
-///   \"admin_pubkey\": \"HcAcIwy3I4KPhtwqhnBtPRMFhqzyasf8yW6SMeoQF5Hwxnhsafg5Qn33qyb7eda\",
+///   \"public_key\": \"HcAcIwy3I4KPhtwqhnBtPRMFhqzyasf8yW6SMeoQF5Hwxnhsafg5Qn33qyb7eda\",
 ///   \"seed\": \"HcCCJ6jX98BJRIrhba9T4s9WYIu5S3Qsg59ZfgBCA6ed8mkh8X7CqpHfGZmxv8a\",
 /// }"
 /// );
