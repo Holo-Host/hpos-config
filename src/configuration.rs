@@ -1,10 +1,7 @@
 use ed25519_dalek::*;
+use sha2::Sha512;
 //use rand::{Rng, RngCore, CryptoRng};
 
-use crypto::{
-    digest::Digest,
-    sha2,
-};
 use rand;
 
 use crate::error::*;
@@ -87,10 +84,7 @@ pub fn admin_key_from(
 ) -> Result<Keypair, ConfigurationError> {
     // Extend the email address to a 512-bit salt using SHA-512. This prevents very short
     // email addresses (eg. a@b.ca) from triggering salt size related failures in argon2.
-    let mut hasher = sha2::Sha512::new();
-    hasher.input_str(email);
-    let mut salt = [0u8; 64];
-    hasher.result(&mut salt);
+    let salt = Sha512::digest(email.as_bytes());
 
     // Extend the hashed email salt + password into a seed for the admin Keypair
     keypair_from_seed(&argon2::hash_raw(&password.as_bytes(), &salt, &HOLO_ADMIN_ARGON_CONFIG)?)
