@@ -1,14 +1,8 @@
-extern crate crypto;
-extern crate getopts;
+use crypto::{digest::Digest, sha2::Sha256};
+use getopts::Options;
 
 use std::process::exit;
 use std::{env, fs, io};
-
-use self::getopts::Options;
-
-use holo_configure;
-
-use crypto::{digest::Digest, sha2};
 
 const DETAIL: &str = "
 
@@ -107,7 +101,7 @@ fn main() {
                 ),
             };
             let mut seed = [0u8; 32];
-            let mut hasher = sha2::Sha256::new();
+            let mut hasher = Sha256::new();
             hasher.input_str(&entropy);
             hasher.result(&mut seed);
             Some(seed)

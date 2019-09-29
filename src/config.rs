@@ -1,10 +1,9 @@
 use ed25519_dalek::*;
-//use rand::{Rng, RngCore, CryptoRng};
 use failure::Error;
 
-use rand;
-use serde_repr::*;
 use serde::ser::{Serialize, Serializer};
+use serde_derive::*;
+use serde_repr::*;
 
 pub const ARGON2_CONFIG: argon2::Config = argon2::Config {
     variant: argon2::Variant::Argon2id,
