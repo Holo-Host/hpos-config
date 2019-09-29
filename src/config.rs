@@ -60,12 +60,12 @@ impl Config {
             }
         };
 
-        let admin_keypair = admin_key_from(&email, &password)?;
+        let admin_public_key = public_key_from(&email, &password)?;
 
         let admin = Admin {
             email: EmailAddress(email),
             public_key: hcid::HcidEncoding::with_kind("hca0")?
-                .encode(&admin_keypair.public.to_bytes())?,
+                .encode(&admin_public_key.to_bytes())?,
         };
 
         Ok(Config {
@@ -76,25 +76,18 @@ impl Config {
     }
 }
 
-/// admin_key_from -- Stretches the email (salt) + password, generates "admin" keypair
-///
-/// TODO: We must be able to generate a sequence of unique admin keypairs for each unique HoloPort.
-/// This is also required for (later) when we support DPKI-generated entropy/keypairs.
-pub fn admin_key_from(email: &str, password: &str) -> Result<Keypair, ConfigurationError> {
-    // Extend the email address to a 512-bit salt using SHA-512. This prevents very short
-    // email addresses (eg. a@b.ca) from triggering salt size related failures in argon2.
+pub fn public_key_from(email: &str, password: &str) -> Result<PublicKey, ConfigurationError> {
+    // Extend the email address to a 512-bit salt using SHA-512. This prevents
+    // very short email addresses (such as a@b.ca) from triggering salt size
+    // related failures in Argon2.
     let salt = Sha512::digest(email.as_bytes());
 
-    // Extend the hashed email salt + password into a seed for the admin Keypair
-    keypair_from_seed(&argon2::hash_raw(
+    // TODO: Argon2 secret (see ARGON2_CONFIG) should be set to Holochain public key
+    let hash = &argon2::hash_raw(
         &password.as_bytes(),
         &salt,
         &ARGON2_CONFIG,
-    )?)
-}
+    )?;
 
-pub fn keypair_from_seed(seed: &[u8]) -> Result<Keypair, ConfigurationError> {
-    let secret: SecretKey = SecretKey::from_bytes(seed)?;
-    let public: PublicKey = (&secret).into();
-    Ok(Keypair { public, secret })
+    Ok(PublicKey::from(&SecretKey::from_bytes(hash)?))
 }
