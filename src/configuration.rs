@@ -85,11 +85,11 @@ pub fn admin_key_from(
     password: &str,
     name_maybe: &Option<String>,
 ) -> Result<Keypair, ConfigurationError> {
-    // Extend the email address to a 256-bit salt using SHA-256.  This prevents very short
+    // Extend the email address to a 512-bit salt using SHA-512. This prevents very short
     // email addresses (eg. a@b.ca) from triggering salt size related failures in argon2.
-    let mut hasher = sha2::Sha256::new();
+    let mut hasher = sha2::Sha512::new();
     hasher.input_str(email);
-    let mut salt = [0u8; 32];
+    let mut salt = [0u8; 64];
     hasher.result(&mut salt);
 
     // Extend the password, including the (optional) name.
@@ -98,7 +98,7 @@ pub fn admin_key_from(
     if let Some(name) = name_maybe {
         hasher.input_str(name)
     }
-    let mut pass = [0u8; 32];
+    let mut pass = [0u8; 64];
     hasher.result(&mut pass);
 
     // Extend the hashed email salt + password (+ nonce) into a seed for the admin Keypair
