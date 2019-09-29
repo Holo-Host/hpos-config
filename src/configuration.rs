@@ -92,17 +92,8 @@ pub fn admin_key_from(
     let mut salt = [0u8; 64];
     hasher.result(&mut salt);
 
-    // Extend the password, including the (optional) name.
-    hasher.reset();
-    hasher.input_str(password);
-    if let Some(name) = name_maybe {
-        hasher.input_str(name)
-    }
-    let mut pass = [0u8; 64];
-    hasher.result(&mut pass);
-
-    // Extend the hashed email salt + password (+ nonce) into a seed for the admin Keypair
-    keypair_from_seed(&argon2::hash_raw(&pass, &salt, &HOLO_ADMIN_ARGON_CONFIG)?)
+    // Extend the hashed email salt + password into a seed for the admin Keypair
+    keypair_from_seed(&argon2::hash_raw(&password.as_bytes(), &salt, &HOLO_ADMIN_ARGON_CONFIG)?)
 }
 
 pub fn keypair_from_seed(seed: &[u8]) -> Result<Keypair, ConfigurationError> {
