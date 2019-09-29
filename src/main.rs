@@ -121,7 +121,7 @@ fn main() {
     // a request. If optional seed entropy is not provided, a random seed will
     // be computed.
     eprintln!("Generating HoloPort Configuration for email: {}", &email);
-    match holo_configure::holoport_configuration(email, password, seed_maybe) {
+    match holo_configure::Config::new(email, password, seed_maybe) {
         Ok(c) => println!("{}", serde_json::to_string_pretty(&c).unwrap()),
         Err(e) => fail(
             &format!("Failed to generate HoloPort configuration: {}", e),

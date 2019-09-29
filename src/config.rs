@@ -8,8 +8,6 @@ use serde::ser::{Serialize, Serializer};
 
 use crate::error::*;
 
-pub const AEAD_TAGBYTES: usize = 16; // AEAD encryption/authentication tag
-
 pub const HOLO_ADMIN_ARGON_CONFIG: argon2::Config = argon2::Config {
     variant: argon2::Variant::Argon2id,
     version: argon2::Version::Version13,
@@ -40,13 +38,13 @@ pub struct Admin {
 }
 
 #[derive(Debug, Serialize)]
-pub struct HoloPortConfiguration {
+pub struct Config {
     version: Version,
     admins: Vec<Admin>,
     seed: String,
 }
 
-impl HoloPortConfiguration {
+impl Config {
     /// new -- Create a new config from provided email/password, + optional seed entropy
     ///
     /// Deduces and creates the admin keys, and creates the config.
@@ -71,7 +69,7 @@ impl HoloPortConfiguration {
                 .encode(&admin_keypair.public.to_bytes())?,
         };
 
-        Ok(HoloPortConfiguration {
+        Ok(Config {
             version: Version::V1,
             admins: vec![admin],
             seed: hcid::HcidEncoding::with_kind("hcc0")?.encode(&seed)?,
@@ -100,28 +98,4 @@ pub fn keypair_from_seed(seed: &[u8]) -> Result<Keypair, ConfigurationError> {
     let secret: SecretKey = SecretKey::from_bytes(seed)?;
     let public: PublicKey = (&secret).into();
     Ok(Keypair { public, secret })
-}
-
-/// Create a unique HoloPort configuration, w/ random seed entropy
-///
-/// Lets create a HoloPortConfiguration with a deterministic (all zeros) seed entropy:
-/// ```
-/// let config = holo_configure::holoport_configuration(
-///     Some("HP1".to_string()), "a@b.c".to_string(), "password".to_string(), Some([0u8; 32])
-/// );
-/// assert_eq!(serde_json::to_string_pretty( &config.unwrap() ).unwrap(),
-/// "{
-///   \"email\": \"a@b.c\",
-///   \"public_key\": \"HcAcIwy3I4KPhtwqhnBtPRMFhqzyasf8yW6SMeoQF5Hwxnhsafg5Qn33qyb7eda\",
-///   \"seed\": \"HcCCJ6jX98BJRIrhba9T4s9WYIu5S3Qsg59ZfgBCA6ed8mkh8X7CqpHfGZmxv8a\",
-/// }"
-/// );
-/// ```
-///
-pub fn holoport_configuration(
-    email: String,
-    password: String,
-    seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>,
-) -> Result<HoloPortConfiguration, ConfigurationError> {
-    Ok(HoloPortConfiguration::new(email, password, seed_maybe)?)
 }

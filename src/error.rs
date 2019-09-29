@@ -67,6 +67,3 @@ impl std::fmt::Display for ConfigurationError {
         write!(f, "{:?}", self)
     }
 }
-
-/// represents a Result object returned by an api in the cryptography system
-pub type ConfigurationResult<T> = Result<T, ConfigurationError>;
