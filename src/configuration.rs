@@ -3,6 +3,7 @@ use sha2::Sha512;
 //use rand::{Rng, RngCore, CryptoRng};
 
 use rand;
+use serde_repr::*;
 use serde::ser::{Serialize, Serializer};
 
 use crate::error::*;
@@ -23,22 +24,10 @@ pub const HOLO_ADMIN_ARGON_CONFIG: argon2::Config = argon2::Config {
 
 pub const HOLO_ENTROPY_SIZE: usize = 32;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize_repr)]
+#[repr(u8)]
 pub enum Version {
-    V1,
-}
-
-impl Serialize for Version {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let n = match self {
-            Version::V1 => 1,
-        };
-
-        serializer.serialize_u8(n)
-    }
+    V1 = 1,
 }
 
 #[derive(Debug, Serialize)]
