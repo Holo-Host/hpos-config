@@ -7,7 +7,7 @@ use serde::ser::{Serialize, Serializer};
 
 use crate::error::*;
 
-pub const HOLO_ADMIN_ARGON_CONFIG: argon2::Config = argon2::Config {
+pub const ARGON2_CONFIG: argon2::Config = argon2::Config {
     variant: argon2::Variant::Argon2id,
     version: argon2::Version::Version13,
     mem_cost: 1 << 16, // 64 MB
@@ -89,7 +89,7 @@ pub fn admin_key_from(email: &str, password: &str) -> Result<Keypair, Configurat
     keypair_from_seed(&argon2::hash_raw(
         &password.as_bytes(),
         &salt,
-        &HOLO_ADMIN_ARGON_CONFIG,
+        &ARGON2_CONFIG,
     )?)
 }
 
