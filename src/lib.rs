@@ -1,10 +1,9 @@
-
 extern crate argon2;
-extern crate ed25519_dalek;
-extern crate rand;
-extern crate hcid;
 extern crate base64;
 extern crate crypto;
+extern crate ed25519_dalek;
+extern crate hcid;
+extern crate rand;
 
 // Support De/Serializing from/to JSON
 extern crate serde;
@@ -15,8 +14,8 @@ extern crate serde_json;
 //#[macro_use]
 //extern crate arrayref;
 
-pub use error::*;
 pub use configuration::*;
+pub use error::*;
 
-mod error;
 mod configuration;
+mod error;

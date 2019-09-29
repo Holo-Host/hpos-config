@@ -1,8 +1,8 @@
+use crypto::symmetriccipher::SymmetricCipherError;
 use ed25519_dalek::SignatureError;
 use hcid::HcidError;
-use std::time::SystemTimeError;
-use crypto::symmetriccipher::SymmetricCipherError;
 use std::convert::From;
+use std::time::SystemTimeError;
 #[derive(Debug)]
 pub enum ConfigurationError {
     Generic(String),
@@ -70,4 +70,3 @@ impl std::fmt::Display for ConfigurationError {
 
 /// represents a Result object returned by an api in the cryptography system
 pub type ConfigurationResult<T> = Result<T, ConfigurationError>;
-

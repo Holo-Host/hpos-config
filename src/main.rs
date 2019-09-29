@@ -1,16 +1,14 @@
 extern crate crypto;
 extern crate getopts;
 
-use std::{env, io, fs};
 use std::process::exit;
+use std::{env, fs, io};
 
 use self::getopts::Options;
 
 use holo_configure;
 
-use crypto:: {
-    sha2, digest::Digest,
-};
+use crypto::{digest::Digest, sha2};
 
 const DETAIL: &str = "
 
@@ -38,9 +36,24 @@ fn main() {
 
     let mut opts = Options::new();
     opts.optopt("", "email", "User's email address", "EMAIL");
-    opts.optopt("", "password", "Password to authorize HoloPort configurations", "PASSWORD");
-    opts.optopt("", "name", "Optional name, to generate unique HoloPort configuration", "NAME");
-    opts.optopt("", "from", "Generate seed from entropy in the provided file", "FILE");
+    opts.optopt(
+        "",
+        "password",
+        "Password to authorize HoloPort configurations",
+        "PASSWORD",
+    );
+    opts.optopt(
+        "",
+        "name",
+        "Optional name, to generate unique HoloPort configuration",
+        "NAME",
+    );
+    opts.optopt(
+        "",
+        "from",
+        "Generate seed from entropy in the provided file",
+        "FILE",
+    );
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -52,7 +65,13 @@ fn main() {
     // Collect the HoloPort name address; may be None (Some("") ==> None)
     let name_maybe = match matches.opt_str("name") {
         None => None,
-        Some(thing) => if thing.len() == 0 { None } else { Some(thing) },
+        Some(thing) => {
+            if thing.len() == 0 {
+                None
+            } else {
+                Some(thing)
+            }
+        }
     };
 
     // Collect the email address; must not be empty.
@@ -64,12 +83,10 @@ fn main() {
                 Err(e) => {
                     eprintln!("{:?}", e);
                     false
-                },
-                Ok(n) => n == 0
-            } 
-        } {
-            ;
-        };
+                }
+                Ok(n) => n == 0,
+            }
+        } {}
         input.trim().to_owned()
     });
     if email.len() == 0 {
@@ -85,12 +102,10 @@ fn main() {
                 Err(e) => {
                     eprintln!("{:?}", e);
                     false
-                },
-                Ok(n) => n == 0
+                }
+                Ok(n) => n == 0,
             }
-        } {
-            ;
-        }
+        } {}
         input.trim().to_owned()
     });
     if password.len() == 0 {
@@ -103,15 +118,18 @@ fn main() {
         Some(filename) => {
             let entropy = match fs::read_to_string(&filename) {
                 Ok(string) => string,
-                Err(e) => fail(&format!("Failed to read entropy from {:?}: {}", &filename, e),
-                               &program, opts),
+                Err(e) => fail(
+                    &format!("Failed to read entropy from {:?}: {}", &filename, e),
+                    &program,
+                    opts,
+                ),
             };
             let mut seed = [0u8; 32];
             let mut hasher = sha2::Sha256::new();
             hasher.input_str(&entropy);
             hasher.result(&mut seed);
             Some(seed)
-        },
+        }
     };
 
     // Using the email address as salt, extend the password into a seed for a public/private signing
@@ -123,8 +141,11 @@ fn main() {
     // a random seed will be computed.
     eprintln!("Generating HoloPort Configuration for email: {}", &email);
     match holo_configure::holoport_configuration(name_maybe, email, password, seed_maybe) {
-        Ok(c) => println!("{}",  serde_json::to_string_pretty(&c).unwrap()),
-        Err(e) => fail(&format!("Failed to generate HoloPort configuration: {}", e),
-                       &program, opts),
+        Ok(c) => println!("{}", serde_json::to_string_pretty(&c).unwrap()),
+        Err(e) => fail(
+            &format!("Failed to generate HoloPort configuration: {}", e),
+            &program,
+            opts,
+        ),
     }
 }
