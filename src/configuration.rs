@@ -22,24 +22,17 @@ pub const HOLO_ADMIN_ARGON_CONFIG: argon2::Config = argon2::Config {
 
 pub const HOLO_ENTROPY_SIZE: usize = 32;
 
-/// The collection of data required to configure a HoloPort.
 #[derive(Deserialize, Debug, Serialize)]
-pub struct HoloPortConfiguration {
-    // All admin requests are signed with the private key, computed from the HoloPort owner's email
-    // address (as salt) and password; authenticate requests
-    email: String,        // HoloPort admin/owner email; used as salt for argon2 password
-    public_key: String, // All Admin API requests are signed by the admin key
-    seed: String,             // The base-64 encoded AEAD tag + seed used to generate all IDs
+pub struct Admin {
+    email: String,
+    public_key: String
 }
 
-impl std::fmt::Display for HoloPortConfiguration {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(
-            f,
-            "email: {}, public_key: {}, seed: {}",
-            &self.email, &self.public_key, &self.seed,
-        )
-    }
+#[derive(Deserialize, Debug, Serialize)]
+pub struct HoloPortConfiguration {
+    version: u32,
+    admins: Vec<Admin>,
+    seed: String,
 }
 
 impl HoloPortConfiguration {
@@ -61,10 +54,15 @@ impl HoloPortConfiguration {
 
         let admin_keypair = admin_key_from(&email, &password)?;
 
-        Ok(HoloPortConfiguration {
+        let admin = Admin {
             email: email.to_string(),
             public_key: hcid::HcidEncoding::with_kind("hca0")?
-                .encode(&admin_keypair.public.to_bytes())?,
+              .encode(&admin_keypair.public.to_bytes())?,
+        };
+
+        Ok(HoloPortConfiguration {
+            version: 1,
+            admins: vec![admin],
             seed: hcid::HcidEncoding::with_kind("hcc0")?.encode(&seed)?,
         })
     }
