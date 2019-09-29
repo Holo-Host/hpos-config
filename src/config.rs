@@ -1,5 +1,4 @@
 use ed25519_dalek::*;
-use sha2::Sha512;
 //use rand::{Rng, RngCore, CryptoRng};
 
 use rand;
