@@ -30,7 +30,8 @@ pub enum Version {
 
 impl Serialize for Version {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where S: Serializer
+    where
+        S: Serializer,
     {
         let n = match self {
             Version::V1 => 1,
@@ -43,7 +44,7 @@ impl Serialize for Version {
 #[derive(Debug, Serialize)]
 pub struct Admin {
     email: String,
-    public_key: String
+    public_key: String,
 }
 
 #[derive(Debug, Serialize)]
@@ -75,7 +76,7 @@ impl HoloPortConfiguration {
         let admin = Admin {
             email: email.to_string(),
             public_key: hcid::HcidEncoding::with_kind("hca0")?
-              .encode(&admin_keypair.public.to_bytes())?,
+                .encode(&admin_keypair.public.to_bytes())?,
         };
 
         Ok(HoloPortConfiguration {
@@ -90,16 +91,17 @@ impl HoloPortConfiguration {
 ///
 /// TODO: We must be able to generate a sequence of unique admin keypairs for each unique HoloPort.
 /// This is also required for (later) when we support DPKI-generated entropy/keypairs.
-pub fn admin_key_from(
-    email: &str,
-    password: &str,
-) -> Result<Keypair, ConfigurationError> {
+pub fn admin_key_from(email: &str, password: &str) -> Result<Keypair, ConfigurationError> {
     // Extend the email address to a 512-bit salt using SHA-512. This prevents very short
     // email addresses (eg. a@b.ca) from triggering salt size related failures in argon2.
     let salt = Sha512::digest(email.as_bytes());
 
     // Extend the hashed email salt + password into a seed for the admin Keypair
-    keypair_from_seed(&argon2::hash_raw(&password.as_bytes(), &salt, &HOLO_ADMIN_ARGON_CONFIG)?)
+    keypair_from_seed(&argon2::hash_raw(
+        &password.as_bytes(),
+        &salt,
+        &HOLO_ADMIN_ARGON_CONFIG,
+    )?)
 }
 
 pub fn keypair_from_seed(seed: &[u8]) -> Result<Keypair, ConfigurationError> {
@@ -129,7 +131,5 @@ pub fn holoport_configuration(
     password: String,
     seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>,
 ) -> Result<HoloPortConfiguration, ConfigurationError> {
-    Ok(HoloPortConfiguration::new(
-        email, password, seed_maybe,
-    )?)
+    Ok(HoloPortConfiguration::new(email, password, seed_maybe)?)
 }
