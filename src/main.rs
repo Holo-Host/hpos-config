@@ -44,12 +44,6 @@ fn main() {
     );
     opts.optopt(
         "",
-        "name",
-        "Optional name, to generate unique HoloPort configuration",
-        "NAME",
-    );
-    opts.optopt(
-        "",
         "from",
         "Generate seed from entropy in the provided file",
         "FILE",
@@ -59,18 +53,6 @@ fn main() {
         Ok(m) => m,
         Err(f) => {
             fail(&f.to_string(), &program, opts);
-        }
-    };
-
-    // Collect the HoloPort name address; may be None (Some("") ==> None)
-    let name_maybe = match matches.opt_str("name") {
-        None => None,
-        Some(thing) => {
-            if thing.len() == 0 {
-                None
-            } else {
-                Some(thing)
-            }
         }
     };
 
@@ -132,15 +114,14 @@ fn main() {
         }
     };
 
-    // Using the email address as salt, extend the password into a seed for a public/private signing
-    // keypair, used to authenticate configuration requests to the HoloPort.  If an optional name is
-    // supplied, it is also hashed into the password to produce a unique admin keypair and blinding
-    // key; this could be used to support multiple HoloPort configurations with the same email and
-    // password.  Only a holder of of the same email and password (and optional name) can generate
-    // the corresponding private key, and sign a request.  If optional seed entropy is not provided,
-    // a random seed will be computed.
+    // Using the email address as salt, extend the password into a seed for a
+    // public/private signing keypair, used to authenticate configuration
+    // requests to the HoloPort. Only a holder of of the same email and password
+    // (and optional name) can generate the corresponding private key, and sign
+    // a request. If optional seed entropy is not provided, a random seed will
+    // be computed.
     eprintln!("Generating HoloPort Configuration for email: {}", &email);
-    match holo_configure::holoport_configuration(name_maybe, email, password, seed_maybe) {
+    match holo_configure::holoport_configuration(email, password, seed_maybe) {
         Ok(c) => println!("{}", serde_json::to_string_pretty(&c).unwrap()),
         Err(e) => fail(
             &format!("Failed to generate HoloPort configuration: {}", e),

@@ -27,7 +27,6 @@ pub const HOLO_ENTROPY_SIZE: usize = 32;
 pub struct HoloPortConfiguration {
     // All admin requests are signed with the private key, computed from the HoloPort owner's email
     // address (as salt) and password; authenticate requests
-    name: Option<String>, // A unique name for the HoloPort (if any); hashed w/ password
     email: String,        // HoloPort admin/owner email; used as salt for argon2 password
     public_key: String, // All Admin API requests are signed by the admin key
     seed: String,             // The base-64 encoded AEAD tag + seed used to generate all IDs
@@ -37,8 +36,8 @@ impl std::fmt::Display for HoloPortConfiguration {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(
             f,
-            "name: {:?}, email: {}, public_key: {}, seed: {}",
-            &self.name, &self.email, &self.public_key, &self.seed,
+            "email: {}, public_key: {}, seed: {}",
+            &self.email, &self.public_key, &self.seed,
         )
     }
 }
@@ -48,7 +47,6 @@ impl HoloPortConfiguration {
     ///
     /// Deduces and creates the admin keys, and creates the config.
     pub fn new(
-        name_maybe: Option<String>,
         email: String,
         password: String,
         seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>,
@@ -61,10 +59,9 @@ impl HoloPortConfiguration {
             }
         };
 
-        let admin_keypair = admin_key_from(&email, &password, &name_maybe)?;
+        let admin_keypair = admin_key_from(&email, &password)?;
 
         Ok(HoloPortConfiguration {
-            name: name_maybe.to_owned(),
             email: email.to_string(),
             public_key: hcid::HcidEncoding::with_kind("hca0")?
                 .encode(&admin_keypair.public.to_bytes())?,
@@ -73,14 +70,13 @@ impl HoloPortConfiguration {
     }
 }
 
-/// admin_key_from -- Stretches the email (salt) + password + name, generates "admin" keypair
+/// admin_key_from -- Stretches the email (salt) + password, generates "admin" keypair
 ///
 /// TODO: We must be able to generate a sequence of unique admin keypairs for each unique HoloPort.
 /// This is also required for (later) when we support DPKI-generated entropy/keypairs.
 pub fn admin_key_from(
     email: &str,
     password: &str,
-    name_maybe: &Option<String>,
 ) -> Result<Keypair, ConfigurationError> {
     // Extend the email address to a 512-bit salt using SHA-512. This prevents very short
     // email addresses (eg. a@b.ca) from triggering salt size related failures in argon2.
@@ -105,7 +101,6 @@ pub fn keypair_from_seed(seed: &[u8]) -> Result<Keypair, ConfigurationError> {
 /// );
 /// assert_eq!(serde_json::to_string_pretty( &config.unwrap() ).unwrap(),
 /// "{
-///   \"name\": \"HP1\",
 ///   \"email\": \"a@b.c\",
 ///   \"public_key\": \"HcAcIwy3I4KPhtwqhnBtPRMFhqzyasf8yW6SMeoQF5Hwxnhsafg5Qn33qyb7eda\",
 ///   \"seed\": \"HcCCJ6jX98BJRIrhba9T4s9WYIu5S3Qsg59ZfgBCA6ed8mkh8X7CqpHfGZmxv8a\",
@@ -114,12 +109,11 @@ pub fn keypair_from_seed(seed: &[u8]) -> Result<Keypair, ConfigurationError> {
 /// ```
 ///
 pub fn holoport_configuration(
-    name_maybe: Option<String>,
     email: String,
     password: String,
     seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>,
 ) -> Result<HoloPortConfiguration, ConfigurationError> {
     Ok(HoloPortConfiguration::new(
-        name_maybe, email, password, seed_maybe,
+        email, password, seed_maybe,
     )?)
 }
