@@ -3,6 +3,7 @@ use sha2::Sha512;
 //use rand::{Rng, RngCore, CryptoRng};
 
 use rand;
+use serde::ser::{Serialize, Serializer};
 
 use crate::error::*;
 
@@ -22,15 +23,32 @@ pub const HOLO_ADMIN_ARGON_CONFIG: argon2::Config = argon2::Config {
 
 pub const HOLO_ENTROPY_SIZE: usize = 32;
 
-#[derive(Deserialize, Debug, Serialize)]
+#[derive(Debug)]
+pub enum Version {
+    V1,
+}
+
+impl Serialize for Version {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where S: Serializer
+    {
+        let n = match self {
+            Version::V1 => 1,
+        };
+
+        serializer.serialize_u8(n)
+    }
+}
+
+#[derive(Debug, Serialize)]
 pub struct Admin {
     email: String,
     public_key: String
 }
 
-#[derive(Deserialize, Debug, Serialize)]
+#[derive(Debug, Serialize)]
 pub struct HoloPortConfiguration {
-    version: u32,
+    version: Version,
     admins: Vec<Admin>,
     seed: String,
 }
@@ -61,7 +79,7 @@ impl HoloPortConfiguration {
         };
 
         Ok(HoloPortConfiguration {
-            version: 1,
+            version: Version::V1,
             admins: vec![admin],
             seed: hcid::HcidEncoding::with_kind("hcc0")?.encode(&seed)?,
         })
