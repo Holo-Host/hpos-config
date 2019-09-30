@@ -1,9 +1,14 @@
 use ed25519_dalek::*;
 use failure::Error;
+use serde::*;
 
-use serde::ser::{Serialize, Serializer};
-use serde_derive::*;
-use serde_repr::*;
+fn as_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
+where
+    T: AsRef<[u8]>,
+    S: Serializer,
+{
+    serializer.serialize_str(&base64::encode_config(x.as_ref(), base64::STANDARD_NO_PAD))
+}
 
 pub const ARGON2_CONFIG: argon2::Config = argon2::Config {
     variant: argon2::Variant::Argon2id,
@@ -14,78 +19,59 @@ pub const ARGON2_CONFIG: argon2::Config = argon2::Config {
     thread_mode: argon2::ThreadMode::Parallel,
     secret: &[],
     ad: "holo-config-v1".as_bytes(),
-    hash_length: 32,
+    hash_length: SECRET_KEY_LENGTH as u32,
 };
 
-pub const HOLO_ENTROPY_SIZE: usize = 32;
-
-#[derive(Debug, Serialize_repr)]
-#[repr(u8)]
-pub enum Version {
-    V1 = 1,
-}
+pub type Seed = [u8; 32];
 
 #[derive(Debug, Serialize)]
-struct EmailAddress(String);
+pub struct EmailAddress(String);
 
 #[derive(Debug, Serialize)]
 pub struct Admin {
     email: EmailAddress,
-    public_key: String,
+    #[serde(serialize_with = "as_base64")]
+    public_key: PublicKey,
 }
 
 #[derive(Debug, Serialize)]
-pub struct Config {
-    version: Version,
-    admins: Vec<Admin>,
-    seed: String,
+pub enum Config {
+    #[serde(rename = "v1")]
+    V1 {
+        #[serde(serialize_with = "as_base64")]
+        seed: Seed,
+        admins: Vec<Admin>,
+    },
 }
 
 impl Config {
-    /// new -- Create a new config from provided email/password, + optional seed entropy
-    ///
-    /// Deduces and creates the admin keys, and creates the config.
-    pub fn new(
-        email: String,
-        password: String,
-        seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>,
-    ) -> Result<Self, Error> {
-        let seed = match seed_maybe {
+    pub fn new(email: String, password: String, maybe_seed: Option<Seed>) -> Result<Self, Error> {
+        let seed = match maybe_seed {
             Some(s) => s,
-            None => {
-                let out: [u8; HOLO_ENTROPY_SIZE] = rand::random();
-                out
-            }
+            None => rand::random::<Seed>(),
         };
-
-        let admin_public_key = public_key_from(&email, &password)?;
 
         let admin = Admin {
-            email: EmailAddress(email),
-            public_key: hcid::HcidEncoding::with_kind("hca0")?
-                .encode(&admin_public_key.to_bytes())?,
+            email: EmailAddress(email.clone()),
+            public_key: public_key_from(&email, &password)?,
         };
 
-        Ok(Config {
-            version: Version::V1,
+        Ok(Config::V1 {
             admins: vec![admin],
-            seed: hcid::HcidEncoding::with_kind("hcc0")?.encode(&seed)?,
+            seed: seed,
         })
     }
 }
 
-pub fn public_key_from(email: &str, password: &str) -> Result<PublicKey, Error> {
-    // Extend the email address to a 512-bit salt using SHA-512. This prevents
-    // very short email addresses (such as a@b.ca) from triggering salt size
-    // related failures in Argon2.
-    let salt = Sha512::digest(email.as_bytes());
+pub fn public_key_from(salt: &str, password: &str) -> Result<PublicKey, Error> {
+    // This allows to use salt shorter than 8 bytes.
+    let salt_hash = Sha512::digest(salt.as_bytes());
 
-    // TODO: Argon2 secret (see ARGON2_CONFIG) should be set to Holochain public key
-    let hash = &argon2::hash_raw(
-        &password.as_bytes(),
-        &salt,
-        &ARGON2_CONFIG,
-    )?;
+    let mut config = ARGON2_CONFIG.clone();
+    // TODO: should be set to Holochain public key.
+    config.secret = &[];
+
+    let hash = &argon2::hash_raw(&password.as_bytes(), &salt_hash, &config)?;
 
     Ok(PublicKey::from(&SecretKey::from_bytes(hash)?))
 }

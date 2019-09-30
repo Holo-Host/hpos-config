@@ -1,126 +1,52 @@
-use crypto::{digest::Digest, sha2::Sha256};
-use getopts::Options;
+use holo_config::{Config, Seed};
 
-use std::process::exit;
-use std::{env, fs, io};
+use docopt::Docopt;
+use failure::Error;
+use serde::*;
+use sha2::{Digest, Sha512Trunc256};
 
-const DETAIL: &str = "
+use std::fs::File;
+use std::path::PathBuf;
+use std::{env, io};
 
-    Produces a JSON file containing the seed entropy to produce the
-HoloPort's Holochain and ZeroTier public/private keys.  This file is
-*unencrypted*, as it is required to be read on start-up of the
-HoloPort!
+const USAGE: &'static str = "
+Usage: holo-config --email EMAIL --password STRING [--seed-from PATH]
+       holo-config --help
 
+Creates Holo config file that contains seed and admin email/password.
+
+Options:
+  --email EMAIL      HoloPort admin email address
+  --password STRING  HoloPort admin password
+  --seed-from PATH   Use SHA-512 hash of given file truncated to 256 bits as seed
 ";
 
-fn print_usage(program: &str, opts: Options) {
-    let brief = opts.short_usage(program);
-    eprintln!("{}\n{}", opts.usage(&brief), &DETAIL);
+#[derive(Deserialize)]
+struct Args {
+    flag_email: String,
+    flag_password: String,
+    flag_seed_from: Option<PathBuf>,
 }
 
-fn fail(message: &str, program: &str, opts: Options) -> ! {
-    eprintln!("{}\n", message);
-    print_usage(program, opts);
-    exit(1);
-}
+fn main() -> Result<(), Error> {
+    let args: Args = Docopt::new(USAGE)
+        .and_then(|d| d.argv(env::args().into_iter()).deserialize())
+        .unwrap_or_else(|e| e.exit());
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let program = args[0].clone();
-
-    let mut opts = Options::new();
-    opts.optopt("", "email", "User's email address", "EMAIL");
-    opts.optopt(
-        "",
-        "password",
-        "Password to authorize HoloPort configurations",
-        "PASSWORD",
-    );
-    opts.optopt(
-        "",
-        "from",
-        "Generate seed from entropy in the provided file",
-        "FILE",
-    );
-
-    let matches = match opts.parse(&args[1..]) {
-        Ok(m) => m,
-        Err(f) => {
-            fail(&f.to_string(), &program, opts);
-        }
-    };
-
-    // Collect the email address; must not be empty.
-    let email = matches.opt_str("email").unwrap_or_else(|| {
-        let mut input = String::new();
-        while {
-            eprint!("email:    ");
-            match io::stdin().read_line(&mut input) {
-                Err(e) => {
-                    eprintln!("{:?}", e);
-                    false
-                }
-                Ok(n) => n == 0,
-            }
-        } {}
-        input.trim().to_owned()
-    });
-    if email.len() == 0 {
-        fail("Failed to read non-empty email address", &program, opts);
-    }
-
-    // Collect the password from args or command-line; empty password is allowed.
-    let password = matches.opt_str("password").unwrap_or_else(|| {
-        let mut input = String::new();
-        while {
-            eprint!("password: ");
-            match io::stdin().read_line(&mut input) {
-                Err(e) => {
-                    eprintln!("{:?}", e);
-                    false
-                }
-                Ok(n) => n == 0,
-            }
-        } {}
-        input.trim().to_owned()
-    });
-    if password.len() == 0 {
-        eprintln!("WARNING: Proceeding with empty password");
-    }
-
-    // Collect seed optionally from entropy in file
-    let seed_maybe = match matches.opt_str("from") {
+    let maybe_seed = match args.flag_seed_from {
         None => None,
-        Some(filename) => {
-            let entropy = match fs::read_to_string(&filename) {
-                Ok(string) => string,
-                Err(e) => fail(
-                    &format!("Failed to read entropy from {:?}: {}", &filename, e),
-                    &program,
-                    opts,
-                ),
-            };
-            let mut seed = [0u8; 32];
-            let mut hasher = Sha256::new();
-            hasher.input_str(&entropy);
-            hasher.result(&mut seed);
+        Some(path) => {
+            let mut hasher = Sha512Trunc256::new();
+            let mut file = File::open(path)?;
+            io::copy(&mut file, &mut hasher)?;
+
+            let seed: Seed = hasher.result().into();
             Some(seed)
         }
     };
 
-    // Using the email address as salt, extend the password into a seed for a
-    // public/private signing keypair, used to authenticate configuration
-    // requests to the HoloPort. Only a holder of of the same email and password
-    // (and optional name) can generate the corresponding private key, and sign
-    // a request. If optional seed entropy is not provided, a random seed will
-    // be computed.
-    eprintln!("Generating HoloPort Configuration for email: {}", &email);
-    match holo_configure::Config::new(email, password, seed_maybe) {
-        Ok(c) => println!("{}", serde_json::to_string_pretty(&c).unwrap()),
-        Err(e) => fail(
-            &format!("Failed to generate HoloPort configuration: {}", e),
-            &program,
-            opts,
-        ),
-    }
+    let config = Config::new(args.flag_email, args.flag_password, maybe_seed)?;
+    println!("{}", serde_json::to_string_pretty(&config)?);
+
+    Ok(())
 }
