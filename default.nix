@@ -11,7 +11,7 @@ in
     name = "holo-config";
     src = gitignoreSource ./.;
 
-    cargoSha256 = "0000000000000000000000000000000000000000000000000000";
+    cargoSha256 = "10jl3wkid0vsy1f6maplmcmkxgjxr75skl79phivfs82ph05ynxs";
 
     meta.platforms = lib.platforms.all;
   };
