@@ -1,3 +1,3 @@
 mod config;
 
-pub use config::{Config, Seed};
+pub use config::{Admin, Config, Seed};

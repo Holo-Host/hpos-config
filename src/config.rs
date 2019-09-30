@@ -25,11 +25,8 @@ pub const ARGON2_CONFIG: argon2::Config = argon2::Config {
 pub type Seed = [u8; 32];
 
 #[derive(Debug, Serialize)]
-pub struct EmailAddress(String);
-
-#[derive(Debug, Serialize)]
 pub struct Admin {
-    email: EmailAddress,
+    email: String,
     #[serde(serialize_with = "as_base64")]
     public_key: PublicKey,
 }
@@ -52,7 +49,7 @@ impl Config {
         };
 
         let admin = Admin {
-            email: EmailAddress(email.clone()),
+            email: email.clone(),
             public_key: public_key_from(&email, &password)?,
         };
 
