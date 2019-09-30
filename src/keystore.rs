@@ -1,12 +1,12 @@
 use crate::config::Seed;
 
+use ed25519_dalek::PublicKey;
+use failure::Error;
+
 use holochain_common::DEFAULT_PASSPHRASE;
 use holochain_conductor_api::key_loaders::mock_passphrase_manager;
 use holochain_conductor_api::keystore::*;
 use holochain_dpki::CODEC_HCS0;
-
-use ed25519_dalek::PublicKey;
-use failure::Error;
 
 pub fn from_seed(seed: &Seed) -> Result<(Keystore, PublicKey), Error> {
     let passphrase_manager = mock_passphrase_manager(DEFAULT_PASSPHRASE.into());

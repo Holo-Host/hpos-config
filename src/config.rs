@@ -1,11 +1,12 @@
 use crate::keystore;
-use holochain_dpki::SEED_SIZE;
 
 use arrayref::array_ref;
 use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
+
+use holochain_dpki::SEED_SIZE;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
