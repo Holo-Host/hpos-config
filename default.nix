@@ -7,10 +7,11 @@ let
 in
 
 {
-  holo-configure = buildRustPackage rustPlatform {
-    name = "holo-configure";
+  holo-config = buildRustPackage rustPlatform {
+    name = "holo-config";
     src = gitignoreSource ./.;
-    cargoDir = ".";
+
+    cargoSha256 = "0000000000000000000000000000000000000000000000000000";
 
     meta.platforms = lib.platforms.all;
   };
