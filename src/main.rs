@@ -5,10 +5,7 @@ use docopt::Docopt;
 use failure::Error;
 use serde::*;
 use sha2::{Digest, Sha512Trunc256};
-
-use std::fs::File;
-use std::path::PathBuf;
-use std::{env, io};
+use std::{env, fs::File, io, path::PathBuf};
 
 const USAGE: &'static str = "
 Usage: holo-config --email EMAIL --password STRING [--seed-from PATH]
