@@ -22,7 +22,7 @@ const ARGON2_CONFIG: argon2::Config = argon2::Config {
     lanes: 4,
     thread_mode: argon2::ThreadMode::Parallel,
     secret: &[],
-    ad: b"holo-config v1",
+    ad: b"holo-config admin ed25519 key v1",
     hash_length: SECRET_KEY_LENGTH as u32,
 };
 
