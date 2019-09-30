@@ -1,5 +1,6 @@
 use ed25519_dalek::*;
 use failure::Error;
+use rand::{rngs::OsRng, Rng};
 use serde::*;
 
 fn as_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
@@ -45,7 +46,7 @@ impl Config {
     pub fn new(email: String, password: String, maybe_seed: Option<Seed>) -> Result<Self, Error> {
         let seed = match maybe_seed {
             Some(s) => s,
-            None => rand::random::<Seed>(),
+            None => OsRng::new()?.gen::<Seed>(),
         };
 
         let admin = Admin {
