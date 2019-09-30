@@ -12,7 +12,10 @@ where
     D: Deserializer<'de>,
 {
     String::deserialize(deserializer)
-        .and_then(|s| base64::decode_config(&s, base64::STANDARD_NO_PAD).map_err(|err| de::Error::custom(err.to_string())))
+        .and_then(|s| {
+            base64::decode_config(&s, base64::STANDARD_NO_PAD)
+                .map_err(|err| de::Error::custom(err.to_string()))
+        })
         .map(|bytes| PublicKey::from_bytes(&bytes))
         .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
 }
@@ -25,7 +28,6 @@ where
         .and_then(|s| base64::decode(&s).map_err(|err| de::Error::custom(err.to_string())))
         .map(|bytes| array_ref!(bytes, 0, SEED_SIZE).clone())
 }
-
 
 fn to_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
@@ -52,7 +54,10 @@ pub type Seed = [u8; SEED_SIZE];
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Admin {
     email: String,
-    #[serde(deserialize_with = "public_key_from_base64", serialize_with = "to_base64")]
+    #[serde(
+        deserialize_with = "public_key_from_base64",
+        serialize_with = "to_base64"
+    )]
     public_key: PublicKey,
 }
 
