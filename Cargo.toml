@@ -1,15 +1,10 @@
 [package]
 name = "holo-config"
 version = "0.0.0"
-authors = ["perry.kundert@holo.host"]
+authors = ["perry.kundert@holo.host", "yegortimoshenko@transumption.com"]
 edition = "2018"
-description = "HoloPort configuration encoding tools"
-keywords = ["holo", "HoloPort"]
-categories = ["encoding"]
-license = "Apache-2.0"
 readme = "README.md"
-documentation = "https://docs.rs/holo-configuration"
-repository = "https://github.com/Holo-Host/holo-configuration"
+repository = "https://github.com/Holo-Host/holo-config"
 
 [dependencies]
 base64 = "0.10.1"
