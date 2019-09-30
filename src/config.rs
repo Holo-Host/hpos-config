@@ -1,9 +1,11 @@
+use holochain_dpki::SEED_SIZE;
+
 use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
 
-fn as_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
+fn to_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
     T: AsRef<[u8]>,
     S: Serializer,
@@ -11,7 +13,7 @@ where
     serializer.serialize_str(&base64::encode_config(x.as_ref(), base64::STANDARD_NO_PAD))
 }
 
-pub const ARGON2_CONFIG: argon2::Config = argon2::Config {
+const ARGON2_CONFIG: argon2::Config = argon2::Config {
     variant: argon2::Variant::Argon2id,
     version: argon2::Version::Version13,
     mem_cost: 1 << 16, // 64 MB
@@ -19,16 +21,16 @@ pub const ARGON2_CONFIG: argon2::Config = argon2::Config {
     lanes: 4,
     thread_mode: argon2::ThreadMode::Parallel,
     secret: &[],
-    ad: "holo-config v1".as_bytes(),
+    ad: b"holo-config v1",
     hash_length: SECRET_KEY_LENGTH as u32,
 };
 
-pub type Seed = [u8; 32];
+pub type Seed = [u8; SEED_SIZE];
 
 #[derive(Debug, Serialize)]
 pub struct Admin {
     email: String,
-    #[serde(serialize_with = "as_base64")]
+    #[serde(serialize_with = "to_base64")]
     public_key: PublicKey,
 }
 
@@ -36,7 +38,7 @@ pub struct Admin {
 pub enum Config {
     #[serde(rename = "v1")]
     V1 {
-        #[serde(serialize_with = "as_base64")]
+        #[serde(serialize_with = "to_base64")]
         seed: Seed,
         admins: Vec<Admin>,
     },
@@ -61,7 +63,7 @@ impl Config {
     }
 }
 
-pub fn public_key_from(salt: &str, password: &str) -> Result<PublicKey, Error> {
+fn public_key_from(salt: &str, password: &str) -> Result<PublicKey, Error> {
     // This allows to use salt shorter than 8 bytes.
     let salt_hash = Sha512::digest(salt.as_bytes());
 
