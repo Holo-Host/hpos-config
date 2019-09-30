@@ -1,3 +1,4 @@
+use crate::keystore;
 use holochain_dpki::SEED_SIZE;
 
 use ed25519_dalek::*;
@@ -45,33 +46,46 @@ pub enum Config {
 }
 
 impl Config {
-    pub fn new(email: String, password: String, maybe_seed: Option<Seed>) -> Result<Self, Error> {
+    pub fn new(
+        email: String,
+        password: String,
+        maybe_seed: Option<Seed>,
+    ) -> Result<(Self, PublicKey), Error> {
         let seed = match maybe_seed {
-            Some(s) => s,
             None => OsRng::new()?.gen::<Seed>(),
+            Some(s) => s,
         };
+
+        let (_, holochain_public_key) = keystore::from_seed(&seed)?;
 
         let admin = Admin {
             email: email.clone(),
-            public_key: public_key_from(&email, &password)?,
+            public_key: admin_public_key_from(holochain_public_key, &email, &password)?,
         };
 
-        Ok(Config::V1 {
-            admins: vec![admin],
-            seed: seed,
-        })
+        Ok((
+            Config::V1 {
+                admins: vec![admin],
+                seed: seed,
+            },
+            holochain_public_key,
+        ))
     }
 }
 
-fn public_key_from(salt: &str, password: &str) -> Result<PublicKey, Error> {
-    // This allows to use salt shorter than 8 bytes.
-    let salt_hash = Sha512::digest(salt.as_bytes());
+fn admin_public_key_from(
+    holochain_public_key: PublicKey,
+    email: &str,
+    password: &str,
+) -> Result<PublicKey, Error> {
+    // This allows to use email addresses shorter than 8 bytes.
+    let salt = Sha512::digest(email.as_bytes());
 
+    let holochain_public_key_bytes = holochain_public_key.to_bytes();
     let mut config = ARGON2_CONFIG.clone();
-    // TODO: should be set to Holochain public key.
-    config.secret = &[];
+    config.secret = &holochain_public_key_bytes;
 
-    let hash = &argon2::hash_raw(&password.as_bytes(), &salt_hash, &config)?;
+    let hash = &argon2::hash_raw(&password.as_bytes(), &salt, &config)?;
 
     Ok(PublicKey::from(&SecretKey::from_bytes(hash)?))
 }

@@ -1,5 +1,5 @@
-use holo_config::{Config, Seed};
 use holo_config::keystore;
+use holo_config::{Config, Seed};
 
 use docopt::Docopt;
 use failure::Error;
@@ -46,11 +46,8 @@ fn main() -> Result<(), Error> {
         }
     };
 
-    let config = Config::new(args.flag_email, args.flag_password, maybe_seed)?;
+    let (config, public_key) = Config::new(args.flag_email, args.flag_password, maybe_seed)?;
     println!("{}", serde_json::to_string_pretty(&config)?);
-
-    let Config::V1 { seed, .. } = config;
-    let (_, public_key) = keystore::from_seed(&seed)?;
     eprintln!("{}", keystore::public_key_as_url(public_key)?);
 
     Ok(())
