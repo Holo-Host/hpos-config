@@ -30,3 +30,7 @@ rev = "0d5f7634b9089477d50348855b1ffcf7f2f0dce5"
 [dependencies.holochain_dpki]
 git = "https://github.com/holochain/holochain-rust"
 rev = "0d5f7634b9089477d50348855b1ffcf7f2f0dce5"
+
+[[bin]]
+name = "holo-config-generate"
+path = "src/bin/generate.rs"

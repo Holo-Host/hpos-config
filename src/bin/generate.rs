@@ -8,8 +8,8 @@ use sha2::{Digest, Sha512Trunc256};
 use std::{env, fs::File, io, path::PathBuf};
 
 const USAGE: &'static str = "
-Usage: holo-config --email EMAIL --password STRING [--seed-from PATH]
-       holo-config --help
+Usage: holo-config-generate --email EMAIL --password STRING [--seed-from PATH]
+       holo-config-generate --help
 
 Creates Holo config file that contains seed and admin email/password.
 
