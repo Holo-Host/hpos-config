@@ -1,5 +1,5 @@
 use holo_config::keystore;
-use holo_config::{Config, Seed};
+use holo_config::{config::Seed, Config};
 
 use docopt::Docopt;
 use failure::Error;

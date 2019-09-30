@@ -1,4 +1,4 @@
-use crate::Seed;
+use crate::config::Seed;
 
 use holochain_common::DEFAULT_PASSPHRASE;
 use holochain_conductor_api::key_loaders::mock_passphrase_manager;

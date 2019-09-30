@@ -7,6 +7,7 @@ readme = "README.md"
 repository = "https://github.com/Holo-Host/holo-config"
 
 [dependencies]
+arrayref = "0.3.5"
 base64 = "0.10.1"
 docopt = "1.0.2"
 ed25519-dalek = { version = "1.0.0-pre.1", features = ["serde"] }
@@ -30,6 +31,10 @@ rev = "0d5f7634b9089477d50348855b1ffcf7f2f0dce5"
 [dependencies.holochain_dpki]
 git = "https://github.com/holochain/holochain-rust"
 rev = "0d5f7634b9089477d50348855b1ffcf7f2f0dce5"
+
+[[bin]]
+name = "holo-config-derive"
+path = "src/bin/derive.rs"
 
 [[bin]]
 name = "holo-config-generate"

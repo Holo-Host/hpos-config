@@ -1,10 +1,31 @@
 use crate::keystore;
 use holochain_dpki::SEED_SIZE;
 
+use arrayref::array_ref;
 use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
+
+fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    String::deserialize(deserializer)
+        .and_then(|s| base64::decode_config(&s, base64::STANDARD_NO_PAD).map_err(|err| de::Error::custom(err.to_string())))
+        .map(|bytes| PublicKey::from_bytes(&bytes))
+        .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
+}
+
+fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    String::deserialize(deserializer)
+        .and_then(|s| base64::decode(&s).map_err(|err| de::Error::custom(err.to_string())))
+        .map(|bytes| array_ref!(bytes, 0, SEED_SIZE).clone())
+}
+
 
 fn to_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
@@ -28,18 +49,18 @@ const ARGON2_CONFIG: argon2::Config = argon2::Config {
 
 pub type Seed = [u8; SEED_SIZE];
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Admin {
     email: String,
-    #[serde(serialize_with = "to_base64")]
+    #[serde(deserialize_with = "public_key_from_base64", serialize_with = "to_base64")]
     public_key: PublicKey,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub enum Config {
     #[serde(rename = "v1")]
     V1 {
-        #[serde(serialize_with = "to_base64")]
+        #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
         admins: Vec<Admin>,
     },
