@@ -9,8 +9,7 @@ pub fn to_hcid(public_key: &PublicKey) -> Result<String, Error> {
     Ok(hcid)
 }
 
-pub fn to_url(public_key: &PublicKey) -> Result<Url, Error> {
-    let hcid = to_hcid(&public_key)?;
+pub fn to_url(hcid: &str) -> Result<Url, Error> {
     let url = Url::parse(&format!("https://{}.holohost.net", hcid))?;
     Ok(url)
 }

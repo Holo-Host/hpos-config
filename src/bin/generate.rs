@@ -42,8 +42,8 @@ fn main() -> Result<(), Error> {
         }
     };
 
-    let (config, public_key) = Config::new(args.flag_email, args.flag_password, maybe_seed)?;
-    eprintln!("{}", public_key::to_url(&public_key)?);
+    let (config, hcid) = Config::new(args.flag_email, args.flag_password, maybe_seed)?;
+    eprintln!("{}", public_key::to_url(&hcid)?);
     println!("{}", serde_json::to_string_pretty(&config)?);
 
     Ok(())
