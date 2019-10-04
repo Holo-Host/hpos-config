@@ -12,7 +12,7 @@ use bip39::{
     Language, Mnemonic, MnemonicType
 };
 use sha2::{
-    Sha256, Digest
+    Sha256, Sha512, Digest
 };
 use serde::{
     Deserialize, Deserializer, Serialize, Serializer, de
@@ -194,16 +194,8 @@ impl SeedData for EncryptedSeed {
     }
 }
 
-/*
-impl From<&[u8]> for Seed {
-    fn from(v: &[u8]) -> Seed {
-        assert_eq!(v.len(), SEED_SIZE);
-        let seed = Seed::from_bytes(v); // seed.copy_from_slice(&v[..SEED_SIZE]);
-        seed
-    }
-}
-*/
-/// Create from, or render to Mnemonics, for Seeds that are multiples of SEED_SIZE.
+
+/// Create seeds from, or render to Mnemonics, for seeds that are multiples of SEED_SIZE.
 pub trait MnemonicableSeed
 where
     Self: Sized,
@@ -340,5 +332,17 @@ pub fn email_password_to_seed(
             &password.as_bytes(), &salt, &config
         )?
     )
+}
+
+/// Use some seed entropy to generate an ed25519 Signing keypair.  To maintain comptibility with
+/// libsodium-based ed25519, we will use the same SHA-512 hash of the incoming 256-bit seed entropy,
+/// and then consume the first 256 bits of it to generate the ed25519 secret key.
+pub fn signing_keypair_from_seed(
+    entropy: &[u8] // Typically should be 32 bytes of entropy, for libsodium compatibility
+) -> Result<(SigningPublicKey, SigningSecretKey), Error> {
+    let digest = Sha512::digest(entropy);
+    let secret = SigningSecretKey::from_bytes(&digest[..SECRET_KEY_SIZE])?;
+    let public = SigningPublicKey::from(&secret);
+    Ok((public, secret))
 }
     

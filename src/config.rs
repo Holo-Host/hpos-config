@@ -42,18 +42,11 @@ use serde::{
 use crate::dpki:: {
     SEED_SIZE,
     Seed, EncryptedSeed, SeedData,
-    SigningPublicKey, SigningSecretKey,  email_password_to_seed,
+    SigningPublicKey, SigningSecretKey,
+    email_password_to_seed, signing_keypair_from_seed,
 };
 
-/*
-use holochain_dpki::{
-    SEED_SIZE,
-    seed, seed::MnemonicableSeed, seed::SeedTrait,
-    keypair, keypair::KeyPair
-};
- */
-
-// Admin... keys are just signing keys w/ some different serialization
+// Admin... keys are just signing keys w/ some different serialization; HcAc... instead of HcSc....
 #[derive(Debug)]
 pub struct AdminSigningPublicKey(pub SigningPublicKey);
 
@@ -92,6 +85,8 @@ impl<'d> Deserialize<'d> for AdminSigningPublicKey {
     }
 }
 
+// Config packages up the seed entropy used to generate the Holochain Signing keypair, and the
+// derived Admin keys, used to authenticate HoloPort admin requests.
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Admin {
     email: String,
@@ -138,10 +133,8 @@ impl Config {
         
         // Construct the Holochain Signing Public Key from the seed; holochain DPKI directly
         // generates an ed25519 Signing keypair from the seed entropy.
+        let (holochain_pubkey, _) = signing_keypair_from_seed(seed.as_bytes())?;
 
-        let holochain_pubkey = SigningPublicKey::from(
-            &SigningSecretKey::from_bytes(seed.as_bytes())?
-        );
         let admin_public_key = admin_public_key_from(
             &holochain_pubkey, &email, &password
         )?;
