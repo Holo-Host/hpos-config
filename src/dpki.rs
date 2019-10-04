@@ -46,9 +46,15 @@ impl SigningPublicKey {
     }
 }
 
+/// To maintain comptibility with libsodium-based ed25519, we will use the same SHA-512 hash of the
+/// incoming 256-bit seed entropy, and then consume the first 256 bits of it to generate the ed25519
+/// secret key.
 impl SigningSecretKey {
-    pub fn from_bytes(b: &[u8]) -> Result<Self, SignatureError> {
-        Ok(Self(SecretKey::from_bytes(b)?))
+    pub fn from_bytes(entropy: &[u8]) -> Result<Self, Error> {
+        ensure!(entropy.len() == SECRET_KEY_SIZE,
+                "Incorrect length for ed25519 Signing Secret Key");
+        let digest = Sha512::digest(entropy);
+        Ok(Self(SecretKey::from_bytes(&digest[..SECRET_KEY_SIZE])?))
     }
 }
 
@@ -334,15 +340,10 @@ pub fn email_password_to_seed(
     )
 }
 
-/// Use some seed entropy to generate an ed25519 Signing keypair.  To maintain comptibility with
-/// libsodium-based ed25519, we will use the same SHA-512 hash of the incoming 256-bit seed entropy,
-/// and then consume the first 256 bits of it to generate the ed25519 secret key.
+/// Use some seed entropy to generate an ed25519 Signing keypair.
 pub fn signing_keypair_from_seed(
     entropy: &[u8] // Typically should be 32 bytes of entropy, for libsodium compatibility
 ) -> Result<(SigningPublicKey, SigningSecretKey), Error> {
-    let digest = Sha512::digest(entropy);
-    let secret = SigningSecretKey::from_bytes(&digest[..SECRET_KEY_SIZE])?;
-    let public = SigningPublicKey::from(&secret);
-    Ok((public, secret))
+    let secret = SigningSecretKey::from_bytes(entropy)?;
+    Ok(((&secret).into(), secret))
 }
-    
