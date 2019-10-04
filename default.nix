@@ -4,6 +4,10 @@ with pkgs;
 
 let
   inherit (rust.packages.nightly) rustPlatform;
+
+  wasm-pack = pkgs.wasm-pack.override {
+    inherit rustPlatform;
+  };
 in
 
 {
@@ -13,7 +17,7 @@ in
 
     cargoSha256 = "10jl3wkid0vsy1f6maplmcmkxgjxr75skl79phivfs82ph05ynxs";
 
-    nativeBuildInputs = [ buildPackages.perl ];
+    nativeBuildInputs = with buildPackages; [ perl wasm-pack ];
 
     OPENSSL_STATIC = "1";
     RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
