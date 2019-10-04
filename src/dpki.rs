@@ -12,7 +12,7 @@ use bip39::{
     Language, Mnemonic, MnemonicType
 };
 use sha2::{
-    Sha256, Sha512, Digest
+    Sha512, Digest
 };
 use serde::{
     Deserialize, Deserializer, Serialize, Serializer, de
@@ -46,15 +46,11 @@ impl SigningPublicKey {
     }
 }
 
-/// To maintain comptibility with libsodium-based ed25519, we will use the same SHA-512 hash of the
-/// incoming 256-bit seed entropy, and then consume the first 256 bits of it to generate the ed25519
-/// secret key.
 impl SigningSecretKey {
     pub fn from_bytes(entropy: &[u8]) -> Result<Self, Error> {
         ensure!(entropy.len() == SECRET_KEY_SIZE,
                 "Incorrect length for ed25519 Signing Secret Key");
-        let digest = Sha512::digest(entropy);
-        Ok(Self(SecretKey::from_bytes(&digest[..SECRET_KEY_SIZE])?))
+        Ok(Self(SecretKey::from_bytes(entropy)?))
     }
 }
 
@@ -326,7 +322,7 @@ pub fn email_password_to_seed(
     password: &str,
     pepper: Option<&[u8]>,
 ) -> Result<Seed, Error> {
-    let salt = Sha256::digest(email.as_bytes());
+    let salt = Sha512::digest(email.as_bytes());
 
     let mut config = ARGON2_CONFIG.clone();
     if let Some(secret) = pepper {
@@ -340,10 +336,42 @@ pub fn email_password_to_seed(
     )
 }
 
-/// Use some seed entropy to generate an ed25519 Signing keypair.
+/// Use some seed entropy to generate an ed25519 Signing keypair.  Note that this retains the raw
+/// entropy as the "SecretKey", and generates the PublicKey by A) producing a 256-bit hash from the
+/// entropy, splitting it into a 256-bit Scalar, and adjusting it to be valid (<2^255, ie. top bit
+/// clear, etc.).  Therefore, the Public key will be consistent with libsodium.  *However*, the
+/// Secret key will *not*, as libsodium adjusts it to be a valid Scalar before returning it!  Other
+/// libraries (like ed25519_dalek) adjust the secret key each time, before signing with it.
 pub fn signing_keypair_from_seed(
-    entropy: &[u8] // Typically should be 32 bytes of entropy, for libsodium compatibility
+    entropy: &[u8]
 ) -> Result<(SigningPublicKey, SigningSecretKey), Error> {
     let secret = SigningSecretKey::from_bytes(entropy)?;
     Ok(((&secret).into(), secret))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ed25519_dalek::ExpandedSecretKey;
+    use std::convert::From;
+
+    #[test]
+    fn keypair_should_generate_consistent_keys() {
+        let (public, secret) = signing_keypair_from_seed(&[
+             0u8,  1u8,  2u8,  3u8,  4u8,  5u8,  6u8,  7u8,  8u8,  9u8,
+            10u8, 11u8, 12u8, 13u8, 14u8, 15u8, 16u8, 17u8, 18u8, 19u8,
+            20u8, 21u8, 22u8, 23u8, 24u8, 25u8, 26u8, 27u8, 28u8, 29u8,
+            30u8,255u8,
+        ]).expect("Failed to generate keypair");
+        assert_eq!(public.to_string(), "HcSciPgAEa7N4e6os7X7zK4JdbXnmxygkVVkHChDT3cbuh3wByfwzx9SNuo9xbz");
+        assert_eq!(format!("{:?}", secret),
+                   "SigningSecretKey(SecretKey: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 255])");
+        // However, what holochain-rust de/serializes is the *expanded* secret key, after SHA-512,
+        // curve-fitting and nonce-generation, as 64 bytes (Scalar + Nonce).  This theory isn't
+        // correct, as the expanded secret key differs from what is output by libsodium on
+        // holochain-rust in dpki/src/keypair.rs:
+        assert_eq!(format!("{:?}", &ExpandedSecretKey::from(&secret.0).to_bytes()[..]),
+                   "[232, 104, 184, 229, 117, 139, 31, 226, 138, 101, 254, 105, 221, 111, 217, 14, 215, 71, 80, 59, 22, 147, 1, 202, 32, 158, 33, 165, 240, 111, 237, 104, 16, 113, 215, 44, 243, 69, 155, 40, 97, 222, 188, 61, 170, 121, 22, 210, 97, 161, 3, 47, 16, 168, 249, 196, 121, 101, 26, 59, 108, 221, 212, 100]"        );
+        
+    }
 }

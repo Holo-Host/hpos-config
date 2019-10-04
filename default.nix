@@ -13,7 +13,10 @@ in
 
     cargoSha256 = "10jl3wkid0vsy1f6maplmcmkxgjxr75skl79phivfs82ph05ynxs";
 
-    nativeBuildInputs = [ buildPackages.perl ];
+    nativeBuildInputs = [
+      buildPackages.perl
+      openssl.dev
+    ];
 
     OPENSSL_STATIC = "1";
     RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
