@@ -198,12 +198,12 @@ mod tests {
             Some(Seed::from_bytes(&[0u8; 32 ]).unwrap()),
             false
         ).unwrap();
-        assert_eq!(agent_id.to_string(), "HcSCIp5KE88N7OwefwsKhKgRfJyr465fgikyphqCIpudwrcivgfWuxSju9mecor");
+	assert_eq!(agent_id.to_string(), "HcSCIp5KE88N7OwefwsKhKgRfJyr465fgikyphqCIpudwrcivgfWuxSju9mecor");
         let Config::V1{ seed: origin_seed, admins: _origin_admins } = config_origin.clone();
         assert_eq!(format!("{}", &origin_seed),
                    "abandon abandon abandon abandon abandon abandon abandon abandon \
-                    abandon abandon abandon abandon abandon abandon abandon abandon \
-                    abandon abandon abandon abandon abandon abandon abandon art");
+		    abandon abandon abandon abandon abandon abandon abandon abandon \
+		    abandon abandon abandon abandon abandon abandon abandon art");
 
         let s: String = serde_json::to_string(&config_origin).unwrap();
 
