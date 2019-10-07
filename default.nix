@@ -18,9 +18,9 @@ in
     cargoSha256 = "10jl3wkid0vsy1f6maplmcmkxgjxr75skl79phivfs82ph05ynxs";
 
     nativeBuildInputs = with buildPackages; [
+      openssl.dev
       perl
       wasm-pack
-      openssl.dev
     ];
 
     OPENSSL_STATIC = "1";

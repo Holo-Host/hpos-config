@@ -2,8 +2,9 @@
 // Manages creation, serialization (storage) and deserialization (loading) of HoloPort Device Seed
 // and Admin keys.
 // 
-// The HoloPort's /var/lib/holo-config.json Config is loaded, and the Config::V1.seed is used to
-// derive all Holochain, ZeroTier, etc. keypairs required for operation.  
+// The HoloPort's holo-config.json Config is loaded (probably from a very temporarily mounted USB
+// device, early in the boot), and the Config::V1.seed is used to derive all Holochain, ZeroTier,
+// etc. keypairs required for operation.
 //
 // Admin Keypair
 // 
@@ -47,7 +48,7 @@ use crate::dpki:: {
 };
 
 // Admin... keys are just signing keys w/ some different serialization; HcAc... instead of HcSc....
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AdminSigningPublicKey(pub SigningPublicKey);
 
 impl fmt::Display for AdminSigningPublicKey {
@@ -87,21 +88,30 @@ impl<'d> Deserialize<'d> for AdminSigningPublicKey {
 
 // Config packages up the seed entropy used to generate the Holochain Signing keypair, and the
 // derived Admin keys, used to authenticate HoloPort admin requests.
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Admin {
     email: String,
     public_key: AdminSigningPublicKey,
 }
 
 // Seeds will be represented by either 24 or 48 words
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(untagged)]
 pub enum ConfigSeed {
     PlaintextSeed(Seed),
     EncryptedSeed(EncryptedSeed),
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+impl fmt::Display for ConfigSeed {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ConfigSeed::PlaintextSeed(s) => write!(f, "{}", s),
+            ConfigSeed::EncryptedSeed(s) => write!(f, "{}", s),
+        }
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub enum Config {
     #[serde(rename = "v1")]
     V1 {
@@ -171,4 +181,33 @@ pub fn admin_public_key_from(
             &SigningSecretKey::from_bytes(seed.as_bytes())?
         )
     ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn config_round_trip() {
+        let (
+            config_origin,
+            agent_id
+        ) = Config::new(
+            "a@b.c".to_string(),
+            "password".to_string(),
+            Some(Seed::from_bytes(&[0u8; 32 ]).unwrap()),
+            false
+        ).unwrap();
+        assert_eq!(agent_id.to_string(), "HcSCIp5KE88N7OwefwsKhKgRfJyr465fgikyphqCIpudwrcivgfWuxSju9mecor");
+        let Config::V1{ seed: origin_seed, admins: _origin_admins } = config_origin.clone();
+        assert_eq!(format!("{}", &origin_seed),
+                   "abandon abandon abandon abandon abandon abandon abandon abandon \
+                    abandon abandon abandon abandon abandon abandon abandon abandon \
+                    abandon abandon abandon abandon abandon abandon abandon art");
+
+        let s: String = serde_json::to_string(&config_origin).unwrap();
+
+        let Config::V1{ seed: config_seed, admins: _config_admins } = serde_json::from_str(&s).unwrap();
+        assert_eq!(format!("{}", &config_seed), format!("{}", &origin_seed));
+    }
 }

@@ -9,13 +9,13 @@ use std::fmt;
 use failure::Error;
 use hcid;
 use bip39::{
-    Language, Mnemonic, MnemonicType
+    Language, Mnemonic, MnemonicType,
 };
 use sha2::{
-    Sha512, Digest
+    Digest, Sha256,
 };
 use serde::{
-    Deserialize, Deserializer, Serialize, Serializer, de
+    Deserialize, Deserializer, Serialize, Serializer, de,
 };
 
 use ed25519_dalek::{
@@ -32,7 +32,7 @@ pub const ENCRYPTED_SEED_SIZE: usize = SEED_SIZE + AEAD_TAG_SIZE;
 
 #[derive(Debug)]
 pub struct SigningKeyPair(pub Keypair);
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SigningPublicKey(pub PublicKey);
 #[derive(Debug)]
 pub struct SigningSecretKey(pub SecretKey);
@@ -98,13 +98,14 @@ impl<'d> Deserialize<'d> for SigningPublicKey {
 
 
 // A regular 256-bit seed is encoded in 24 BIP39 words
-#[derive(Debug)]
+#[derive(Clone)]
 pub struct Seed(pub [u8; SEED_SIZE]);
 
 // An encrypted seed adds a 256-bit authentication MAC + salt, and is encoded in 48 BIP39 words.  In
 // holochain_dpki::seed::MnemonicableSeed for EncryptedSeed, we see that a all-0 nonce is used in
 // the aead encryption, and the Seed ciphertext is first, followed by the authentication MAC, and
 // finally the random salt.5
+#[derive(Clone)]
 pub struct EncryptedSeed(pub [u8; ENCRYPTED_SEED_SIZE]);
 
 /*
@@ -220,7 +221,7 @@ where
         // The Vec<u8> contains all of the 24-word chunks of entropy, appended.
         Self::from_bytes(&entropy) // will validate the length.
     }
-        
+
     fn get_mnemonic(&self) -> Result<String, Error> {
         // Split into 256-bit (24-word) chunks
         let mnemonic: String = self.as_bytes()
@@ -244,6 +245,12 @@ impl fmt::Display for Seed {
         write!(f, "{}",
                self.get_mnemonic()
                 .map_err(|_e| std::fmt::Error)?)
+    }
+}
+
+impl fmt::Debug for Seed {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "Seed({})", self)
     }
 }
 
@@ -322,7 +329,7 @@ pub fn email_password_to_seed(
     password: &str,
     pepper: Option<&[u8]>,
 ) -> Result<Seed, Error> {
-    let salt = Sha512::digest(email.as_bytes());
+    let salt = Sha256::digest(email.as_bytes());
 
     let mut config = ARGON2_CONFIG.clone();
     if let Some(secret) = pepper {
@@ -354,6 +361,7 @@ mod tests {
     use super::*;
     use ed25519_dalek::ExpandedSecretKey;
     use std::convert::From;
+
 
     #[test]
     fn keypair_should_generate_consistent_keys() {

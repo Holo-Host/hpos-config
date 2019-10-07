@@ -9,7 +9,7 @@ repository = "https://github.com/Holo-Host/holo-config"
 [dependencies]
 arrayref = "0.3.5"
 base64 = "0.10.1"
-bip39 = "=0.6.0-beta.1"
+bip39 = "0.6.0-beta.1"
 docopt = "1.0.2"
 ed25519-dalek = { version = "1.0.0-pre.2", features = ["serde"] }
 failure = "0.1.5"
