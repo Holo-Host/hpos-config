@@ -125,16 +125,17 @@ impl Config {
     /// resultant Config will contain a 256-bit seed in BIP39 mnemonic form; either in plaintext (24
     /// words), or ciphertext + MAC/IV Tag (48 words).  While this seed may have been generated in a
     /// variety of ways (eg. randomly, or via DPKI), it will be stored in this Config as a
-    /// DeviceSeed (24 words) or (optionally) an EncryptedSeed (48 words), secured by the supplied
+    /// DeviceSeed (24 words) or (optionally) an EncryptedSeed (48 words) secured by the supplied
     /// Admin password.
     /// 
-    /// Returns the Config, and the Holochain Agent ID.
+    /// Returns the Config, and the Holochain Agent ID for which this Config was created, and the
+    /// Vec<AdminSigningSecretKey> matching the `admins` Vec of email and public_key values.
     pub fn new(
         email: String,
         password: String,
         maybe_seed: Option<Seed>,
         encrypt: bool
-    ) -> Result<(Self, SigningPublicKey), Error> {
+    ) -> Result<(Self, SigningPublicKey, Vec<SigningSecretKey>), Error> {
         // Get the seed bytes, either generated from OS random source, or from the supplied seed.
         let seed = match maybe_seed {
             None => Seed::from_bytes(&OsRng::new()?.gen::<[u8; SEED_SIZE]>())?,
@@ -168,7 +169,7 @@ impl Config {
     }
 }
 
-pub fn admin_public_key_from(
+pub fn admin_keypair_from(
     holochain_pubkey: &SigningPublicKey,
     email: &str,
     password: &str,
@@ -176,10 +177,9 @@ pub fn admin_public_key_from(
     let seed = email_password_to_seed(
         email, password, Some(holochain_pubkey.as_bytes()),
     )?;
+    let admin_secret_key = SigningSecretKey::from_bytes(seed.as_bytes())?;
     Ok(AdminSigningPublicKey(
-        SigningPublicKey::from(
-            &SigningSecretKey::from_bytes(seed.as_bytes())?
-        )
+        SigningPublicKey::from(&admin_secret_key)
     ))
 }
 

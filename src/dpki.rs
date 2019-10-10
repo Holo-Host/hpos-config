@@ -19,7 +19,7 @@ use serde::{
 };
 
 use ed25519_dalek::{
-    PublicKey, SecretKey, Keypair, SignatureError,
+    PublicKey, SecretKey, SignatureError,
 };
 
 pub const PUBLIC_KEY_SIZE: usize = 256/8;
@@ -30,8 +30,6 @@ pub const AEAD_TAG_SIZE: usize = 256/8;
 pub const SEED_SIZE: usize = 256/8;
 pub const ENCRYPTED_SEED_SIZE: usize = SEED_SIZE + AEAD_TAG_SIZE;
 
-#[derive(Debug)]
-pub struct SigningKeyPair(pub Keypair);
 #[derive(Debug, Clone)]
 pub struct SigningPublicKey(pub PublicKey);
 #[derive(Debug)]

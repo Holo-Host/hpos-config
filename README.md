@@ -15,10 +15,10 @@ which is then inserted into the HoloPortOS instance.  When the device boots, it 
 
 ## Building & Geneating a `HoloPortConfiguration`
 
-We'll generate a `HoloPortConfiguration` object in JSON form, into `holo.json`:
+We'll generate a `Config` object in JSON form, into `holo-config.json`:
 
 ```
-$ nix-build -A holo-configure
+$ nix-build -A holo-config
 $ ./result/bin/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
 ```
 
