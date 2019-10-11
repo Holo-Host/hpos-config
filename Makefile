@@ -55,7 +55,7 @@ test-e2e:	build
 	./target/debug/holo-config-generate  \
 	    --email a@b.ca \
 	    --password password \
-	    --seed-from /etc/machine-id \
+	    --seed-from ./test/etc/machine-id \
 	| ./target/debug/holo-config-derive \
 	    --email a@b.ca \
 	    --password password
@@ -64,7 +64,7 @@ test-e2e:	build
 	    --email a@b.ca \
 	    --password password \
 	    --encrypt \
-	    --seed-from /etc/machine-id \
+	    --seed-from ./test/etc/machine-id \
 	| ./target/debug/holo-config-derive \
 	    --email a@b.ca \
 	    --password password

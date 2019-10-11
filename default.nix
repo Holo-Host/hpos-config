@@ -3,6 +3,8 @@
 with pkgs;
 
 let
+  darwin = pkgs.callPackage ./darwin { };
+
   inherit (rust.packages.nightly) rustPlatform;
 
   wasm-pack = pkgs.wasm-pack.override {
@@ -24,6 +26,9 @@ in
       wasm-pack
     ];
 
+    buildInputs = []
+    ++ darwin.buildInputs;
+    
     OPENSSL_STATIC = "1";
     RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
     RUST_SODIUM_SHARED = "1";
