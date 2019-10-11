@@ -19,18 +19,19 @@ We'll generate a `Config` object in JSON form, into `holo-config.json`:
 
 ```
 $ nix-build -A holo-config
-$ ./result/bin/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
+$ ./result/bin/holo-config-generate --email "a@b.ca" --password "secret" | tee holo-config.json
 ```
 
 If that doesn't work, try using the nix-shell and manual build approach:
 ```
 $ nix-shell
-$ cargo build --release --lib --bin holo-configure
+$ cargo build --release --lib --bin holo-config-generate
 
-$ ./target/release/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
+$ ./target/release/holo-config-generate --email "a@b.ca" --password "secret" | tee holo-config.json
 Generating HoloPort Configuration for email: a@b.ca
 {
-  "name": "HP1",
+  "v1": {
+  	
   "email": "a@b.ca",
   "admin_pubkey": "HcACj5GG78Nfa476fdvcAXwOQdv7hq7gyHi6bueg7ZSb4iix5hNpUcDFjnjejvi",
   "seed_key": "HcBciRfTSA9E9h6y9mdfzi95PPYhkj6qfBHsXRAC34hpqjx3kxHNIWKYzexuzva",
@@ -38,11 +39,6 @@ Generating HoloPort Configuration for email: a@b.ca
   "seed_sig": "WO0PYkFg1RZEP1UOzdBacj5QtHuM37uqjn0zPSSsgw8gJX2TU4NoQNb3tDMNvSFK5n4dDcen10ScGsRIde5iCA=="
 }
 ```
-
-### `name`
-
-Optionally, make the `admin_key` and `seed_key` unique, by hashing the supplied `name` into
-`password` when performing the Argon2 password hashing.
 
 ### `email` and `password`
 

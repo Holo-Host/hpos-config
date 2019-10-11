@@ -2,9 +2,38 @@
 // Manages creation, serialization (storage) and deserialization (loading) of HoloPort Device Seed
 // and Admin keys.
 // 
+// HoloPort Usage
+// 
+// - Loads seed
+//   - May be encrypted, which prevents further keypair derivation until the HP Admin queries the
+//     seed, decrypts it, generates all Agent and Admin keypairs, and returns them to the HoloPort.
+//     - Instead of running the 
+//   - With 
+
+// 
+// - Generates Agent ID public (HcScJ123abc...) keypair.  No key material is persisted to the HoloPort
+//   disk; without the removable media containing the seed, an attacker cannot sign entries into any
+//   of the HoloPort's hApp's source-chains.
+// 
+//   - Other keypairs, eg ZeroTier, SSH Host keys, could be generated, but will probably be left as
+//     automatically generated local HoloPort state, because sometimes ZeroTier may need to
+//     regenerate keys and does so automatically (eg. on collision of 40-bit zerotier device IDs).
+//     At 1 in a Trillion, the probability appears low -- but this could be an attack vector.
+//     Unintuitively, with 1 million HoloPorts, the probability of such a collision reaches 40%!
+//     So, deterministic key generation would require testing for such collisions, and generating
+//     further keys.  Best to let ZeroTier do it; especially since the ZT IP address of the host is
+//     dynamically updated on a regular basis to avoid an external persistent database of ZT IPs.
+// 
+//        people = 1000000                                         = 1,000,000
+//        days = 1000000000000                                     = 1,000,000,000,000
+//        pairs = ((people)*(people-1)) / 2                        = 499,999,500,000
+//        chance per pair = ((days-1) / days) ^ pairs              = 0.60653767176
+//        percent chance of all different = chance per pair * 100  = 60.65376717624
+// 
+// 
 // The HoloPort's holo-config.json Config is loaded (probably from a very temporarily mounted USB
-// device, early in the boot), and the Config::V1.seed is used to derive all Holochain, ZeroTier,
-// etc. keypairs required for operation.
+// device, early in the boot), and the Config::V1.seed is used to derive all the original Holochain
+// (Agent ID) keypair, ZeroTier keys, and Admin etc. keypairs required for operation.
 //
 // Admin Keypair
 // 
@@ -111,61 +140,78 @@ impl fmt::Display for ConfigSeed {
     }
 }
 
+/// The HoloPort Config data saved into holo-config.json.  From this seed, all Agent ID keypair and
+/// Admin keypair(s) can be derived.  If desired, the Seed may be encrypted with the admin password,
+/// thereby preventing an attacker who recovers this file from easily obtaining the 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub enum Config {
     #[serde(rename = "v1")]
     V1 {
         seed: ConfigSeed,
+        agent_id: SigningPublicKey,
         admins: Vec<Admin>,
     },
 }
 
+/// The Config, and the full set of derived keys, including signing private keys
+#[derive(Debug, Deserialize, Serialize)]
+pub struct ConfigResult {
+    pub config: Config,
+    pub agent_key: SigningSecretKey,
+    pub admin_keys: Vec<SigningSecretKey>,
+}
+
 impl Config {
-    /// Use an email/password and (optionally) 256-bit seed bytes to generate a Config.  The
-    /// resultant Config will contain a 256-bit seed in BIP39 mnemonic form; either in plaintext (24
-    /// words), or ciphertext + MAC/IV Tag (48 words).  While this seed may have been generated in a
-    /// variety of ways (eg. randomly, or via DPKI), it will be stored in this Config as a
-    /// DeviceSeed (24 words) or (optionally) an EncryptedSeed (48 words) secured by the supplied
-    /// Admin password.
+    /// Use an email/password and (optionally) 256-bit seed bytes to generate a Config, and all
+    /// derived keypairs.  The resultant Config will contain a 256-bit seed in BIP39 mnemonic form;
+    /// either in plaintext (24 words), or ciphertext + MAC/IV Tag (48 words).  While this seed may
+    /// have been generated in a variety of ways (eg. randomly, or via DPKI), it will be stored in
+    /// this Config as a DeviceSeed (24 words) or (optionally) an EncryptedSeed (48 words) secured
+    /// by the supplied Admin password.
     /// 
     /// Returns the Config, and the Holochain Agent ID for which this Config was created, and the
-    /// Vec<AdminSigningSecretKey> matching the `admins` Vec of email and public_key values.
+    /// Vec<SigningSecretKey> matching the `admins` Vec of email and public_key values.
     pub fn new(
         email: String,
         password: String,
-        maybe_seed: Option<Seed>,
-        encrypt: bool
-    ) -> Result<(Self, SigningPublicKey, Vec<SigningSecretKey>), Error> {
-        // Get the seed bytes, either generated from OS random source, or from the supplied seed.
-        let seed = match maybe_seed {
+        maybe_seed: Option<ConfigSeed>, // None: generate, Some(...): optionally decrypt, and use
+        encrypt: bool // Encrypt the resultant Config's seed
+    ) -> Result<ConfigResult, Error> {
+        // Get the Seed bytes, either generated from OS random source, or from the supplied data.
+        let seed_secret: Seed = match maybe_seed {
             None => Seed::from_bytes(&OsRng::new()?.gen::<[u8; SEED_SIZE]>())?,
-            Some(s) => s,
+            Some(ConfigSeed::EncryptedSeed(s)) => s.decrypt(&password)?,
+            Some(ConfigSeed::PlaintextSeed(s)) => s,
         };
         
-        // Construct the Holochain Signing Public Key from the seed; holochain DPKI directly
-        // generates an ed25519 Signing keypair from the seed entropy.
-        let (holochain_pubkey, _) = signing_keypair_from_seed(seed.as_bytes())?;
+        // Construct the Holochain Agent ID Signing Public Key from the seed; holochain DPKI
+        // directly generates an ed25519 Signing keypair from the seed entropy.
+        let (agent_id, agent_key) = signing_keypair_from_seed(seed_secret.as_bytes())?;
 
-        let admin_public_key = admin_public_key_from(
-            &holochain_pubkey, &email, &password
+        // Then, we generate Admin keys password entropy, salted by email, and peppered (made
+        // unique) by the Agent ID public key.  This allows a user to specify the same (!)
+        // email+password for multiple HoloPort Admin, and get unique Admin keys for each one.
+        let (admin_pubkey, admin_key) = admin_keypair_from(
+            &agent_id, &email, &password
         )?;
-                                              
-        let admin = Admin {
-            email: email.clone(),
-            public_key: admin_public_key,
-        };
-        let config_seed = if encrypt {
-            ConfigSeed::EncryptedSeed(seed.encrypt(&password)?)
+
+        // Now, (re) generate the Config w/ the desired seed encryption
+        let seed = if encrypt {
+            ConfigSeed::EncryptedSeed(seed_secret.encrypt(&password)?)
         } else {
-            ConfigSeed::PlaintextSeed(seed)
+            ConfigSeed::PlaintextSeed(seed_secret)
         };
-        Ok((
-            Config::V1 {
-                admins: vec![admin],
-                seed: config_seed,
-            },
-            holochain_pubkey,
-        ))
+        let admins = vec![Admin {
+                email: email.clone(),
+                public_key: admin_pubkey,
+        }];
+
+        // And package it up with the derived secret keys
+        let config = Config::V1 { seed, agent_id, admins };
+        let admin_keys = vec![
+            admin_key
+        ];
+        Ok(ConfigResult { config, agent_key, admin_keys })
     }
 }
 
@@ -173,14 +219,13 @@ pub fn admin_keypair_from(
     holochain_pubkey: &SigningPublicKey,
     email: &str,
     password: &str,
-) -> Result<AdminSigningPublicKey, Error> {
+) -> Result<(AdminSigningPublicKey, SigningSecretKey), Error> {
     let seed = email_password_to_seed(
         email, password, Some(holochain_pubkey.as_bytes()),
     )?;
-    let admin_secret_key = SigningSecretKey::from_bytes(seed.as_bytes())?;
-    Ok(AdminSigningPublicKey(
-        SigningPublicKey::from(&admin_secret_key)
-    ))
+    let admin_secret = SigningSecretKey::from_bytes(seed.as_bytes())?;
+    let admin_pubkey = AdminSigningPublicKey(SigningPublicKey::from(&admin_secret));
+    Ok((admin_pubkey, admin_secret))
 }
 
 #[cfg(test)]
@@ -189,25 +234,28 @@ mod tests {
 
     #[test]
     fn config_round_trip() {
-        let (
-            config_origin,
-            agent_id
-        ) = Config::new(
+        let ConfigResult{
+            config,
+            agent_key,
+            admin_keys,
+        } = Config::new(
             "a@b.c".to_string(),
             "password".to_string(),
-            Some(Seed::from_bytes(&[0u8; 32 ]).unwrap()),
+            Some(PlaintextSeed(Seed::from_bytes(&[0u8; 32 ]).unwrap())),
             false
         ).unwrap();
-	assert_eq!(agent_id.to_string(), "HcSCIp5KE88N7OwefwsKhKgRfJyr465fgikyphqCIpudwrcivgfWuxSju9mecor");
-        let Config::V1{ seed: origin_seed, admins: _origin_admins } = config_origin.clone();
+	assert_eq!(config.agent_id.to_string(), "HcSCIp5KE88N7OwefwsKhKgRfJyr465fgikyphqCIpudwrcivgfWuxSju9mecor");
+        let Config::V1{
+            seed: origin_seed, agent_id: _origin_agent_id, admins: _origin_admins
+        } = config.clone();
         assert_eq!(format!("{}", &origin_seed),
                    "abandon abandon abandon abandon abandon abandon abandon abandon \
 		    abandon abandon abandon abandon abandon abandon abandon abandon \
 		    abandon abandon abandon abandon abandon abandon abandon art");
 
-        let s: String = serde_json::to_string(&config_origin).unwrap();
+        let s: String = serde_json::to_string(&config).unwrap();
 
-        let Config::V1{ seed: config_seed, admins: _config_admins } = serde_json::from_str(&s).unwrap();
+        let Config::V1{ seed: config_seed, .. } = serde_json::from_str(&s).unwrap();
         assert_eq!(format!("{}", &config_seed), format!("{}", &origin_seed));
     }
 }

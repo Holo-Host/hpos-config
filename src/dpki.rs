@@ -32,7 +32,7 @@ pub const ENCRYPTED_SEED_SIZE: usize = SEED_SIZE + AEAD_TAG_SIZE;
 
 #[derive(Debug, Clone)]
 pub struct SigningPublicKey(pub PublicKey);
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct SigningSecretKey(pub SecretKey);
 
 impl SigningPublicKey {
@@ -78,7 +78,16 @@ impl Serialize for SigningPublicKey {
         serializer.serialize_str(&format!("{}", self))
     }
 }
-
+/*
+impl Serialize for SigningSecretKey {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&format!("{}", self.0))
+    }
+}
+*/
 impl<'d> Deserialize<'d> for SigningPublicKey {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -195,6 +204,16 @@ impl SeedData for EncryptedSeed {
     }
 }
 
+impl EncryptedSeed {
+    pub fn decrypt(
+        &self,
+        _pkassword: &str
+    ) -> Result<Seed, Error> {
+        let mut dec_seed = [0u8; SEED_SIZE];
+        dec_seed.copy_from_slice(&self.0[..SEED_SIZE]);
+        return Ok(Seed::from_bytes(&dec_seed)?);
+    }
+}
 
 /// Create seeds from, or render to Mnemonics, for seeds that are multiples of SEED_SIZE.
 pub trait MnemonicableSeed
