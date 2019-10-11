@@ -4,7 +4,7 @@ pub mod config;
 pub mod dpki;
 
 pub use config::{
-    Config,
+    ConfigResult, Config, ConfigSeed,
     AdminSigningPublicKey,
 };
 pub use dpki::{

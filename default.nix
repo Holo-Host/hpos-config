@@ -18,6 +18,7 @@ in
     cargoSha256 = "10jl3wkid0vsy1f6maplmcmkxgjxr75skl79phivfs82ph05ynxs";
 
     nativeBuildInputs = with buildPackages; [
+      nodejs-12_x
       openssl.dev
       perl
       wasm-pack

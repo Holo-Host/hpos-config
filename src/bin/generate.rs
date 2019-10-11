@@ -1,4 +1,4 @@
-use holo_config::{Config, Seed, SeedData};
+use holo_config::{Config, ConfigResult, ConfigSeed, Seed, SeedData};
 
 use docopt::Docopt;
 use failure::Error;
@@ -8,7 +8,7 @@ use std::{env, fs::File, io, path::PathBuf};
 use url::Url;
 
 const USAGE: &'static str = "
-Usage: holo-config-generate --email EMAIL --password STRING [--seed-from PATH] [--encrypt]
+Usage: holo-config-generate --email EMAIL [--password STRING] [--seed-from PATH] [--encrypt]
        holo-config-generate --help
 
 Creates Holo config file that contains seed and admin email/password.
@@ -23,7 +23,7 @@ Options:
 #[derive(Deserialize)]
 struct Args {
     flag_email: String,
-    flag_password: String,
+    flag_password: Option<String>, // Optionally w/ no passphrase
     flag_seed_from: Option<PathBuf>,
     flag_encrypt: bool,
 }
@@ -45,13 +45,22 @@ fn main() -> Result<(), Error> {
             let mut file = File::open(path)?;
             io::copy(&mut file, &mut hasher)?;
             let entropy = hasher.result();
-            Some(Seed::from_bytes(&entropy[..])?)
+            Some(ConfigSeed::PlaintextSeed(Seed::from_bytes(&entropy[..])?))
         }
     };
-    let (config, hcid) = Config::new(
-        args.flag_email, args.flag_password, maybe_seed, args.flag_encrypt)?;
-    eprintln!("{}", to_url(&hcid.to_string())?);
+    let password = args.flag_password.unwrap_or_else(|| {
+        eprintln!("WARNING: Generating HoloPort Config w/ empty passphrase!");
+        "".to_string()
+    });
+
+    // Emit the Config to stdout
+    let ConfigResult { config, .. } = Config::new(
+        args.flag_email, password, maybe_seed, args.flag_encrypt)?;
     println!("{}", serde_json::to_string_pretty(&config)?);
+
+    // Also emit the Agent ID's URL to stderr
+    let Config::V1 { agent_id, .. } = config;
+    eprintln!("{}", to_url(&agent_id.to_string())?);
 
     Ok(())
 }

@@ -40,18 +40,18 @@ macro_rules! jserr {
 }
 
 #[wasm_bindgen]
-pub struct Config(holo_config::Config, holo_config::SigningPublicKey, holo_config::AgentSigningSecretKey);
+pub struct ConfigSeed(holo_config::ConfigSeed);
 
 #[wasm_bindgen]
-pub struct Seed(holo_config::Seed);
-
+pub struct Config(holo_config::ConfigResult);
+    
 #[wasm_bindgen]
 impl Config {
     #[wasm_bindgen(constructor)]
     pub fn new(
         email: String,
         password: String,
-        maybe_seed: Option<Seed>,
+        maybe_seed: Option<ConfigSeed>,
         encrypt: bool
     ) -> JsResult<Config> {
 
@@ -60,13 +60,7 @@ impl Config {
                 email, password, maybe_seed.map(|s| s.0), encrypt
             )
         )?;
-        Ok(
-            Config(
-                config_result.0,
-                config_result.1,
-            )
-        )
+        Ok(Config(config_result))
     }
 }
 
-#[wasm_bindgen]

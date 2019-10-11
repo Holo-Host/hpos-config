@@ -234,20 +234,17 @@ mod tests {
 
     #[test]
     fn config_round_trip() {
-        let ConfigResult{
-            config,
-            agent_key,
-            admin_keys,
-        } = Config::new(
+        let ConfigResult { config, .. } = Config::new(
             "a@b.c".to_string(),
             "password".to_string(),
-            Some(PlaintextSeed(Seed::from_bytes(&[0u8; 32 ]).unwrap())),
+            Some(ConfigSeed::PlaintextSeed(Seed::from_bytes(&[0u8; 32 ]).unwrap())),
             false
         ).unwrap();
-	assert_eq!(config.agent_id.to_string(), "HcSCIp5KE88N7OwefwsKhKgRfJyr465fgikyphqCIpudwrcivgfWuxSju9mecor");
+        
         let Config::V1{
-            seed: origin_seed, agent_id: _origin_agent_id, admins: _origin_admins
+            seed: origin_seed, agent_id: origin_agent_id, admins: _origin_admins
         } = config.clone();
+	assert_eq!(origin_agent_id.to_string(), "HcSCIp5KE88N7OwefwsKhKgRfJyr465fgikyphqCIpudwrcivgfWuxSju9mecor");
         assert_eq!(format!("{}", &origin_seed),
                    "abandon abandon abandon abandon abandon abandon abandon abandon \
 		    abandon abandon abandon abandon abandon abandon abandon abandon \
