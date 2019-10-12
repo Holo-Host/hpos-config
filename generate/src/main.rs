@@ -1,4 +1,4 @@
-use holo_config::{config::Seed, public_key, Config};
+use holo_config_core::{config::Seed, public_key, Config};
 
 use docopt::Docopt;
 use failure::Error;

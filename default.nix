@@ -4,25 +4,27 @@ with pkgs;
 
 let
   inherit (rust.packages.nightly) rustPlatform;
-
-  wasm-pack = pkgs.wasm-pack.override {
-    inherit rustPlatform;
-  };
 in
 
 {
-  holo-config = buildRustPackage rustPlatform {
-    name = "holo-config";
-    src = gitignoreSource ./.;
+  holo-config-derive = buildRustPackage rustPlatform {
+    name = "holo-config-derive";
+    src = gitignoreSource ./derive;
 
-    cargoSha256 = "10jl3wkid0vsy1f6maplmcmkxgjxr75skl79phivfs82ph05ynxs";
+    cargoSha256 = "0000000000000000000000000000000000000000000000000000";
 
-    nativeBuildInputs = with buildPackages; [ perl wasm-pack ];
+    nativeBuildInputs = with buildPackages; [ perl ];
 
     OPENSSL_STATIC = "1";
     RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
     RUST_SODIUM_SHARED = "1";
-
-    meta.platforms = lib.platforms.all;
   };
+
+  holo-config-generate = buildRustPackage rustPlatform {
+    name = "holo-config-generate";
+    src = gitignoreSource ./generate;
+
+    cargoSha256 = "0000000000000000000000000000000000000000000000000000";
+  };
+
 }
