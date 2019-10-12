@@ -1,12 +1,10 @@
-use crate::keystore;
-
 use arrayref::array_ref;
 use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
 
-use holochain_dpki::SEED_SIZE;
+const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
@@ -83,7 +81,8 @@ impl Config {
             Some(s) => s,
         };
 
-        let (_, holochain_public_key) = keystore::from_seed(&seed)?;
+        let holochain_secret_key = SecretKey::from_bytes(&seed)?;
+        let holochain_public_key = PublicKey::from(&holochain_secret_key);
 
         let admin = Admin {
             email: email.clone(),

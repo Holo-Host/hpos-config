@@ -13,6 +13,8 @@ docopt = "1.0.2"
 ed25519-dalek = { version = "1.0.0-pre.1", features = ["serde"] }
 failure = "0.1.5"
 getopts = "0.2.19"
+hcid = "0.0.6"
+lazy_static = "1.2"
 rand = "0.6.5"
 rust-argon2 = "0.5.1"
 serde = { version = "1.0.89", features = ["derive"] }
