@@ -36,17 +36,7 @@ where
     serializer.serialize_str(&base64::encode_config(x.as_ref(), base64::STANDARD_NO_PAD))
 }
 
-const ARGON2_CONFIG: argon2::Config = argon2::Config {
-    variant: argon2::Variant::Argon2id,
-    version: argon2::Version::Version13,
-    mem_cost: 1 << 16, // 64 MB
-    time_cost: 2,
-    lanes: 4,
-    thread_mode: argon2::ThreadMode::Parallel,
-    secret: &[],
-    ad: b"holo-config admin ed25519 key v1",
-    hash_length: SECRET_KEY_LENGTH as u32,
-};
+const ARGON2_ADDITIONAL_DATA: &[u8] = b"holo-config admin ed25519 key v1";
 
 pub type Seed = [u8; SEED_SIZE];
 
@@ -106,12 +96,10 @@ fn admin_public_key_from(
 ) -> Result<PublicKey, Error> {
     // This allows to use email addresses shorter than 8 bytes.
     let salt = Sha512::digest(email.as_bytes());
+    let mut hash = [0; SEED_SIZE];
 
-    let holochain_public_key_bytes = holochain_public_key.to_bytes();
-    let mut config = ARGON2_CONFIG.clone();
-    config.secret = &holochain_public_key_bytes;
+    argon2min::Argon2::new(2, 4, 1 << 16, argon2min::Variant::Argon2id)?
+        .hash(&mut hash, password.as_bytes(), &salt, &holochain_public_key.to_bytes(), ARGON2_ADDITIONAL_DATA);
 
-    let hash = &argon2::hash_raw(&password.as_bytes(), &salt, &config)?;
-
-    Ok(PublicKey::from(&SecretKey::from_bytes(hash)?))
+    Ok(PublicKey::from(&SecretKey::from_bytes(&hash)?))
 }
