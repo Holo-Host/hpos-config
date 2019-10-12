@@ -20,11 +20,10 @@ in
     RUST_SODIUM_SHARED = "1";
   };
 
-  holo-config-generate = buildRustPackage rustPlatform {
-    name = "holo-config-generate";
-    src = gitignoreSource ./generate;
-
-    cargoSha256 = "0000000000000000000000000000000000000000000000000000";
+  holo-config-generate-cli = buildRustPackage rustPlatform {
+    name = "holo-config-generate-cli";
+    src = gitignoreSource ./generate-cli;
+    cargoDir = ".";
   };
 
 }
