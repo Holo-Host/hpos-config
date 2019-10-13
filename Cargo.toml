@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+  "core",
+  "derive",
+  "generate-cli",
+  "generate-web"
+]
