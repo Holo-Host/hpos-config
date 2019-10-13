@@ -1,0 +1,35 @@
+<!doctype html>
+<title>Holo Config</title>
+<style>
+#form {
+  display: table;
+}
+
+#form li {
+  display: table-row;
+  list-style: none;
+}
+
+#form label {
+  padding-bottom: .5em;
+  padding-right: 1em;
+  display: table-cell;
+}
+
+#form input {
+  display: table-cell;
+}
+</style>
+<ul id="form">
+    <li>
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email">
+    </li>
+    <li>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password">
+    </li>
+    <li>
+	<button id="generate">Generate</button>
+    </li>
+</ul>

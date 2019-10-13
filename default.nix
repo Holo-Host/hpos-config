@@ -26,4 +26,14 @@ in
     cargoDir = ".";
   };
 
+  holo-config-generate-web = buildRustPackage rustPlatform {
+    name = "holo-config-generate-web";
+    src = gitignoreSource ./generate-web;
+    cargoDir = ".";
+
+    nativeBuildInputs = [
+      nodejs-12_x
+      (wasm-pack.override { inherit rustPlatform; })
+    ];
+  };
 }
