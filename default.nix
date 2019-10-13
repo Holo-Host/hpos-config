@@ -9,31 +9,53 @@ in
 {
   holo-config-derive = buildRustPackage rustPlatform {
     name = "holo-config-derive";
-    src = gitignoreSource ./derive;
+    src = gitignoreSource ./.;
+    cargoDir = "derive";
 
-    cargoSha256 = "0000000000000000000000000000000000000000000000000000";
+    RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
+    RUST_SODIUM_SHARED = "1";
 
     nativeBuildInputs = with buildPackages; [ perl ];
 
-    OPENSSL_STATIC = "1";
-    RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
-    RUST_SODIUM_SHARED = "1";
+    doCheck = false;
   };
 
   holo-config-generate-cli = buildRustPackage rustPlatform {
     name = "holo-config-generate-cli";
-    src = gitignoreSource ./generate-cli;
-    cargoDir = ".";
+    src = gitignoreSource ./.;
+    cargoDir = "generate-cli";
+
+    doCheck = false;
   };
 
-  holo-config-generate-web = buildRustPackage rustPlatform {
+  holo-config-generate-web = buildRustPackage rustPlatform rec {
     name = "holo-config-generate-web";
-    src = gitignoreSource ./generate-web;
-    cargoDir = ".";
+    src = gitignoreSource ./.;
+    cargoDir = "generate-web";
 
-    nativeBuildInputs = [
+    OPENSSL_STATIC = "1";
+
+    nativeBuildInputs = with buildPackages; [
       nodejs-12_x
+      pkgconfig
       (wasm-pack.override { inherit rustPlatform; })
     ];
+
+    buildInputs = [ openssl ];
+
+    buildPhase = ''
+      cp -r ${npmToNix { src = "${src}/${cargoDir}"; }} node_modules
+      chmod -R +w node_modules
+      chmod +x node_modules/.bin/webpack
+      patchShebangs node_modules
+
+      npm run build
+    '';
+
+    installPhase = ''
+      mv target/webpack $out
+    '';
+
+    doCheck = false;
   };
 }
