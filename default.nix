@@ -4,7 +4,7 @@ with pkgs;
 
 let
   inherit (rust.packages.nightly) rustPlatform;
-  darwin = pkgs.callPackage ./darwin { };
+  inherit (darwin.apple_sdk.frameworks) CoreServices Security;
 in
 
 {
@@ -17,8 +17,8 @@ in
     RUST_SODIUM_SHARED = "1";
 
     nativeBuildInputs = with buildPackages; [ perl ];
-    buildInputs = []
-      ++ darwin.buildInputs;
+    buildInputs = lib.optionals stdenv.isDarwin [ CoreServices ];
+
     doCheck = false;
   };
 
@@ -27,8 +27,7 @@ in
     src = gitignoreSource ./.;
     cargoDir = "generate-cli";
 
-    buildInputs = []
-      ++ darwin.buildInputs;
+    buildInputs = lib.optionals stdenv.isDarwin [ Security ];
 
     doCheck = false;
   };
@@ -38,16 +37,13 @@ in
     src = gitignoreSource ./.;
     cargoDir = "generate-web";
 
-    OPENSSL_STATIC = "1";
-
     nativeBuildInputs = with buildPackages; [
       nodejs-12_x
       pkgconfig
       (wasm-pack.override { inherit rustPlatform; })
     ];
 
-    buildInputs = [ openssl ]
-      ++ darwin.buildInputs;
+    buildInputs = [ openssl ];
 
     buildPhase = ''
       cp -r ${npmToNix { src = "${src}/${cargoDir}"; }} node_modules
