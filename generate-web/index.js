@@ -16,11 +16,11 @@ async function main() {
   });
 
   elements.generate.addEventListener('click', e => {
-    const config_data = config(elements.email.value, elements.password.value);
-    const blob = new Blob([config_data.config], {type: 'application/json'});
+    const configData = config(elements.email.value, elements.password.value);
+    const configBlob = new Blob([configData.config], {type: 'application/json'});
 
-    saveAs(blob, 'holo-config.json');
-    alert(config_data.url);
+    saveAs(configBlob, 'holo-config.json');
+    alert(configData.url);
   });
 };
 
