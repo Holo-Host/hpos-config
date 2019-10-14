@@ -39,3 +39,18 @@ https://hcscjzpwmnr6ezxybxauytg458vgr6t8nuj3deyd3g6exybqydgsz38qc8n3zfr.holohost
 }
 ```
 
+### Building a Web UI to Generate Config
+
+To build an example web UI, able to call a WASM-compiled function that can generate and return a
+`Config` in JSON form suitable for saving to `holo-config.json`:
+
+```
+$ nix-shell
+$ cd generate-web
+$ npm install
+$ npm build
+$ npm run serve
+```
+
+Go to `http://localhost:8080`, type in an email and password, and click `Generate`, and save the
+file.  Will default to saving a file named `holo-config.json` to your downloads directory.
