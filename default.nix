@@ -4,6 +4,7 @@ with pkgs;
 
 let
   inherit (rust.packages.nightly) rustPlatform;
+  darwin = pkgs.callPackage ./darwin { };
 in
 
 {
@@ -16,7 +17,8 @@ in
     RUST_SODIUM_SHARED = "1";
 
     nativeBuildInputs = with buildPackages; [ perl ];
-
+    buildInputs = []
+      ++ darwin.buildInputs;
     doCheck = false;
   };
 
@@ -24,6 +26,9 @@ in
     name = "holo-config-generate-cli";
     src = gitignoreSource ./.;
     cargoDir = "generate-cli";
+
+    buildInputs = []
+      ++ darwin.buildInputs;
 
     doCheck = false;
   };
@@ -41,7 +46,8 @@ in
       (wasm-pack.override { inherit rustPlatform; })
     ];
 
-    buildInputs = [ openssl ];
+    buildInputs = [ openssl ]
+      ++ darwin.buildInputs;
 
     buildPhase = ''
       cp -r ${npmToNix { src = "${src}/${cargoDir}"; }} node_modules
