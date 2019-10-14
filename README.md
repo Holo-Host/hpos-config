@@ -54,3 +54,50 @@ $ npm run serve
 
 Go to `http://localhost:8080`, type in an email and password, and click `Generate`, and save the
 file.  Will default to saving a file named `holo-config.json` to your downloads directory.
+
+## Generating a Holochain Keystore from `holo-config.json`
+
+To use the seed saved in `holo-config.json` from within a Holochain application (for example, upon
+start-up of the Holochain Conductor on the HoloPort), the Config needs to be deserialized, and the
+seed used in the standard Holochain cryptography routines.
+
+Standard Rust Serialize/Deserialize functionality is provided:
+
+```
+use holo_config_core::{config::Seed, Config}
+...
+let Config::V1 { seed, .. } = serde_json::from_reader(stdin())?;
+```
+
+Generate a `holo-config.json`, and use `holo-config-derive` to load it and generate a Holochain
+keystore:
+
+```
+$ nix-shell
+$ cargo build --release --bin holo-config-derive < holo-config.json
+$ ./target/release/holo-config-derive < holo-config.json
+HcSCjwu4wIi4BawccpoEINNfsybv76wrqoJe39y4KNAO83gsd87mKIU7Tfjy7ci
+{
+  "passphrase_check": "eyJzY...0=",
+  "secrets": {
+    "primary_keybundle:enc_key": {
+      "blob_type": "EncryptingKey",
+      "seed_type": "Mock",
+      "hint": "",
+      "data": "eyJzY...0="
+    },
+    "primary_keybundle:sign_key": {
+      "blob_type": "SigningKey",
+      "seed_type": "Mock",
+      "hint": "",
+      "data": "eyJzYW...19"
+    },
+    "root_seed": {
+      "blob_type": "Seed",
+      "seed_type": "OneShot",
+      "hint": "",
+      "data": "eyJzYW...19"
+    }
+  }
+}
+```
