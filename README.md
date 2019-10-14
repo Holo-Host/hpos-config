@@ -8,86 +8,34 @@ identity + password to be collected and deployed.
 The simplest and most direct method is to generate a configuration, and copy it onto a USB stick,
 which is then inserted into the HoloPortOS instance.  When the device boots, it will:
 
-- Use the data on the USB stick to create its Holochain and ZeroTier keys
+- Use the data on the USB stick to create its Holochain and potentially other keys
 - Authenticate itself to the Holo ZeroTier network, which will provision its DNS configuration
 - Start the Holo services
 - Eject the USB and blacklist the kernel modules
 
-## Building & Geneating a `HoloPortConfiguration`
+## Building & Generating a `holo-config.json`
 
-We'll generate a `HoloPortConfiguration` object in JSON form, into `holo.json`:
+We'll generate a `Config` object in JSON form, to be saved into `holo-config.json`:
 
 ```
-$ nix-build -A holo-configure
-$ ./result/bin/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
+$ nix-build -A holo-config-generate-cli
+$ ./target/debug/holo-config-generate-cli  --email "a@b.ca" --password "secret" | tee holo-config.json
 ```
 
-If that doesn't work, try using the nix-shell and manual build approach:
+Also available is the nix-shell and manual build approach:
 ```
 $ nix-shell
-$ cargo build --release --lib --bin holo-configure
+$ cargo build --release --bin holo-config-generate-cli
 
-$ ./target/release/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
-Generating HoloPort Configuration for email: a@b.ca
+$ ./target/release/holo-config-generate-cli --email "a@b.ca" --password "secret" | tee holo-config.json
+https://hcscjzpwmnr6ezxybxauytg458vgr6t8nuj3deyd3g6exybqydgsz38qc8n3zfr.holohost.net/
 {
-  "name": "HP1",
-  "email": "a@b.ca",
-  "admin_pubkey": "HcACj5GG78Nfa476fdvcAXwOQdv7hq7gyHi6bueg7ZSb4iix5hNpUcDFjnjejvi",
-  "seed_key": "HcBciRfTSA9E9h6y9mdfzi95PPYhkj6qfBHsXRAC34hpqjx3kxHNIWKYzexuzva",
-  "seed": "HcCcjf5ebsEDxmiz8j7YZX3r47qriFhwwPFZc7Vc7Wys5ozcFwUAQQTXoaygnbr",
-  "seed_sig": "WO0PYkFg1RZEP1UOzdBacj5QtHuM37uqjn0zPSSsgw8gJX2TU4NoQNb3tDMNvSFK5n4dDcen10ScGsRIde5iCA=="
+  "v1": {
+  "seed": "jYvZ70UkYJGjMzADb4PcQzHcECLfUHHXb9KMk6NY2fE",
+  "admin": {
+    "email": "a@b.ca",
+    "public_key": "4sfPilERj9dPCkTADmJ8MfsUkfXOxWOlPHhhtVuzlt4"
+  }
 }
 ```
-
-### `name`
-
-Optionally, make the `admin_key` and `seed_key` unique, by hashing the supplied `name` into
-`password` when performing the Argon2 password hashing.
-
-### `email` and `password`
-
-These will be harvested from stdin, if not supplied on the command-line.
-
-The `email` is used as a salt (SHA-2 256 hashed, to avoid too-short email addresses).
-
-The `password` is hashed (optionally, with any supplied `name`), and the resultant salt and password
-hashes are used to generate an argon2 password hash, which is used to generate the Admin and
-Blinding keypairs.
-
-### `admin_pubkey: String`: "HcAcj..."
-
-The Admin Private key is used to sign all HoloPort admin requests; the `admin_pubkey` is used to
-authenticate them.
-
-### `seed_key: Option<String>`: "HcBci..."
-
-A 256-bit AES ECB encryption key is *always* used to encrypt the seed; it is *optionally* supplied
-here in the config.
-
-### `seed: String`: "HcCcf..."
-
-The encrypted seed entropy; decrypted using the `seed_key` (if supplied).
-
-### `seed_sig: String`: "WO0P....CA=="
-
-The base-64 encoded signature of the decrypted seed entropy, which can be validated with the
-`admin_pubkey` ed25519 Public Key.
-
-#### Future: Admin Decryption at Holo Boot
-
-If not supplied, then the seed material must be decrypted by a holder of the admin private key (who
-can generate the `seed_key`, and decrypt the `seed`).  This would require the Admin password-holder
-to log into the HoloPort and decrypt the `seed`, before Holo could use the decrypted seed entropy to
-generate the Holo Agent and ZeroTier Keypairs, and continue to boot up.
-
-## `holo-configure` APIs
-
-### `holoport_configuration(name_maybe, email, password, seed_maybe)`
-
-Returns the `HoloPortConfiguration` object, which can be serialized to JSON.
-
-#### `name_maybe: Option<String>`
-#### `email:      String`
-#### `password:   String`
-#### `seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>`
 
