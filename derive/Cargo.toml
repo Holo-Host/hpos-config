@@ -1,0 +1,23 @@
+[package]
+name = "holo-config-derive"
+version = "0.0.0"
+authors = ["perry.kundert@holo.host", "yegortimoshenko@transumption.com"]
+edition = "2018"
+repository = "https://github.com/Holo-Host/holo-config"
+
+[dependencies]
+failure = "0.1.5"
+holo-config-core = { path = "../core" }
+serde_json = "1.0.39"
+
+[dependencies.holochain_conductor_api]
+git = "https://github.com/holochain/holochain-rust"
+branch = "2019-10-13-hydra"
+
+[dependencies.holochain_common]
+git = "https://github.com/holochain/holochain-rust"
+branch = "2019-10-13-hydra"
+
+[dependencies.holochain_dpki]
+git = "https://github.com/holochain/holochain-rust"
+branch = "2019-10-13-hydra"
