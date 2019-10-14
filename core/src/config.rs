@@ -56,7 +56,7 @@ pub enum Config {
     V1 {
         #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
-        admins: Vec<Admin>,
+        admin: Admin,
     },
 }
 
@@ -81,7 +81,7 @@ impl Config {
 
         Ok((
             Config::V1 {
-                admins: vec![admin],
+                admin: admin,
                 seed: seed,
             },
             holochain_public_key,
