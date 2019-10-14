@@ -1,6 +1,6 @@
 import { saveAs } from 'file-saver';
 
-async function main() {
+(async () => {
   const { config } = await import('./pkg');
 
   const elements = {
@@ -22,6 +22,4 @@ async function main() {
     saveAs(configBlob, 'holo-config.json');
     alert(configData.url);
   });
-};
-
-main();
+});
