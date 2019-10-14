@@ -4,6 +4,7 @@ with pkgs;
 
 let
   inherit (rust.packages.nightly) rustPlatform;
+  inherit (darwin.apple_sdk.frameworks) CoreServices Security;
 in
 
 {
@@ -16,6 +17,7 @@ in
     RUST_SODIUM_SHARED = "1";
 
     nativeBuildInputs = with buildPackages; [ perl ];
+    buildInputs = lib.optionals stdenv.isDarwin [ CoreServices ];
 
     doCheck = false;
   };
@@ -25,6 +27,8 @@ in
     src = gitignoreSource ./.;
     cargoDir = "generate-cli";
 
+    buildInputs = lib.optionals stdenv.isDarwin [ Security ];
+
     doCheck = false;
   };
 
@@ -32,8 +36,6 @@ in
     name = "holo-config-generate-web";
     src = gitignoreSource ./.;
     cargoDir = "generate-web";
-
-    OPENSSL_STATIC = "1";
 
     nativeBuildInputs = with buildPackages; [
       nodejs-12_x

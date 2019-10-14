@@ -8,86 +8,146 @@ identity + password to be collected and deployed.
 The simplest and most direct method is to generate a configuration, and copy it onto a USB stick,
 which is then inserted into the HoloPortOS instance.  When the device boots, it will:
 
-- Use the data on the USB stick to create its Holochain and ZeroTier keys
+- Use the data on the USB stick to create its Holochain and potentially other keys
 - Authenticate itself to the Holo ZeroTier network, which will provision its DNS configuration
 - Start the Holo services
 - Eject the USB and blacklist the kernel modules
 
-## Building & Geneating a `HoloPortConfiguration`
+## Building & Generating a `holo-config.json`
 
-We'll generate a `HoloPortConfiguration` object in JSON form, into `holo.json`:
+We will generate a `Config` object in JSON form, to be saved into `holo-config.json`:
 
 ```
-$ nix-build -A holo-configure
-$ ./result/bin/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
+$ nix-build -A holo-config-generate-cli
+$ ./target/debug/holo-config-generate-cli  --email "a@b.ca" --password "secret" | tee holo-config.json
 ```
 
-If that doesn't work, try using the nix-shell and manual build approach:
+Also available is the nix-shell and manual build approach:
 ```
 $ nix-shell
-$ cargo build --release --lib --bin holo-configure
+$ cargo build --release --bin holo-config-generate-cli
 
-$ ./target/release/holo-configure --name "HP1" --email "a@b.ca" --password "secret" | tee holo.json
-Generating HoloPort Configuration for email: a@b.ca
+$ ./target/release/holo-config-generate-cli --email "a@b.ca" --password "secret" | tee holo-config.json
+https://hcscjzpwmnr6ezxybxauytg458vgr6t8nuj3deyd3g6exybqydgsz38qc8n3zfr.holohost.net/
 {
-  "name": "HP1",
-  "email": "a@b.ca",
-  "admin_pubkey": "HcACj5GG78Nfa476fdvcAXwOQdv7hq7gyHi6bueg7ZSb4iix5hNpUcDFjnjejvi",
-  "seed_key": "HcBciRfTSA9E9h6y9mdfzi95PPYhkj6qfBHsXRAC34hpqjx3kxHNIWKYzexuzva",
-  "seed": "HcCcjf5ebsEDxmiz8j7YZX3r47qriFhwwPFZc7Vc7Wys5ozcFwUAQQTXoaygnbr",
-  "seed_sig": "WO0PYkFg1RZEP1UOzdBacj5QtHuM37uqjn0zPSSsgw8gJX2TU4NoQNb3tDMNvSFK5n4dDcen10ScGsRIde5iCA=="
+  "v1": {
+  "seed": "jYvZ70UkYJGjMzADb4PcQzHcECLfUHHXb9KMk6NY2fE",
+  "admin": {
+    "email": "a@b.ca",
+    "public_key": "4sfPilERj9dPCkTADmJ8MfsUkfXOxWOlPHhhtVuzlt4"
+  }
 }
 ```
 
-### `name`
+## Building a Web UI to Generate Config
 
-Optionally, make the `admin_key` and `seed_key` unique, by hashing the supplied `name` into
-`password` when performing the Argon2 password hashing.
+Each UI can build and ship exactly the subset of the Rust `holo-config` project required to support
+its functionality.  We do not ship a "standard" JS library, but instead allow the Web UI developer
+to write a very small Rust API calling holo-config code, which is compiled to a small WASM static
+asset included with and called by the Web UI project.
 
-### `email` and `password`
+For example, the provided `generate-web` example generates a JSON string containing a holo-config,
+from a supplied email and password.  The Rust code:
 
-These will be harvested from stdin, if not supplied on the command-line.
+```
+// https://github.com/rustwasm/wasm-bindgen/issues/1004
+fn config_raw(email: String, password: String) -> Result<JsValue, Error> {
+    let (config, public_key) = Config::new(email, password, None)?;
 
-The `email` is used as a salt (SHA-2 256 hashed, to avoid too-short email addresses).
+    let config_data = ConfigData {
+        config: serde_json::to_string_pretty(&config)?,
+        url: public_key::to_url(&public_key)?.into_string()
+    };
 
-The `password` is hashed (optionally, with any supplied `name`), and the resultant salt and password
-hashes are used to generate an argon2 password hash, which is used to generate the Admin and
-Blinding keypairs.
+    Ok(JsValue::from_serde(&config_data)?)
+}
+```
 
-### `admin_pubkey: String`: "HcAcj..."
+is compiled using the Javascript `@wasm-tool/wasm-pack-plugin`.  A very simple Javascript `index.js`
+loads the compiled WASM package:
 
-The Admin Private key is used to sign all HoloPort admin requests; the `admin_pubkey` is used to
-authenticate them.
+```
+import { saveAs } from 'file-saver';
+async function main() {
+  const { config } = await import('./pkg');
+  const elements = {
+    generate: document.querySelector('#generate'),
+    ...
+  }
+  ...
+  elements.generate.addEventListener('click', e => {
+    const config_data = config(elements.email.value, elements.password.value);
+    const blob = new Blob([config_data.config], {type: 'application/json'});
 
-### `seed_key: Option<String>`: "HcBci..."
+    saveAs(blob, 'holo-config.json');
+    alert(config_data.url);
+  });
+};
+main();
+```
 
-A 256-bit AES ECB encryption key is *always* used to encrypt the seed; it is *optionally* supplied
-here in the config.
+When the Webpack-compiled page is loaded, the DOM is configured by the above Javascript, and the
+WASM code is invoked on the Generate button-click, producing the `holo-config.json` file.
 
-### `seed: String`: "HcCcf..."
+### Building the WASM and JS
 
-The encrypted seed entropy; decrypted using the `seed_key` (if supplied).
+To build an example web UI, able to call a WASM-compiled function that can generate and return a
+`Config` in JSON form suitable for saving to `holo-config.json`:
 
-### `seed_sig: String`: "WO0P....CA=="
+```
+$ nix-shell
+$ cd generate-web
+$ npm install
+$ npm build
+$ npm run serve
+```
 
-The base-64 encoded signature of the decrypted seed entropy, which can be validated with the
-`admin_pubkey` ed25519 Public Key.
+Go to `http://localhost:8080`, type in an email and password, and click `Generate`, and save the
+file.  Will default to saving a file named `holo-config.json` to your downloads directory.
 
-#### Future: Admin Decryption at Holo Boot
+## Generating a Holochain Keystore from `holo-config.json`
 
-If not supplied, then the seed material must be decrypted by a holder of the admin private key (who
-can generate the `seed_key`, and decrypt the `seed`).  This would require the Admin password-holder
-to log into the HoloPort and decrypt the `seed`, before Holo could use the decrypted seed entropy to
-generate the Holo Agent and ZeroTier Keypairs, and continue to boot up.
+To use the seed saved in `holo-config.json` from within a Holochain application (for example, upon
+start-up of the Holochain Conductor on the HoloPort), the Config needs to be deserialized, and the
+seed used in the standard Holochain cryptography routines.
 
-## `holo-configure` APIs
+Standard Rust Serialize/Deserialize functionality is provided:
 
-### `holoport_configuration(name_maybe, email, password, seed_maybe)`
+```
+use holo_config_core::{config::Seed, Config}
+...
+let Config::V1 { seed, .. } = serde_json::from_reader(stdin())?;
+```
 
-Returns the `HoloPortConfiguration` object, which can be serialized to JSON.
+Generate a `holo-config.json`, and use `holo-config-derive` to load it and generate a Holochain
+keystore:
 
-#### `name_maybe: Option<String>`
-#### `email:      String`
-#### `password:   String`
-#### `seed_maybe: Option<[u8; HOLO_ENTROPY_SIZE]>`
-
+```
+$ nix-shell
+$ cargo build --release --bin holo-config-derive < holo-config.json
+$ ./target/release/holo-config-derive < holo-config.json
+HcSCjwu4wIi4BawccpoEINNfsybv76wrqoJe39y4KNAO83gsd87mKIU7Tfjy7ci
+{
+  "passphrase_check": "eyJzY...0=",
+  "secrets": {
+    "primary_keybundle:enc_key": {
+      "blob_type": "EncryptingKey",
+      "seed_type": "Mock",
+      "hint": "",
+      "data": "eyJzY...0="
+    },
+    "primary_keybundle:sign_key": {
+      "blob_type": "SigningKey",
+      "seed_type": "Mock",
+      "hint": "",
+      "data": "eyJzYW...19"
+    },
+    "root_seed": {
+      "blob_type": "Seed",
+      "seed_type": "OneShot",
+      "hint": "",
+      "data": "eyJzYW...19"
+    }
+  }
+}
+```
