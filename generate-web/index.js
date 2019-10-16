@@ -34,6 +34,7 @@ async () => {
     password: ""
   }
 
+  // Actions executed at click
   const clickStart = () => {
     if (!validateBrowser()) {
       alert("Please upgrade your browser to newer version.");
@@ -103,15 +104,30 @@ async () => {
   buttons.download.onclick = clickDownload;
   buttons.copied.onclick = clickCopied;
 
+  /**
+   * Validate if string is email (super simple because actual validation is via sent email)
+   * @param {string} email 
+   */
+
   const validateEmail = (email) => {
     let re = /^\S+@\S+$/;
     return re.test(String(email).toLowerCase());
   }
 
+  /**
+   * Validate if browser supports required functions
+   */
+
   const validateBrowser = () => {
     // Detect if browser supports download attribute on <a>
     return (typeof buttons.download.download != "undefined")
   }
+
+  /**
+   * Update UI to the `step` step
+   * 
+   * @param {int} step 
+   */
 
   const updateUiStep = (step) => {
     let validation = {0:!0, 1:!0, 2:!0, 3:!0, 4:!0};
@@ -125,6 +141,7 @@ async () => {
   }
 
   /**
+   * Generate download link of holo-config.json and attach to `button` domElement
    * 
    * @param {Object} user 
    * @param {DomElement} button - a DomElement that will have download and attribute props updated
