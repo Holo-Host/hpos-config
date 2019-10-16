@@ -35,6 +35,11 @@ async () => {
   }
 
   const clickStart = () => {
+    if (!validateBrowser()) {
+      alert("Please upgrade your browser to newer version.");
+      return;
+    }
+
     updateUiStep(1);
   }
 
@@ -101,6 +106,11 @@ async () => {
   const validateEmail = (email) => {
     let re = /^\S+@\S+$/;
     return re.test(String(email).toLowerCase());
+  }
+
+  const validateBrowser = () => {
+    // Detect if browser supports download attribute on <a>
+    return (typeof buttons.download.download != "undefined")
   }
 
   const updateUiStep = (step) => {
