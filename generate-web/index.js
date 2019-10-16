@@ -49,20 +49,21 @@
       buttons.generate.disabled = true;
       buttons.generate.innerText = "Generating...";
 
-      // Generate holo-config.json and create download blob attached to url
-      try {
-        generateDownload(user, buttons.download);
-      } catch(e) {
-        console.log(`Error executing generateDownload with an error ${e}`);
-        return;
-      }
-
-      // revert
+      // Move generateDownload out of exec flow 
       setTimeout(() => {
+          // Generate holo-config.json and create download blob attached to url
+          try {
+            generateDownload(user, buttons.download);
+          } catch(e) {
+            console.log(`Error executing generateDownload with an error ${e}`);
+            return;
+          }
+
+          // revert UI
           buttons.generate.disabled = false;
           buttons.generate.innerText = "Generate";
           updateUiStep(2);
-      }, 1000);
+      }, 50);
     },
     download: () => {
       // Communicate visually that something is happening in the bkgd
