@@ -1,35 +1,65 @@
-<!doctype html>
-<title>Holo Config</title>
-<style>
-#form {
-  display: table;
-}
-
-#form li {
-  display: table-row;
-  list-style: none;
-}
-
-#form label {
-  padding-bottom: .5em;
-  padding-right: 1em;
-  display: table-cell;
-}
-
-#form input {
-  display: table-cell;
-}
-</style>
-<ul id="form">
-    <li>
-        <label for="email">Email</label>
-        <input type="text" id="email" name="email">
-    </li>
-    <li>
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password">
-    </li>
-    <li>
-	<button id="generate">Generate</button>
-    </li>
-</ul>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Quickstart</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body class="step0">
+        <h1 class="stepH1 step0">Welcome to Holo</h1>
+        <h1 class="stepH1 step1 step2 step3">Let's start!</h1>
+        <h1 class="stepH1 step4">All done!</h1>
+        <div class="stepLabel step0">
+            <div class="step-label step0">&nbsp;</div>
+            <div class="step-label-info">You will be guided through the setup process of your HoloPort.</div>
+        </div>
+        <div class="stepLabel step1 step2 step3 step4">
+            <div class="step-label step1">1</div>
+            <div class="step-label-info">Personalize and secure your HoloPort with login credentials.</div>
+        </div>
+        <div class="stepLabel step2 step3 step4">
+            <div class="step-label step2">2</div>
+            <div class="step-label-info">Download configuration file.</div>
+        </div>
+        <div class="stepLabel step3 step4">
+            <div class="step-label step3">3</div>
+            <div class="step-label-info">Move configuration file to your HoloPort.</div>
+        </div>
+        <div class="stepLabel step4">
+            <div class="step-label step4">4</div>
+            <div class="step-label-info">Check your inbox.</div>
+        </div>
+        <div class="stepBox step0">
+            <h4>Prerequisites:</h4>
+            <ul>
+                <li>Your <span class="bold">HoloPort</span> connected to the internet</li>
+                <li>Your USB dongle</li>
+                <li>Device that can write to the USB dongle and display this webpage</li>
+            </ul>
+            <button id="startButton">Start</button>
+        </div>
+        <div class="stepBox step1">
+            <ul>
+                <li><label>Your email:</label><input id="email" name="email" type="text"/></li>
+                <li><label>Password:</label><input id="password" name="password" type="password"/></li>
+            </ul>
+            <p>After filling out email and password you will generate your HoloPort configuration.</p>
+            <button id="generateButton">Generate</button>
+        </div>
+        <div class="stepBox step2">
+            <p>The configuration file for your HoloPort has been created.</p>
+            <a class="button" id="downloadButton">Download</a>
+            <p class="tos">By clicking Download button you agree to <a href="tos/index.html">Holo's TOS</a></p>
+        </div>
+        <div class="stepBox step3">
+            <p>Copy downloaded <span class="bold">holo-config.json</span> file to the USB Dongle and insert the Dongle in your HoloPort.</p>
+            <button id="copiedButton">Copied</button>
+        </div>
+        <div class="stepBox step4">
+            <p>Confirm your email address at <span class="bold" id="emailPlaceholder">email@placeholder.com</span>. Confirmation link in an email will take you to your HoloPort Admin Panel.</p>
+        </div>
+        <script src="index.js"></script>
+    </body>
+</html>
