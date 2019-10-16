@@ -1,0 +1,141 @@
+html {
+    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #24292e;
+}
+
+body {
+    margin: 0;
+    padding: 30px 70px;
+}
+
+body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body.step4 .step4
+{
+    display: block;
+}
+
+.step1 label {
+    min-width: 96px;
+    display: inline-block;
+}
+.step1 input {
+    padding: 5px;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+    min-width: 200px;
+}
+
+.step-label {
+    display: inline-block !important;
+    width: 2em;
+    height: 2em;
+    border-radius: 2em;
+    font-size: 1.5em;
+    border: 1px solid rgb(173,221,252);
+    background: rgb(225, 241, 251);
+    line-height: 2em;
+    text-align: center;
+    color: rgb(60, 168, 239);
+}
+
+.step-label-info {
+    display: inline-block;
+    margin-left: 2em;
+}
+
+body.step0 .step0.step-label, body.step1 .step1.step-label, body.step2 .step2.step-label, body.step3 .step3.step-label, body.step4 .step4.step-label {
+    background: #fff;
+}
+
+ul {
+    margin-top: 0;
+    margin-bottom: 2em;
+}
+
+ul li {
+    list-style-type: none;
+    min-height: 2.2em;
+}
+
+button, a.button {
+    padding: 4px 23px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    border: 1px solid rgb(173,221,252);
+    background: rgb(225, 241, 251);
+    color: inherit;
+    text-decoration: inherit;
+}
+button:hover, a.button:hover {
+    background: rgb(192, 231, 255);
+}
+button:disabled, button[disabled],
+a.button:disabled, a.button[disabled] {
+    cursor: not-allowed;
+    pointer-events: none;
+    background: rgb(247, 247, 247);
+    border-color: rgb(213, 213, 213);
+}
+
+.stepBox {
+    padding-left: 5.5em;
+}
+
+.stepH1, .stepBox, .stepLabel {
+    display: none;
+}
+
+.tos-link {
+    font-size: x-small;
+}
+
+.bold {
+    font-weight: bolder
+}
+
+#fixed-overlay {
+    display: none;
+    position: fixed;
+    top: 3em;
+    bottom: 3em;
+    left: 3em;
+    right: 3em;
+    background: #fff;
+    border-radius: 2em;
+    border: 1px #ddd solid;
+    overflow: hidden;
+}
+
+.tos-content {
+    margin: 3em;
+    padding: 0 1em;
+    overflow: auto; 
+    height: calc(100% - 6em);
+}
+
+.close {
+    position: absolute;
+    right: 1.7em;
+    top: 1.2em;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+  }
+.close:hover {
+    opacity: 1;
+}
+.close:before, .close:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 33px;
+    width: 2px;
+    background-color: #333;
+}
+.close:before {
+    transform: rotate(45deg);
+}
+.close:after {
+    transform: rotate(-45deg);
+}
