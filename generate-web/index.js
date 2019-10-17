@@ -1,7 +1,7 @@
 (async () => {
   const { config } = await import('./pkg')
 
-  const DOWNLOAD_FILE_NAME = 'holo-config.json';
+  const DOWNLOAD_FILE_NAME = 'holo-config.json'
 
   // Parse UI elements
   const buttons = {
@@ -18,96 +18,96 @@
     password: document.querySelector('#password')
   }
 
-  const user ={
-    email: "",
-    password: ""
+  const user = {
+    email: '',
+    password: ''
   }
 
   // Actions executed at button click
   const click = {
     start: () => {
       if (!validateBrowser()) {
-        alert("Please upgrade your browser to newer version.");
-        return;
+        alert('Please upgrade your browser to newer version.')
+        return
       }
-  
-      updateUiStep(1);
+
+      updateUiStep(1)
     },
     generate: () => {
-        // Read inputs
-      user.email = inputs.email.value;
-      user.password = inputs.password.value;
+      // Read inputs
+      user.email = inputs.email.value
+      user.password = inputs.password.value
 
       // Check for email and pass
       if (!validateEmail(user.email)) {
-          alert("Wrong format of email");
-          return;
+        alert('Wrong format of email')
+        return
       } else if (!user.password) {
-          alert("Password cannot be empty");
-          return;
+        alert('Password cannot be empty')
+        return
       }
 
       // Communicate visually that something is happening in the bkgd
-      buttons.generate.disabled = true;
-      buttons.generate.innerText = "Generating...";
+      buttons.generate.disabled = true
+      buttons.generate.innerText = 'Generating...'
 
-      // Move generateDownload out of exec flow 
+      // Move generateDownload out of exec flow
       setTimeout(() => {
-          // Generate holo-config.json and create download blob attached to url
-          try {
-            generateDownload(user, buttons.download);
-          } catch(e) {
-            console.log(`Error executing generateDownload with an error ${e}`);
-            return;
-          }
+        // Generate holo-config.json and create download blob attached to url
+        try {
+          generateDownload(user, buttons.download)
+        } catch (e) {
+          console.log(`Error executing generateDownload with an error ${e}`)
+          return
+        }
 
-          // revert UI
-          buttons.generate.disabled = false;
-          buttons.generate.innerText = "Generate";
-          updateUiStep(2);
-      }, 50);
+        // revert UI
+        buttons.generate.disabled = false
+        buttons.generate.innerText = 'Generate'
+        updateUiStep(2)
+      }, 50)
     },
     download: () => {
       // Communicate visually that something is happening in the bkgd
-      buttons.download.disabled = true;
-      buttons.download.innerText = "Downloading...";
+      buttons.download.disabled = true
+      buttons.download.innerText = 'Downloading...'
 
       // Update user email in the UI
-      document.querySelector("#emailPlaceholder").innerText = user.email;
+      document.querySelector('#emailPlaceholder').innerText = user.email
 
       // revert
       setTimeout(() => {
-          buttons.download.disabled = false;
-          buttons.download.innerText = "Download";
-          updateUiStep(3);
-      }, 1000);
+        buttons.download.disabled = false
+        buttons.download.innerText = 'Download'
+        updateUiStep(3)
+      }, 1000)
     },
     copied: () => {
-      updateUiStep(4);
+      updateUiStep(4)
     },
     openOlay: () => {
-      document.querySelector("#fixed-overlay").style.display = "block";
+      document.querySelector('#fixed-overlay').style.display = 'block'
     },
     closeOlay: () => {
-      document.querySelector("#fixed-overlay").style.display = "none";
+      document.querySelector('#fixed-overlay').style.display = 'none'
     }
   }
 
   // Bind actions to buttons
-  buttons.start.onclick = click.start;
-  buttons.generate.onclick = click.generate;
-  buttons.download.onclick = click.download;
-  buttons.copied.onclick = click.copied;
-  buttons.openOlay.onclick = click.openOlay;
-  buttons.closeOlay.onclick = click.closeOlay;
+  buttons.start.onclick = click.start
+  buttons.generate.onclick = click.generate
+  buttons.download.onclick = click.download
+  buttons.copied.onclick = click.copied
+  buttons.openOlay.onclick = click.openOlay
+  buttons.closeOlay.onclick = click.closeOlay
 
   /**
    * Validate if string is email (super simple because actual validation is via sent email)
-   * @param {string} email 
+   * @param {string} email
    */
   const validateEmail = (email) => {
-    const re = /^\S+@\S+$/;
-    return re.test(String(email).toLowerCase());
+    const re = /^\S+@\S+$/
+    return re.test(String(email).toLowerCase())
   }
 
   /**
@@ -115,43 +115,43 @@
    */
   const validateBrowser = () => {
     // Detect if browser supports download attribute on <a>
-    return (typeof buttons.download.download != "undefined")
+    return (typeof buttons.download.download !== 'undefined')
   }
 
   /**
    * Update UI to the `step` step
-   * 
-   * @param {int} step 
+   *
+   * @param {int} step
    */
   const updateUiStep = (step) => {
-    const validation = {0:!0, 1:!0, 2:!0, 3:!0, 4:!0};
+    const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0 }
 
     if (!validation[step]) {
-        console.log(`Wrong parameter ${step} in updateUiStep()`);
-        return;
+      console.log(`Wrong parameter ${step} in updateUiStep()`)
+      return
     }
 
-    document.body.className = 'step' + step;
+    document.body.className = 'step' + step
   }
 
   /**
    * Generate download link of holo-config.json and attach to `button` domElement
-   * 
-   * @param {Object} user 
+   *
+   * @param {Object} user
    * @param {DomElement} button - a DomElement that will have download and attribute props updated
    */
   const generateDownload = (user, button) => {
-    console.log("generating...");
-    const configData = config(user.email, user.password);
-    const configBlob = new Blob([configData.config], { type: 'application/json' });
-    const url = URL.createObjectURL(configBlob);
+    console.log('generating...')
+    const configData = config(user.email, user.password)
+    const configBlob = new Blob([configData.config], { type: 'application/json' })
+    const url = URL.createObjectURL(configBlob)
 
-    if (button.nodeName !== "A") throw new Error("Download button has to be node <a> type");
+    if (button.nodeName !== 'A') throw new Error('Download button has to be node <a> type')
 
-    button.href = url;
-    button.download = DOWNLOAD_FILE_NAME;
+    button.href = url
+    button.download = DOWNLOAD_FILE_NAME
 
     // In case we decide to use the HoloPort url it is available right here
-    console.log(configData.url);
+    console.log(configData.url)
   }
 })()
