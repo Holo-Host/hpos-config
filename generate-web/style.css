@@ -86,10 +86,56 @@ a.button:disabled, a.button[disabled] {
     display: none;
 }
 
-.tos {
+.tos-link {
     font-size: x-small;
 }
 
 .bold {
     font-weight: bolder
 }
+
+#fixed-overlay {
+    display: none;
+    position: fixed;
+    top: 3em;
+    bottom: 3em;
+    left: 3em;
+    right: 3em;
+    background: #fff;
+    border-radius: 2em;
+    border: 1px #ddd solid;
+    overflow: hidden;
+}
+
+.tos-content {
+    margin: 3em;
+    padding: 0 1em;
+    overflow: auto; 
+    height: calc(100% - 6em);
+}
+
+.close {
+    position: absolute;
+    right: 1.7em;
+    top: 1.2em;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+  }
+  .close:hover {
+    opacity: 1;
+  }
+  .close:before, .close:after {
+    position: absolute;
+    left: 15px;
+    content: ' ';
+    height: 33px;
+    width: 2px;
+    background-color: #333;
+  }
+  .close:before {
+    transform: rotate(45deg);
+  }
+  .close:after {
+    transform: rotate(-45deg);
+  }

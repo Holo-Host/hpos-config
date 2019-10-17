@@ -8,7 +8,9 @@
     start: document.querySelector('#startButton'),
     generate: document.querySelector('#generateButton'),
     download: document.querySelector('#downloadButton'),
-    copied: document.querySelector('#copiedButton')
+    copied: document.querySelector('#copiedButton'),
+    openOlay: document.querySelector('#open-overlay'),
+    closeOlay: document.querySelector('#close-overlay')
   }
 
   const inputs = {
@@ -21,7 +23,7 @@
     password: ""
   }
 
-  // Actions executed at click
+  // Actions executed at button click
   const click = {
     start: () => {
       if (!validateBrowser()) {
@@ -82,6 +84,12 @@
     },
     copied: () => {
       updateUiStep(4);
+    },
+    openOlay: () => {
+      document.querySelector("#fixed-overlay").style.display = "block";
+    },
+    closeOlay: () => {
+      document.querySelector("#fixed-overlay").style.display = "none";
     }
   }
 
@@ -90,13 +98,15 @@
   buttons.generate.onclick = click.generate;
   buttons.download.onclick = click.download;
   buttons.copied.onclick = click.copied;
+  buttons.openOlay.onclick = click.openOlay;
+  buttons.closeOlay.onclick = click.closeOlay;
 
   /**
    * Validate if string is email (super simple because actual validation is via sent email)
    * @param {string} email 
    */
   const validateEmail = (email) => {
-    let re = /^\S+@\S+$/;
+    const re = /^\S+@\S+$/;
     return re.test(String(email).toLowerCase());
   }
 
@@ -114,7 +124,7 @@
    * @param {int} step 
    */
   const updateUiStep = (step) => {
-    let validation = {0:!0, 1:!0, 2:!0, 3:!0, 4:!0};
+    const validation = {0:!0, 1:!0, 2:!0, 3:!0, 4:!0};
 
     if (!validation[step]) {
         console.log(`Wrong parameter ${step} in updateUiStep()`);
