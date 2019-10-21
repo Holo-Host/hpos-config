@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 
@@ -11,6 +12,9 @@ module.exports = {
         filename: 'index.js',
     },
     plugins: [
+        new MiniCssExtractPlugin({
+            filename: 'style.css',
+        }),
         new HtmlWebpackPlugin({
             template: 'index.html'
         }),
@@ -19,9 +23,17 @@ module.exports = {
         }),
 	// https://caniuse.com/#feat=textencoder
         new webpack.ProvidePlugin({
-          TextDecoder: ['text-encoding', 'TextDecoder'],
-          TextEncoder: ['text-encoding', 'TextEncoder']
+            TextDecoder: ['text-encoding', 'TextDecoder'],
+            TextEncoder: ['text-encoding', 'TextEncoder']
         })
     ],
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use:  [MiniCssExtractPlugin.loader, 'css-loader']
+            }
+        ]
+    },
     mode: 'production'
 };

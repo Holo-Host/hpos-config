@@ -1,3 +1,5 @@
+import "./style.css";
+
 (async () => {
   const { state } = await import('./pkg')
 
