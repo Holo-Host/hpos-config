@@ -23,10 +23,10 @@ mod tests {
     fn hc_public_key_hcid() {
         let email: String = "pj@aa.pl".to_string();
         let password: String =  "password".to_string();
-        let seed: Option<[u8; 32]> = Some([55; 32]);
+        let seed: [u8; 32] = [55; 32];
         let expected_hcid: String = "HcScIMeeSmNgnuygkhTIT5auWbfiuivxjMfF7O54sPeb6zg84yEBXUV7bf7z58z".to_string();
 
-        let (_, public_key) = Config::new(email, password, seed).unwrap();
+        let (_, public_key) = Config::new(email, password, Some(seed)).unwrap();
         assert_eq!(public_key::to_hcid(&public_key).unwrap(), expected_hcid);
     }
 }
