@@ -56,6 +56,9 @@ in
 
     installPhase = ''
       mv target/webpack $out
+
+      mkdir -p $out/nix-support
+      echo "doc manual $out" >> $out/nix-support/hydra-build-products
     '';
 
     doCheck = false;
