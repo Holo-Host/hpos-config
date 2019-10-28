@@ -6,7 +6,7 @@ use serde::*;
 
 const SEED_SIZE: usize = 32;
 
-fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
+pub fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -19,7 +19,7 @@ where
         .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
 }
 
-fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
+pub fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -28,7 +28,7 @@ where
         .map(|bytes| array_ref!(bytes, 0, SEED_SIZE).clone())
 }
 
-fn to_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
+pub fn to_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
     T: AsRef<[u8]>,
     S: Serializer,
@@ -48,6 +48,8 @@ pub struct Admin {
         serialize_with = "to_base64"
     )]
     public_key: PublicKey,
+    #[serde(skip)]
+    secret_key: Option<SecretKey>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -74,9 +76,12 @@ impl Config {
         let holochain_secret_key = SecretKey::from_bytes(&seed)?;
         let holochain_public_key = PublicKey::from(&holochain_secret_key);
 
+        let admin_keypair = admin_keypair_from(holochain_public_key, &email, &password)?;
+
         let admin = Admin {
             email: email.clone(),
-            public_key: admin_public_key_from(holochain_public_key, &email, &password)?,
+            public_key: admin_keypair.public,
+            secret_key: Some(admin_keypair.secret),
         };
 
         Ok((
@@ -89,19 +94,43 @@ impl Config {
     }
 }
 
-fn admin_public_key_from(
+/// Generate a Holo admin keypair from holochain public key, email and password
+pub fn admin_keypair_from(
     holochain_public_key: PublicKey,
     email: &str,
     password: &str,
-) -> Result<PublicKey, Error> {
+) -> Result<Keypair, Error> {
     // This allows to use email addresses shorter than 8 bytes.
     let salt = Sha512::digest(email.as_bytes());
+    keypair_from(
+        password.as_bytes(),
+        &salt,
+        &holochain_public_key.to_bytes(),
+        ARGON2_ADDITIONAL_DATA
+    )
+}
+
+/// Most general function for generating Holo keypairs. 
+/// Prefer using a more specialised version (e.g. admin_keypair) if possible
+/// passphrase: bytes of a user readable passphrase to be hashed when deriving the key pair
+/// salt: Addtional salt to be added as part of the Argon2 algo
+/// extra_secret: Optional, pass empty byte array if not desired. See argon2min docs
+/// argon_additional_data: Optional, pass empty byte array if not desired. See argon2min docs
+pub fn keypair_from(
+    passphrase: &[u8],
+    salt: &[u8],
+    extra_secret: &[u8],
+    argon_additional_data: &[u8]
+) -> Result<Keypair, Error> {
     let mut hash = [0; SEED_SIZE];
-
     argon2min::Argon2::new(2, 4, 1 << 16, argon2min::Variant::Argon2id)?
-        .hash(&mut hash, password.as_bytes(), &salt, &holochain_public_key.to_bytes(), ARGON2_ADDITIONAL_DATA);
-
-    Ok(PublicKey::from(&SecretKey::from_bytes(&hash)?))
+        .hash(&mut hash, passphrase, &salt, &extra_secret, argon_additional_data);
+    let secret_key = SecretKey::from_bytes(&hash)?;
+    let public_key = PublicKey::from(&secret_key);
+    Ok(Keypair{
+        public: public_key,
+        secret: secret_key,
+    })
 }
 
 #[cfg(test)]
