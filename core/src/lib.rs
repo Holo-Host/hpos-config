@@ -3,6 +3,7 @@ pub mod public_key;
 
 
 pub use config::{Config, keypair_from, admin_keypair_from};
+pub use ed25519_dalek::{Keypair, PublicKey, SecretKey};
 
 #[cfg(test)]
 mod tests {
@@ -31,3 +32,5 @@ mod tests {
         assert_eq!(public_key::to_hcid(&public_key).unwrap(), expected_hcid);
     }
 }
+
+
