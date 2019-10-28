@@ -6,7 +6,7 @@ use serde::*;
 
 const SEED_SIZE: usize = 32;
 
-pub fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
+fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -19,7 +19,7 @@ where
         .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
 }
 
-pub fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
+fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -28,7 +28,7 @@ where
         .map(|bytes| array_ref!(bytes, 0, SEED_SIZE).clone())
 }
 
-pub fn to_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
+fn to_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
     T: AsRef<[u8]>,
     S: Serializer,
@@ -48,8 +48,6 @@ pub struct Admin {
         serialize_with = "to_base64"
     )]
     public_key: PublicKey,
-    #[serde(skip)]
-    secret_key: Option<SecretKey>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -81,7 +79,6 @@ impl Config {
         let admin = Admin {
             email: email.clone(),
             public_key: admin_keypair.public,
-            secret_key: Some(admin_keypair.secret),
         };
 
         Ok((
