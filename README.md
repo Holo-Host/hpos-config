@@ -47,44 +47,10 @@ to write a very small Rust API calling holo-config code, which is compiled to a 
 asset included with and called by the Web UI project.
 
 For example, the provided `generate-web` example generates a JSON string containing a holo-config,
-from a supplied email and password.  The Rust code:
+from a supplied email and password.  The Rust code in [./generate-web/src/lib.rs] is compiled using
+the Javascript `@wasm-tool/wasm-pack-plugin`.
 
-```
-// https://github.com/rustwasm/wasm-bindgen/issues/1004
-fn config_raw(email: String, password: String) -> Result<JsValue, Error> {
-    let (config, public_key) = Config::new(email, password, None)?;
-
-    let config_data = ConfigData {
-        config: serde_json::to_string_pretty(&config)?,
-        url: public_key::to_url(&public_key)?.into_string()
-    };
-
-    Ok(JsValue::from_serde(&config_data)?)
-}
-```
-
-is compiled using the Javascript `@wasm-tool/wasm-pack-plugin`.  A very simple Javascript `index.js`
-loads the compiled WASM package:
-
-```
-import { saveAs } from 'file-saver';
-async function main() {
-  const { config } = await import('./pkg');
-  const elements = {
-    generate: document.querySelector('#generate'),
-    ...
-  }
-  ...
-  elements.generate.addEventListener('click', e => {
-    const config_data = config(elements.email.value, elements.password.value);
-    const blob = new Blob([config_data.config], {type: 'application/json'});
-
-    saveAs(blob, 'holo-config.json');
-    alert(config_data.url);
-  });
-};
-main();
-```
+A very simple Javascript `index.js` loads the compiled WASM package, in [./generate-web/index.js].
 
 When the Webpack-compiled page is loaded, the DOM is configured by the above Javascript, and the
 WASM code is invoked on the Generate button-click, producing the `holo-config.json` file.
@@ -98,7 +64,7 @@ To build an example web UI, able to call a WASM-compiled function that can gener
 $ nix-shell
 $ cd generate-web
 $ npm install
-$ npm build
+$ npm run build
 $ npm run serve
 ```
 
