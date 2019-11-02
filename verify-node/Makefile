@@ -16,6 +16,8 @@ wasm-bindgen-version:
 pkg/holo_config_verify_node.js: ../target/wasm32-unknown-unknown/release/holo_config_verify_node.wasm
 	wasm-bindgen $^ --nodejs --out-dir pkg
 
+test-unit:
+	cargo test
 
-test: pkg/holo_config_verify_node.js
+test: test-unit pkg/holo_config_verify_node.js
 	node test/test_smoke.js

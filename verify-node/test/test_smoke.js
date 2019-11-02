@@ -11,3 +11,6 @@ console.log('pre remote call a[1] === ' + a[1]);
 verify.alter(a);
 console.log('post remote call a[1] === ' + a[1]);
 
+// Get an admin Keypair
+//keypair = 
+//verify.verify( 

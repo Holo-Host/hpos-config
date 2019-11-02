@@ -8,6 +8,7 @@ repository = "https://github.com/Holo-Host/holo-config"
 [dependencies]
 base64 = "0.10.1"
 ed25519-dalek = { version = "1.0.0-pre.1", features = ["nightly", "serde"] }
+failure = "0.1.5"
 hcid = "0.0.6"
 holo-config-core = { path = "../core", features = ["wasm-bindgen"] }
 serde = { version = "1.0.89", features = ["derive"] }
