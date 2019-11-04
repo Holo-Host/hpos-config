@@ -37,9 +37,9 @@ pub fn verify(
     message: &[u8],		// bytes
     signature: &str,		// Base-64
 ) -> JsResult<bool> {
-    let pubkey_bytes = jserr!(base64::decode( &pubkey ))?;
+    let pubkey_bytes = jserr!(base64::decode_config( &pubkey, base64::STANDARD_NO_PAD ))?;
     let pubkey: PublicKey = jserr!(PublicKey::from_bytes( &pubkey_bytes ))?;
-    let signature_bytes = jserr!(base64::decode( &signature ))?;
+    let signature_bytes = jserr!(base64::decode_config( &signature, base64::STANDARD_NO_PAD ))?;
     let signature = jserr!(Signature::from_bytes( &signature_bytes ))?;
 
     Ok(verify_pubkey_signature( &pubkey, message, &signature ))
@@ -52,7 +52,10 @@ pub fn verify_pubkey_signature(
 ) -> bool {
     match pubkey.verify( message, signature ) {
         Ok(()) => true,
-        _ => false,
+        other => {
+            println!("Invalid signature: {:?}", other);
+            false
+        },
     }
 }
 
@@ -88,6 +91,10 @@ mod tests {
         let sig_string = base64::encode_config(
             &sig.to_bytes().as_ref(), base64::STANDARD_NO_PAD);
 
+        println!("Admin PublicKey (base-64): {:?}", pubkey_string);
+        println!("Message: {:?}", message);
+        println!("Signature: {:?}", sig_string);
+
         // Ensure that verify detects correct and incorrect messages and keys
         assert_eq!(verify( pubkey_string.as_ref(),
                            &message.as_bytes(), sig_string.as_ref()),
@@ -95,10 +102,6 @@ mod tests {
         assert_eq!(verify( pubkey_string.as_ref(),
                            &message.as_bytes()[1..], sig_string.as_ref()),
                    Ok(false));
-        /*
-        assert_eq!(verify( pubkey_string.chars().rev().collect::<String>().as_ref(),
-                           &message.as_bytes(), sig_string.as_ref()),
-                   Ok(false));
-*/
+
     }
 }

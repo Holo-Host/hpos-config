@@ -17,7 +17,7 @@ pkg/holo_config_verify_node.js: ../target/wasm32-unknown-unknown/release/holo_co
 	wasm-bindgen $^ --nodejs --out-dir pkg
 
 test-unit:
-	cargo test
+	RUST_BACKTRACE=1 cargo test -- --nocapture
 
 test: test-unit pkg/holo_config_verify_node.js
 	node test/test_smoke.js
