@@ -63,4 +63,30 @@ in
 
     doCheck = false;
   };
+
+  verify-node = buildRustPackage rustPlatform rec {
+    name = "holo-config-verify-node";
+    src = gitignoreSource ./.;
+    cargoDir = "verify-node";
+
+    nativeBuildInputs = with buildPackages; [
+      nodejs-12_x
+      pkgconfig
+      (wasm-pack.override { inherit rustPlatform; })
+    ];
+
+    buildInputs = [ openssl ];
+
+    buildPhase = ''
+      wasm-pack build --scope holo-host --out-dir pkg --target nodejs
+    '';
+
+    installPhase = ''
+      mv pkg $out
+    '';
+
+    doCheck = false;
+  };
+
+
 }

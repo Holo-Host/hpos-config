@@ -2,8 +2,8 @@ pub mod config;
 pub mod public_key;
 
 
-pub use config::{Config, keypair_from, admin_keypair_from};
-pub use ed25519_dalek::{Keypair, PublicKey, SecretKey};
+pub use config::{Config, AdminPublicKey, keypair_from, admin_keypair_from};
+pub use ed25519_dalek::{Keypair, PublicKey, SecretKey, PUBLIC_KEY_LENGTH};
 
 #[cfg(test)]
 mod tests {

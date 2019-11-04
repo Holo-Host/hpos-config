@@ -1,23 +1,81 @@
 use arrayref::array_ref;
 use ed25519_dalek::*;
 use failure::Error;
+use hcid::HcidEncoding;
+use lazy_static::lazy_static;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
+use std::fmt;
+use std::str::FromStr;
+
 
 const SEED_SIZE: usize = 32;
 
-fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    String::deserialize(deserializer)
-        .and_then(|s| {
-            base64::decode_config(&s, base64::STANDARD_NO_PAD)
-                .map_err(|err| de::Error::custom(err.to_string()))
-        })
-        .map(|bytes| PublicKey::from_bytes(&bytes))
-        .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
+
+/// Admin... keys are just ed25591 signing keys w/ some different serialization; HcAc...
+#[derive(Debug, Clone)]
+pub struct AdminPublicKey(pub PublicKey);
+
+lazy_static! {
+    pub static ref HCAPK_CODEC: hcid::HcidEncoding =
+        HcidEncoding::with_kind("hca0").expect("Couldn't init hca0 hcid codec.");
 }
+
+impl AdminPublicKey {
+    #[inline]
+    pub fn to_bytes(&self) -> [u8; PUBLIC_KEY_LENGTH] {
+        self.0.to_bytes()
+    }
+
+    pub fn verify(
+        &self,
+        message: &[u8],
+        signature: &Signature,
+    ) -> bool {
+        self.0.verify(message, signature).is_ok()
+    }
+}
+
+impl fmt::Display for AdminPublicKey {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", HCAPK_CODEC.encode(self.0.as_bytes())
+               .map_err(|_e| std::fmt::Error)?)
+    }
+}
+
+impl FromStr for AdminPublicKey {
+    type Err = Error;
+    fn from_str(hcapk: &str) -> Result<Self, Self::Err> {
+        Ok(AdminPublicKey(
+            PublicKey::from_bytes(
+                &HCAPK_CODEC.decode(hcapk)?
+            )?
+        ))
+    }
+}
+
+impl Serialize for AdminPublicKey {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(&format!("{}", self))
+    }
+}
+
+impl<'d> Deserialize<'d> for AdminPublicKey {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'d>,
+    {
+        let hcapk = String::deserialize(deserializer)?; // HcA...
+        Ok(
+            AdminPublicKey::from_str(&hcapk)
+                .map_err(de::Error::custom)?
+        )
+    }
+}
+
 
 fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
 where
@@ -43,11 +101,7 @@ pub type Seed = [u8; SEED_SIZE];
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Admin {
     email: String,
-    #[serde(
-        deserialize_with = "public_key_from_base64",
-        serialize_with = "to_base64"
-    )]
-    public_key: PublicKey,
+    public_key: AdminPublicKey,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -78,7 +132,7 @@ impl Config {
 
         let admin = Admin {
             email: email.clone(),
-            public_key: admin_keypair.public,
+            public_key: AdminPublicKey(admin_keypair.public),
         };
 
         Ok((
@@ -142,10 +196,18 @@ mod tests {
         let expected_public_key: [u8; 32] = [17, 243, 42, 222, 75, 47, 128, 87, 1, 252, 72, 56, 141, 216, 210, 251, 217, 95, 97, 62, 95, 112, 234, 31, 243, 73, 64, 160, 134, 92, 138, 97];
 
         let (config, _) = Config::new(email, password, seed).unwrap();
-        if let Config::V1{seed: _, admin} = config {
-            assert_eq!(admin.public_key.to_bytes(), expected_public_key);
-        } else {
-            panic!("Wrong Version of Config implementation");
-        }
+        let Config::V1 { admin, .. } = &config;
+        assert_eq!( admin.public_key.to_bytes(), expected_public_key );
+        // Ensure that JSON serialization works as expected
+        assert_eq!( serde_json::to_string_pretty( &config ).unwrap(), r#"{
+  "v1": {
+    "seed": "Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc3Nzc",
+    "admin": {
+      "email": "pj@aa.pl",
+      "public_key": "HcAcIEqufMqexm6ak6a9zTbzsynof883m7ru6Y5r7iq9gTkaVcDF3cUBAdba4jz"
+    }
+  }
+}"# );
+
     }
 }
