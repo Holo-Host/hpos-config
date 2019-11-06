@@ -72,13 +72,18 @@ in
     nativeBuildInputs = with buildPackages; [
       nodejs-12_x
       pkgconfig
+      nginx
       (wasm-pack.override { inherit rustPlatform; })
     ];
 
     buildInputs = [ openssl ];
 
     buildPhase = ''
-      wasm-pack build --scope holo-host --out-dir pkg --target nodejs
+      make build
+    '';
+
+    checkPhase = ''
+      make test-server
     '';
 
     installPhase = ''
@@ -87,6 +92,5 @@ in
 
     doCheck = false;
   };
-
 
 }
