@@ -1,7 +1,7 @@
 use failure::Error;
 use std::io::stdin;
 
-use hpos_state_core::{config::Seed, Config};
+use hpos_state_core::{state::Seed, State};
 
 use holochain_common::DEFAULT_PASSPHRASE;
 use holochain_conductor_api::key_loaders::mock_passphrase_manager;
@@ -19,7 +19,7 @@ pub fn keystore_from_seed(seed: &Seed) -> Result<(Keystore, String), Error> {
 }
 
 fn main() -> Result<(), Error> {
-    let Config::V1 { seed, .. } = serde_json::from_reader(stdin())?;
+    let State::V1 { seed, .. } = serde_json::from_reader(stdin())?;
     let (keystore, public_key_hcid) = keystore_from_seed(&seed)?;
 
     eprintln!("{}", public_key_hcid);

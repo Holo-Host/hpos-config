@@ -51,16 +51,21 @@ pub struct Admin {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub enum Config {
+pub struct Config {
+    admin: Admin,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub enum State {
     #[serde(rename = "v1")]
     V1 {
         #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
-        admin: Admin,
+        config: Config,
     },
 }
 
-impl Config {
+impl State {
     pub fn new(
         email: String,
         password: String,
@@ -80,9 +85,9 @@ impl Config {
         };
 
         Ok((
-            Config::V1 {
-                admin: admin,
-                seed: seed,
+            State::V1 {
+                seed,
+                config: Config { admin },
             },
             holochain_public_key,
         ))
@@ -98,8 +103,13 @@ fn admin_public_key_from(
     let salt = Sha512::digest(email.as_bytes());
     let mut hash = [0; SEED_SIZE];
 
-    argon2min::Argon2::new(2, 4, 1 << 16, argon2min::Variant::Argon2id)?
-        .hash(&mut hash, password.as_bytes(), &salt, &holochain_public_key.to_bytes(), ARGON2_ADDITIONAL_DATA);
+    argon2min::Argon2::new(2, 4, 1 << 16, argon2min::Variant::Argon2id)?.hash(
+        &mut hash,
+        password.as_bytes(),
+        &salt,
+        &holochain_public_key.to_bytes(),
+        ARGON2_ADDITIONAL_DATA,
+    );
 
     Ok(PublicKey::from(&SecretKey::from_bytes(&hash)?))
 }

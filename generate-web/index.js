@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver'
 
 (async () => {
-  const { config } = await import('./pkg')
+  const { state } = await import('./pkg')
 
   const elements = {
     email: document.querySelector('#email'),
@@ -15,10 +15,10 @@ import { saveAs } from 'file-saver'
   })
 
   elements.generate.addEventListener('click', e => {
-    const configData = config(elements.email.value, elements.password.value)
-    const configBlob = new Blob([configData.config], { type: 'application/json' })
+    const stateData = state(elements.email.value, elements.password.value)
+    const stateBlob = new Blob([stateData.state], { type: 'application/json' })
 
-    saveAs(configBlob, 'hpos-state.json')
-    alert(configData.url)
+    saveAs(stateBlob, 'hpos-state.json')
+    alert(stateData.url)
   })
 })()

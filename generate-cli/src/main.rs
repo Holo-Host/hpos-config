@@ -1,4 +1,4 @@
-use hpos_state_core::{config::Seed, public_key, Config};
+use hpos_state_core::{public_key, state::Seed, State};
 
 use docopt::Docopt;
 use failure::Error;
@@ -10,7 +10,7 @@ const USAGE: &'static str = "
 Usage: hpos-state-generate --email EMAIL --password STRING [--seed-from PATH]
        hpos-state-generate --help
 
-Creates Holo config file that contains seed and admin email/password.
+Creates HoloPortOS state file that contains seed and admin email/password.
 
 Options:
   --email EMAIL      HoloPort admin email address
@@ -42,9 +42,9 @@ fn main() -> Result<(), Error> {
         }
     };
 
-    let (config, public_key) = Config::new(args.flag_email, args.flag_password, maybe_seed)?;
+    let (state, public_key) = State::new(args.flag_email, args.flag_password, maybe_seed)?;
     eprintln!("{}", public_key::to_url(&public_key)?);
-    println!("{}", serde_json::to_string_pretty(&config)?);
+    println!("{}", serde_json::to_string_pretty(&state)?);
 
     Ok(())
 }
