@@ -119,13 +119,13 @@ use hpos_state_core::{config::Seed, Config}
 let Config::V1 { seed, .. } = serde_json::from_reader(stdin())?;
 ```
 
-Generate a `hpos-state.json`, and use `hpos-state-derive` to load it and generate a Holochain
+Generate a `hpos-state.json`, and use `hpos-state-derive-hc-keystore` to load it and generate a Holochain
 keystore:
 
 ```
 $ nix-shell
-$ cargo build --release --bin hpos-state-derive < hpos-state.json
-$ ./target/release/hpos-state-derive < hpos-state.json
+$ cargo build --release --bin hpos-state-derive-hc-keystore < hpos-state.json
+$ ./target/release/hpos-state-derive-hc-keystore < hpos-state.json
 HcSCjwu4wIi4BawccpoEINNfsybv76wrqoJe39y4KNAO83gsd87mKIU7Tfjy7ci
 {
   "passphrase_check": "eyJzY...0=",

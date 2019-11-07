@@ -2,7 +2,7 @@
 
 members = [
   "core",
-  "derive",
+  "derive-hc-keystore",
   "gen-cli",
   "gen-web"
 ]
