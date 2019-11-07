@@ -1311,7 +1311,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "hpos-state-derive-hc-keystore"
+name = "hpos-state-derive-keystore"
 version = "0.0.0"
 dependencies = [
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",

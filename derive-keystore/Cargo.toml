@@ -1,5 +1,5 @@
 [package]
-name = "hpos-state-derive-hc-keystore"
+name = "hpos-state-derive-keystore"
 version = "0.0.0"
 authors = ["perry.kundert@holo.host", "yegortimoshenko@transumption.com"]
 edition = "2018"
