@@ -22,20 +22,20 @@ in
     doCheck = false;
   };
 
-  hpos-state-generate-cli = buildRustPackage rustPlatform {
-    name = "hpos-state-generate-cli";
+  hpos-state-gen-cli = buildRustPackage rustPlatform {
+    name = "hpos-state-gen-cli";
     src = gitignoreSource ./.;
-    cargoDir = "generate-cli";
+    cargoDir = "gen-cli";
 
     buildInputs = lib.optionals stdenv.isDarwin [ Security ];
 
     doCheck = false;
   };
 
-  hpos-state-generate-web = buildRustPackage rustPlatform rec {
-    name = "hpos-state-generate-web";
+  hpos-state-gen-web = buildRustPackage rustPlatform rec {
+    name = "hpos-state-gen-web";
     src = gitignoreSource ./.;
-    cargoDir = "generate-web";
+    cargoDir = "gen-web";
 
     nativeBuildInputs = with buildPackages; [
       nodejs-12_x

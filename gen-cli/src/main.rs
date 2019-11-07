@@ -7,8 +7,8 @@ use sha2::{Digest, Sha512Trunc256};
 use std::{env, fs::File, io, path::PathBuf};
 
 const USAGE: &'static str = "
-Usage: hpos-state-generate --email EMAIL --password STRING [--seed-from PATH]
-       hpos-state-generate --help
+Usage: hpos-state-gen-cli --email EMAIL --password STRING [--seed-from PATH]
+       hpos-state-gen-cli --help
 
 Creates HoloPortOS state file that contains seed and admin email/password.
 

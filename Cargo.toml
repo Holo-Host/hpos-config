@@ -3,8 +3,8 @@
 members = [
   "core",
   "derive",
-  "generate-cli",
-  "generate-web"
+  "gen-cli",
+  "gen-web"
 ]
 
 # https://github.com/rust-lang/cargo/issues/5478#issuecomment-518026540

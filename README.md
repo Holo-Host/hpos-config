@@ -18,16 +18,16 @@ which is then inserted into the HoloPortOS instance.  When the device boots, it 
 We will generate a `Config` object in JSON form, to be saved into `hpos-state.json`:
 
 ```
-$ nix-build -A hpos-state-generate-cli
-$ ./target/debug/hpos-state-generate-cli  --email "a@b.ca" --password "secret" | tee hpos-state.json
+$ nix-build -A hpos-state-gen-cli
+$ ./target/debug/hpos-state-gen-cli  --email "a@b.ca" --password "secret" | tee hpos-state.json
 ```
 
 Also available is the nix-shell and manual build approach:
 ```
 $ nix-shell
-$ cargo build --release --bin hpos-state-generate-cli
+$ cargo build --release --bin hpos-state-gen-cli
 
-$ ./target/release/hpos-state-generate-cli --email "a@b.ca" --password "secret" | tee hpos-state.json
+$ ./target/release/hpos-state-gen-cli --email "a@b.ca" --password "secret" | tee hpos-state.json
 https://hcscjzpwmnr6ezxybxauytg458vgr6t8nuj3deyd3g6exybqydgsz38qc8n3zfr.holohost.net/
 {
   "v1": {
@@ -46,7 +46,7 @@ its functionality.  We do not ship a "standard" JS library, but instead allow th
 to write a very small Rust API calling hpos-state code, which is compiled to a small WASM static
 asset included with and called by the Web UI project.
 
-For example, the provided `generate-web` example generates a JSON string containing a hpos-state,
+For example, the provided `gen-web` example generates a JSON string containing a hpos-state,
 from a supplied email and password.  The Rust code:
 
 ```
@@ -96,7 +96,7 @@ To build an example web UI, able to call a WASM-compiled function that can gener
 
 ```
 $ nix-shell
-$ cd generate-web
+$ cd gen-web
 $ npm install
 $ npm build
 $ npm run serve
