@@ -36,7 +36,7 @@ where
     serializer.serialize_str(&base64::encode_config(x.as_ref(), base64::STANDARD_NO_PAD))
 }
 
-const ARGON2_ADDITIONAL_DATA: &[u8] = b"holo-config admin ed25519 key v1";
+const ARGON2_ADDITIONAL_DATA: &[u8] = b"hpos-state admin ed25519 key v1";
 
 pub type Seed = [u8; SEED_SIZE];
 

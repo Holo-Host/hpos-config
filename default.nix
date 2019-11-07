@@ -8,8 +8,8 @@ let
 in
 
 {
-  holo-config-derive = buildRustPackage rustPlatform {
-    name = "holo-config-derive";
+  hpos-state-derive = buildRustPackage rustPlatform {
+    name = "hpos-state-derive";
     src = gitignoreSource ./.;
     cargoDir = "derive";
 
@@ -22,8 +22,8 @@ in
     doCheck = false;
   };
 
-  holo-config-generate-cli = buildRustPackage rustPlatform {
-    name = "holo-config-generate-cli";
+  hpos-state-generate-cli = buildRustPackage rustPlatform {
+    name = "hpos-state-generate-cli";
     src = gitignoreSource ./.;
     cargoDir = "generate-cli";
 
@@ -32,8 +32,8 @@ in
     doCheck = false;
   };
 
-  holo-config-generate-web = buildRustPackage rustPlatform rec {
-    name = "holo-config-generate-web";
+  hpos-state-generate-web = buildRustPackage rustPlatform rec {
+    name = "hpos-state-generate-web";
     src = gitignoreSource ./.;
     cargoDir = "generate-web";
 

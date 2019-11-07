@@ -1,4 +1,4 @@
-use holo_config_core::{config::Seed, public_key, Config};
+use hpos_state_core::{config::Seed, public_key, Config};
 
 use docopt::Docopt;
 use failure::Error;
@@ -7,8 +7,8 @@ use sha2::{Digest, Sha512Trunc256};
 use std::{env, fs::File, io, path::PathBuf};
 
 const USAGE: &'static str = "
-Usage: holo-config-generate --email EMAIL --password STRING [--seed-from PATH]
-       holo-config-generate --help
+Usage: hpos-state-generate --email EMAIL --password STRING [--seed-from PATH]
+       hpos-state-generate --help
 
 Creates Holo config file that contains seed and admin email/password.
 

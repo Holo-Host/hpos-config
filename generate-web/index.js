@@ -18,7 +18,7 @@ import { saveAs } from 'file-saver'
     const configData = config(elements.email.value, elements.password.value)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
 
-    saveAs(configBlob, 'holo-config.json')
+    saveAs(configBlob, 'hpos-state.json')
     alert(configData.url)
   })
 })()

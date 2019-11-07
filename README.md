@@ -13,21 +13,21 @@ which is then inserted into the HoloPortOS instance.  When the device boots, it 
 - Start the Holo services
 - Eject the USB and blacklist the kernel modules
 
-## Building & Generating a `holo-config.json`
+## Building & Generating a `hpos-state.json`
 
-We will generate a `Config` object in JSON form, to be saved into `holo-config.json`:
+We will generate a `Config` object in JSON form, to be saved into `hpos-state.json`:
 
 ```
-$ nix-build -A holo-config-generate-cli
-$ ./target/debug/holo-config-generate-cli  --email "a@b.ca" --password "secret" | tee holo-config.json
+$ nix-build -A hpos-state-generate-cli
+$ ./target/debug/hpos-state-generate-cli  --email "a@b.ca" --password "secret" | tee hpos-state.json
 ```
 
 Also available is the nix-shell and manual build approach:
 ```
 $ nix-shell
-$ cargo build --release --bin holo-config-generate-cli
+$ cargo build --release --bin hpos-state-generate-cli
 
-$ ./target/release/holo-config-generate-cli --email "a@b.ca" --password "secret" | tee holo-config.json
+$ ./target/release/hpos-state-generate-cli --email "a@b.ca" --password "secret" | tee hpos-state.json
 https://hcscjzpwmnr6ezxybxauytg458vgr6t8nuj3deyd3g6exybqydgsz38qc8n3zfr.holohost.net/
 {
   "v1": {
@@ -41,12 +41,12 @@ https://hcscjzpwmnr6ezxybxauytg458vgr6t8nuj3deyd3g6exybqydgsz38qc8n3zfr.holohost
 
 ## Building a Web UI to Generate Config
 
-Each UI can build and ship exactly the subset of the Rust `holo-config` project required to support
+Each UI can build and ship exactly the subset of the Rust `hpos-state` project required to support
 its functionality.  We do not ship a "standard" JS library, but instead allow the Web UI developer
-to write a very small Rust API calling holo-config code, which is compiled to a small WASM static
+to write a very small Rust API calling hpos-state code, which is compiled to a small WASM static
 asset included with and called by the Web UI project.
 
-For example, the provided `generate-web` example generates a JSON string containing a holo-config,
+For example, the provided `generate-web` example generates a JSON string containing a hpos-state,
 from a supplied email and password.  The Rust code:
 
 ```
@@ -79,7 +79,7 @@ async function main() {
     const config_data = config(elements.email.value, elements.password.value);
     const blob = new Blob([config_data.config], {type: 'application/json'});
 
-    saveAs(blob, 'holo-config.json');
+    saveAs(blob, 'hpos-state.json');
     alert(config_data.url);
   });
 };
@@ -87,12 +87,12 @@ main();
 ```
 
 When the Webpack-compiled page is loaded, the DOM is configured by the above Javascript, and the
-WASM code is invoked on the Generate button-click, producing the `holo-config.json` file.
+WASM code is invoked on the Generate button-click, producing the `hpos-state.json` file.
 
 ### Building the WASM and JS
 
 To build an example web UI, able to call a WASM-compiled function that can generate and return a
-`Config` in JSON form suitable for saving to `holo-config.json`:
+`Config` in JSON form suitable for saving to `hpos-state.json`:
 
 ```
 $ nix-shell
@@ -103,29 +103,29 @@ $ npm run serve
 ```
 
 Go to `http://localhost:8080`, type in an email and password, and click `Generate`, and save the
-file.  Will default to saving a file named `holo-config.json` to your downloads directory.
+file.  Will default to saving a file named `hpos-state.json` to your downloads directory.
 
-## Generating a Holochain Keystore from `holo-config.json`
+## Generating a Holochain Keystore from `hpos-state.json`
 
-To use the seed saved in `holo-config.json` from within a Holochain application (for example, upon
+To use the seed saved in `hpos-state.json` from within a Holochain application (for example, upon
 start-up of the Holochain Conductor on the HoloPort), the Config needs to be deserialized, and the
 seed used in the standard Holochain cryptography routines.
 
 Standard Rust Serialize/Deserialize functionality is provided:
 
 ```
-use holo_config_core::{config::Seed, Config}
+use hpos_state_core::{config::Seed, Config}
 ...
 let Config::V1 { seed, .. } = serde_json::from_reader(stdin())?;
 ```
 
-Generate a `holo-config.json`, and use `holo-config-derive` to load it and generate a Holochain
+Generate a `hpos-state.json`, and use `hpos-state-derive` to load it and generate a Holochain
 keystore:
 
 ```
 $ nix-shell
-$ cargo build --release --bin holo-config-derive < holo-config.json
-$ ./target/release/holo-config-derive < holo-config.json
+$ cargo build --release --bin hpos-state-derive < hpos-state.json
+$ ./target/release/hpos-state-derive < hpos-state.json
 HcSCjwu4wIi4BawccpoEINNfsybv76wrqoJe39y4KNAO83gsd87mKIU7Tfjy7ci
 {
   "passphrase_check": "eyJzY...0=",

@@ -1,5 +1,5 @@
 use failure::Error;
-use holo_config_core::{public_key, Config};
+use hpos_state_core::{public_key, Config};
 use serde::*;
 use wasm_bindgen::prelude::*;
 
