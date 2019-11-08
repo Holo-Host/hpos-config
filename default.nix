@@ -8,10 +8,10 @@ let
 in
 
 {
-  hpos-state-derive = buildRustPackage rustPlatform {
-    name = "hpos-state-derive";
+  hpos-state-derive-keystore = buildRustPackage rustPlatform {
+    name = "hpos-state-derive-keystore";
     src = gitignoreSource ./.;
-    cargoDir = "derive";
+    cargoDir = "derive-keystore";
 
     RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
     RUST_SODIUM_SHARED = "1";
