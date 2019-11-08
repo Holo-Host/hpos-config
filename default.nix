@@ -8,10 +8,10 @@ let
 in
 
 {
-  holo-config-derive = buildRustPackage rustPlatform {
-    name = "holo-config-derive";
+  hpos-state-derive-keystore = buildRustPackage rustPlatform {
+    name = "hpos-state-derive-keystore";
     src = gitignoreSource ./.;
-    cargoDir = "derive";
+    cargoDir = "derive-keystore";
 
     RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
     RUST_SODIUM_SHARED = "1";
@@ -22,20 +22,20 @@ in
     doCheck = false;
   };
 
-  holo-config-generate-cli = buildRustPackage rustPlatform {
-    name = "holo-config-generate-cli";
+  hpos-state-gen-cli = buildRustPackage rustPlatform {
+    name = "hpos-state-gen-cli";
     src = gitignoreSource ./.;
-    cargoDir = "generate-cli";
+    cargoDir = "gen-cli";
 
     buildInputs = lib.optionals stdenv.isDarwin [ Security ];
 
     doCheck = false;
   };
 
-  holo-config-generate-web = buildRustPackage rustPlatform rec {
-    name = "holo-config-generate-web";
+  hpos-state-gen-web = buildRustPackage rustPlatform rec {
+    name = "hpos-state-gen-web";
     src = gitignoreSource ./.;
-    cargoDir = "generate-web";
+    cargoDir = "gen-web";
 
     nativeBuildInputs = with buildPackages; [
       nodejs-12_x

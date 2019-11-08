@@ -1,9 +1,9 @@
 [package]
-name = "holo-config-core"
+name = "hpos-state-core"
 version = "0.0.0"
 authors = ["perry.kundert@holo.host", "yegortimoshenko@transumption.com"]
 edition = "2018"
-repository = "https://github.com/Holo-Host/holo-config"
+repository = "https://github.com/Holo-Host/hpos-state"
 
 [dependencies]
 arrayref = "0.3.5"

@@ -941,58 +941,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "holo-config-core"
-version = "0.0.0"
-dependencies = [
- "argon2min 0.3.0 (git+https://github.com/Holo-Host/argon2min?branch=2019-10-13-holo-config)",
- "arrayref 0.3.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "ed25519-dalek 1.0.0-pre.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "hcid 0.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "lazy_static 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
- "url 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "holo-config-derive"
-version = "0.0.0"
-dependencies = [
- "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "holo-config-core 0.0.0",
- "holochain_common 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
- "holochain_conductor_api 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
- "holochain_dpki 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
- "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "holo-config-generate-cli"
-version = "0.0.0"
-dependencies = [
- "docopt 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "holo-config-core 0.0.0",
- "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
- "sha2 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "holo-config-generate-web"
-version = "0.0.0"
-dependencies = [
- "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "holo-config-core 0.0.0",
- "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
- "wasm-bindgen 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)",
- "wasm-bindgen-cli 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "holochain_common"
 version = "0.0.32-alpha2"
 source = "git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra#9c2f5ee29c7798e10d375fc990fa05f81ce42dd4"
@@ -1344,6 +1292,58 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "libc 0.2.58 (registry+https://github.com/rust-lang/crates.io-index)",
  "winutil 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "hpos-state-core"
+version = "0.0.0"
+dependencies = [
+ "argon2min 0.3.0 (git+https://github.com/Holo-Host/argon2min?branch=2019-10-13-holo-config)",
+ "arrayref 0.3.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ed25519-dalek 1.0.0-pre.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hcid 0.0.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.6.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
+ "url 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "hpos-state-derive-keystore"
+version = "0.0.0"
+dependencies = [
+ "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "holochain_common 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
+ "holochain_conductor_api 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
+ "holochain_dpki 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
+ "hpos-state-core 0.0.0",
+ "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "hpos-state-gen-cli"
+version = "0.0.0"
+dependencies = [
+ "docopt 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hpos-state-core 0.0.0",
+ "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sha2 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "hpos-state-gen-web"
+version = "0.0.0"
+dependencies = [
+ "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hpos-state-core 0.0.0",
+ "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
+ "wasm-bindgen 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)",
+ "wasm-bindgen-cli 0.2.51 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
