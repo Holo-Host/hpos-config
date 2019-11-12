@@ -1,18 +1,90 @@
 html {
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #24292e;
+  font-family: 'CircularStd', 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji','Segoe UI Emoji';
+  font-size: 14px;
+  line-height: 1.5;
+  color: #24292e;
 }
 
 body {
-    margin: 0;
-    padding: 30px 70px;
+  box-sizing: border-box;
+  margin: 0;
+  background-color: #f5f5f5;
 }
 
 body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body.step4 .step4
 {
-    display: block;
+  display: block;
+  text-align: center;
+}
+
+.container-fluid {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* navbar menu */
+
+.nav-wrapper {
+  padding: .25rem;
+  margin: 0px -15px 1rem 0px;
+  border: solid #f8f9fa;
+  border-width: .2rem 0 0;
+  background: #FFFFFF;
+  box-shadow: 0px 2.5px 10px rgba(0, 0, 0, 0.1);
+  text-align: right;
+}
+
+.nav-right {
+  display: flex;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  justify-content: flex-end !important;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+  text-align: right;
+}
+
+.nav-link {
+  display: list-item;
+  padding: 1.5rem;
+  margin-right: 0;
+  margin-left: 0;
+  border-width: .2rem;
+  text-decoration: none;
+  color: #06ac8b; 
+  font-weight: 400;
+  font-size: 1.2em;
+}
+
+/* headings, titles & labels */
+
+.greeting {
+  line-height: 1.2;
+  margin: 0 auto;
+  margin-top: 3rem;
+  font-weight: 500;
+  font-size: 4rem;
+}
+
+.header {
+  margin: 0 auto;
+  margin-top: 5rem;
+  margin-bottom: .5rem;
+  font-weight: 300;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.first-header {
+  margin: 0 auto;
+  font-weight: 300;
+  font-size: 2rem;
+  line-height: 1.2;
+  margin-top: 1rem;
 }
 
 .step1 label {
@@ -25,7 +97,7 @@ body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body
     border: 1px solid #ddd;
     min-width: 200px;
 }
-
+/* 
 .step-label {
     display: inline-block !important;
     width: 2em;
@@ -37,12 +109,88 @@ body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body
     line-height: 2em;
     text-align: center;
     color: rgb(60, 168, 239);
+} */
+
+/* list groups */
+
+.list-wrapper {
+  margin: auto;
+  display: flex;
+  outline: 0;
+  padding: 20px;
+  position: relative;
+  border-radius: 4px;
+  justify-content: center;
+}
+
+.list-group {
+  max-width: 700px; 
+  padding: calc(3rem + 2.3vw); /* 5rem;  */
+  margin: 0 auto;
+  margin-bottom: 1rem;
+  text-align: left;
+  border: solid #f8f9fa;
+  border-width: .2rem;
+  border-radius: 4px;
+  color: rgba(0, 0, 0, 0.87);
+  box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+  transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  background-color: #fff;
+}
+
+.list-group-item {
+  list-style-type: disc;
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 2.5;
+}
+.list-group-item :hover {
+  background-color: #3aa794;
 }
 
 .step-label-info {
-    display: inline-block;
-    margin-left: 2em;
+  display: block;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 300;
 }
+
+.input-wrapper {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.input-group {
+  flex: 1;
+  max-width: 700px; 
+  padding: calc(3rem + 2.3vw); /* 5rem;  */
+  margin: 0 auto;
+  margin-bottom: 1rem;
+}
+
+.input-item {
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 2.5;
+  width: 500px;
+}
+
+.input-item-label {
+  margin: 0px 10px;
+}
+
+.disclaimer {
+  font-style: italic;
+  max-width: 300px;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+/* step subble */
 
 body.step0 .step0.step-label, body.step1 .step1.step-label, body.step2 .step2.step-label, body.step3 .step3.step-label, body.step4 .step4.step-label {
     background: #fff;
@@ -58,33 +206,44 @@ ul li {
     min-height: 2.2em;
 }
 
-button, a.button {
-    padding: 4px 23px;
-    border-radius: 5px;
-    font-size: 1.2em;
-    border: 1px solid rgb(173,221,252);
-    background: rgb(225, 241, 251);
-    color: inherit;
-    text-decoration: inherit;
-}
-button:hover, a.button:hover {
-    background: rgb(192, 231, 255);
-}
-button:disabled, button[disabled],
-a.button:disabled, a.button[disabled] {
-    cursor: not-allowed;
-    pointer-events: none;
-    background: rgb(247, 247, 247);
-    border-color: rgb(213, 213, 213);
-}
-
 .stepBox {
-    padding-left: 5.5em;
+    /* padding-left: 5.5em; */
 }
 
 .stepH1, .stepBox, .stepLabel {
     display: none;
 }
+
+/* buttons */
+
+button, a.button {
+  padding: 4px 23px;
+  border-radius: 5px;
+  font-size: 1.2em;
+  border: 1px solid rgb(173,221,252);
+  background: rgb(225, 241, 251);
+  color: inherit;
+  text-decoration: inherit;
+}
+button:hover, a.button:hover {
+background-color: #3aa794;
+}
+button:disabled, button[disabled],
+a.button:disabled, a.button[disabled] {
+  cursor: not-allowed;
+  pointer-events: none;
+  background: rgb(247, 247, 247);
+  border-color: rgb(213, 213, 213);
+}
+
+.btn {
+color: #FFFFFF;
+background-color: #0DC39F;
+padding: 20px;
+width: calc(11rem + 2.3vw);
+}
+
+/* tos & error modals */
 
 .tos-link {
     font-size: x-small;
@@ -94,7 +253,7 @@ a.button:disabled, a.button[disabled] {
     font-weight: bolder
 }
 
-#fixed-overlay {
+#fixed-overlay-error {
     display: none;
     position: fixed;
     top: 3em;
@@ -107,7 +266,21 @@ a.button:disabled, a.button[disabled] {
     overflow: hidden;
 }
 
-.tos-content {
+
+#fixed-overlay-tos {
+  display: none;
+  position: fixed;
+  top: 3em;
+  bottom: 3em;
+  left: 3em;
+  right: 3em;
+  background: #fff;
+  border-radius: 2em;
+  border: 1px #ddd solid;
+  overflow: hidden;
+}
+
+.modal-content {
     margin: 3em;
     padding: 0 1em;
     overflow: auto; 
@@ -138,4 +311,64 @@ a.button:disabled, a.button[disabled] {
 }
 .close:after {
     transform: rotate(-45deg);
+}
+
+/*progress bar*/
+
+.progressbar {
+  display: flex;
+  margin: 60px 0px 30px 0px;
+  overflow: hidden;
+  counter-reset: step;
+}
+
+.progressbar li {
+  flex: 1;
+  list-style-type: none;
+  color: white;
+  text-transform: uppercase;
+  font-size: 9px;
+  position: relative;
+  letter-spacing: 1px;
+}
+
+.progressbar li:before {
+  content: counter(step);
+  align-content: center;
+  justify-content: center;
+  counter-increment: step;
+  width: 4em;
+  height: 4em;
+  line-height: 26px;
+  display: block;
+  font-size: 12px;
+  color: .333;
+  background: white;
+  border-radius: 25px;
+  margin: 0 auto 10px auto;
+}
+
+/*progressbar connectors*/
+.progressbar li:after {
+  content: '';
+  width: 100%;
+  height: 2px;
+  background: white;
+  position: absolute;
+  left: -50%;
+  top: 20px;
+  z-index: -1; /*put it behind the numbers*/
+  font-size: 50px;
+}
+
+.progressbar li:first-child:after {
+  /*connector not needed before the first step*/
+  content: none;
+}
+
+/*marking active/completed steps green*/
+/*The number of the step and the connector before it = green*/
+.progressbar li.active:before, #progressbar li.active:after {
+  background: #0DC39F;
+  color: white;
 }

@@ -1,4 +1,4 @@
-import "./style.css";
+import './style.css'
 
 (async () => {
   const { config } = await import('./pkg')
@@ -30,10 +30,11 @@ import "./style.css";
     start: () => {
       if (!validateBrowser()) {
         alert('Please upgrade your browser to newer version.')
-        return
+        return null
       }
 
       updateUiStep(1)
+      updateProgressBar(1)
     },
     generate: () => {
       // Read inputs
@@ -46,7 +47,7 @@ import "./style.css";
         return
       } else if (!user.password) {
         alert('Password cannot be empty')
-        return
+        return null
       }
 
       // Communicate visually that something is happening in the bkgd
@@ -60,13 +61,14 @@ import "./style.css";
           generateDownload(user, buttons.download)
         } catch (e) {
           console.log(`Error executing generateDownload with an error ${e}`)
-          return
+          return null
         }
 
         // revert UI
         buttons.generate.disabled = false
         buttons.generate.innerText = 'Generate'
         updateUiStep(2)
+        updateProgressBar(2)
       }, 50)
     },
     download: () => {
@@ -82,10 +84,12 @@ import "./style.css";
         buttons.download.disabled = false
         buttons.download.innerText = 'Download'
         updateUiStep(3)
+        updateProgressBar(3)
       }, 1000)
     },
     copied: () => {
       updateUiStep(4)
+      updateProgressBar(4)
     },
     openOlay: () => {
       document.querySelector('#fixed-overlay').style.display = 'block'
@@ -125,18 +129,48 @@ import "./style.css";
    *
    * @param {int} step
    */
+  // 
+  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0 }
+  // 
   const updateUiStep = (step) => {
-    const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0 }
-
     if (!validation[step]) {
       console.log(`Wrong parameter ${step} in updateUiStep()`)
-      return
+      return null
     }
-
     document.body.className = 'step' + step
   }
 
   /**
+   * Update the progresss bar
+   * @param {int} currentStep
+   * @param {bool} rewind
+   */
+  const updateProgressBar = (currentStep, rewind=false) => {
+    if (!validation[currentStep]) {
+      console.log(`Wrong parameter ${currentStep} in updateProgressBar()`)
+      return null
+    }
+
+    const progressbarElement = document.getElementById('progressbar')
+    console.log('progressbarElement : ', progressbarElement)
+
+    if (rewind) {
+      const previousStep = currentStep + 1
+      console.log('previousStep : ', previousStep)
+      // activate previous currentStep on progressbar 
+      progressbarElement.childNodes[currentStep].removeClass('active')
+      progressbarElement.childNodes[nextStep].addClass('active')
+    }
+    else {
+      const nextStep = currentStep + 1
+      console.log('nextStep : ', nextStep)
+      // activate next currentStep on progressbar 
+      progressbarElement.childNodes[nextStep].addClass('active')
+    }
+  }
+
+
+    /**
    * Generate download link of holo-config.json and attach to `button` domElement
    *
    * @param {Object} user
