@@ -51,12 +51,17 @@ pub struct Admin {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+pub struct InternalConfig {
+    admin: Admin
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub enum Config {
     #[serde(rename = "v1")]
     V1 {
         #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
-        admin: Admin,
+        config: InternalConfig,
     },
 }
 
@@ -81,7 +86,9 @@ impl Config {
 
         Ok((
             Config::V1 {
-                admin: admin,
+                config: InternalConfig {
+                    admin: admin
+                },
                 seed: seed,
             },
             holochain_public_key,
