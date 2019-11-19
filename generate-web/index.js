@@ -3,7 +3,7 @@ import './style.css'
 (async () => {
   const { config } = await import('./pkg')
 
-  const DOWNLOAD_FILE_NAME = 'holo-config.json'
+  const DOWNLOAD_FILE_NAME = 'hpos-state.json'
 
   // Parse UI elements
   const buttons = {
@@ -80,7 +80,7 @@ import './style.css'
 
       // Move generateDownload out of exec flow
       setTimeout(() => {
-        // Generate holo-config.json and create download blob attached to url
+        // Generate hpos-state.json and create download blob attached to url
         try {
           generateDownload(user, buttons.download)
         } catch (e) {
@@ -209,7 +209,7 @@ import './style.css'
 
 
     /**
-   * Generate download link of holo-config.json and attach to `button` domElement
+   * Generate download link of holo-state.json and attach to `button` domElement
    *
    * @param {Object} user
    * @param {DomElement} button - a DomElement that will have download and attribute props updated
