@@ -21,16 +21,16 @@
         <h1 class="stepH1 step0 greeting">Hello!</h1>
         <h1 class="stepH1 step1 step2 step3 header"> Let's get your HoloPort configured and ready to host!</h1>
         <h1 class="stepH1 step4 greeting">All done!</h1>
-        <div class="stepLabel step0 first-header">
-            <h2 class="step-label-info">Here are a few tips to get you</h2>
-            <h2 class="step-label-info">ready for configuring your HoloPort</h2>
+        <div class="stepLabel step0 step0-header">
+            <h2 class="step0-label-info">Here are a few tips to get you</h2>
+            <h2 class="step0-label-info">ready for configuring your HoloPort</h2>
         </div>
         <div class="stepLabel step1 step2 step3 step4">
           <ul class="progressbar">
-            <li class="active">Generate Keys</li>
-            <li>Download Config</li>
-            <li>HPOS Setup</li>
-            <li>Network Connection</li>
+            <li class="progressbar-item 1 active">Generate Keys</li>
+            <li class="progressbar-item 2">Download Config</li>
+            <li class="progressbar-item 3">HPOS Setup</li>
+            <li class="progressbar-item 4">Network Connection</li>
           </ul>
         </div>
         <div class="stepLabel step1">
@@ -39,15 +39,15 @@
         </div>
         <div class="stepLabel step2">
             <!-- <div class="step-label step2">2</div> -->
-            <div class="step-label-info">2. Download configuration file.</div>
+            <div class="step-label-info">Step 2. Save the configuration file for your HoloPort onto a USB drive.</div>
         </div>
         <div class="stepLabel step3">
             <!-- <div class="step-label step3">3</div> -->
-            <div class="step-label-info">3. Move configuration file to your HoloPort.</div>
+            <div class="step-label-info">Step 3. Move the configuration file to your HoloPort.</div>
         </div>
         <div class="stepLabel step4">
             <!-- <div class="step-label step4">4</div> -->
-            <div class="step-label-info">4.Check your inbox.</div>
+            <div class="step-label-info">Step 4: Connect your HoloPort to the Holo network.</div>
         </div>
         <div class="stepBox step0 list-wrapper">
             <ul class="list-group">
@@ -61,7 +61,7 @@
         </div>
         <div class="stepBox step1 input-wrapper">
             <ul class="input-group">
-                <li class='input-item'><label class='input-item-label'>HoloPort Name:</label><input id="email" name="email" type="text"/></li>
+                <li class='input-item'><label class='input-item-label'>HoloPort Name:</label><input id="device-name" name="device-name" type="text"/></li>
                 <li class='input-item'><label class='input-item-label'>Email:</label><input id="email" name="email" type="text"/></li>
                 <li class='input-item'><label class='input-item-label'>Password:</label><input id="password" name="password" type="password"/></li>                
                 <li class='input-item'><label class='input-item-label'>Re-enter Password:</label><input id="password-check" name="password-check" type="password"/></li>
@@ -72,21 +72,27 @@
             </div>
         </div>
         <div class="stepBox step2">
-            <p>The configuration file for your HoloPort has been created.</p>
-            <a class="button" id="downloadButton">Download</a>
-            <p class="tos-link">By clicking Download button you agree to <a href="#" id="open-overlay">Holo's TOS</a></p>
+            <button id="backButton2" class="nav-btn btn">Back</button>
+            <a id="downloadButton" class="btn">Save to USB Drive</a>
+            <div>
+              <p class="tos-link disclaimer">By clicking the "Save to USB Drive" you agree to <a href="#" id="open-overlay">Holo's TOS</a></p>
+            </div>
         </div>
         <div class="stepBox step3">
-            <p>Copy downloaded <span class="bold">holo-config.json</span> file to the USB Dongle and insert the Dongle in your HoloPort.</p>
-            <button id="copiedButton">Copied</button>
+            <p class="paragraph-text">Copy the downloaded <span class="bold italic paragraph-text">holo-config.json</span> file to a USB Drive, and then that USB Drive into your HoloPort.</p>
+            <button id="backButton3" class="nav-btn btn">Back</button>
+            <button id="copiedButton" class="nav-btn next btn">Next</button>
         </div>
         <div class="stepBox step4">
-            <p>Confirm your email address at <span class="bold" id="emailPlaceholder">email@placeholder.com</span>. Confirmation link in an email will take you to your HoloPort Admin Panel.</p>
+            <p class="paragraph-text">Check your email for a link to verify your email address, <span class="bold" id="emailPlaceholder"></span>, and connect your HoloPort to the Holo network. The confirmation link in an email will take you to your HoloPort Admin Panel.</p>
+            <div>
+              <p class='disclaimer'>*If you don't receive an email after 5 mintues, please reah out ot Customer Service.</p>
+            </div>
         </div>
         <div id="fixed-overlay-error">
             <div class="modal-content">
                 <div class="close" id="close-overlay"></div>
-                <h1>Error Message</h1>
+                <h1 class="modal-header">Error Message</h1>
                  <p id='error-message'></p>
             </div>
         </div>

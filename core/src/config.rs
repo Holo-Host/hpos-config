@@ -48,6 +48,7 @@ pub struct Admin {
         serialize_with = "to_base64"
     )]
     public_key: PublicKey,
+    device_name: Option<String>
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -64,6 +65,7 @@ impl Config {
     pub fn new(
         email: String,
         password: String,
+        device_name: Option<String>,
         maybe_seed: Option<Seed>,
     ) -> Result<(Self, PublicKey), Error> {
         let seed = match maybe_seed {
@@ -77,6 +79,7 @@ impl Config {
         let admin = Admin {
             email: email.clone(),
             public_key: admin_public_key_from(holochain_public_key, &email, &password)?,
+            device_name: device_name.clone()
         };
 
         Ok((

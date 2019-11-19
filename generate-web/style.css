@@ -77,9 +77,10 @@ body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body
   font-weight: 300;
   font-size: 2rem;
   line-height: 1.2;
+  color: #3aa794;
 }
 
-.first-header {
+.step0-header {
   margin: 0 auto;
   font-weight: 300;
   font-size: 2rem;
@@ -92,24 +93,11 @@ body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body
     display: inline-block;
 }
 .step1 input {
-    padding: 5px;
+    padding: 10px;
     border-radius: 3px;
     border: 1px solid #ddd;
     min-width: 200px;
 }
-/* 
-.step-label {
-    display: inline-block !important;
-    width: 2em;
-    height: 2em;
-    border-radius: 2em;
-    font-size: 1.5em;
-    border: 1px solid rgb(173,221,252);
-    background: rgb(225, 241, 251);
-    line-height: 2em;
-    text-align: center;
-    color: rgb(60, 168, 239);
-} */
 
 /* list groups */
 
@@ -150,6 +138,15 @@ body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body
 
 .step-label-info {
   display: block;
+  margin-top: 8rem;
+  margin-bottom: 2rem;
+  font-size: 1.72rem;
+  font-weight: 300;
+  color: #24292e;
+}
+
+.step0-label-info {
+  display: block;
   margin-top: 0;
   margin-bottom: 1rem;
   font-size: 1.5rem;
@@ -167,13 +164,14 @@ body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body
   flex: 1;
   max-width: 700px; 
   padding: calc(3rem + 2.3vw); /* 5rem;  */
+  padding-top: 25px;
   margin: 0 auto;
   margin-bottom: 1rem;
 }
 
 .input-item {
   text-align: right;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   font-weight: 400;
   line-height: 2.5;
   width: 500px;
@@ -183,6 +181,14 @@ body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body
   margin: 0px 10px;
 }
 
+.paragraph-text {
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 2.5;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
 .disclaimer {
   font-style: italic;
   max-width: 300px;
@@ -190,11 +196,9 @@ body.step0 .step0, body.step1 .step1, body.step2 .step2, body.step3 .step3, body
   margin-top: 20px;
 }
 
-/* step subble */
-
-body.step0 .step0.step-label, body.step1 .step1.step-label, body.step2 .step2.step-label, body.step3 .step3.step-label, body.step4 .step4.step-label {
+/* body.step0 .step0.step-label, body.step1 .step1.step-label, body.step2 .step2.step-label, body.step3 .step3.step-label, body.step4 .step4.step-label {
     background: #fff;
-}
+} */
 
 ul {
     margin-top: 0;
@@ -206,17 +210,13 @@ ul li {
     min-height: 2.2em;
 }
 
-.stepBox {
-    /* padding-left: 5.5em; */
-}
-
 .stepH1, .stepBox, .stepLabel {
     display: none;
 }
 
 /* buttons */
 
-button, a.button {
+button {
   padding: 4px 23px;
   border-radius: 5px;
   font-size: 1.2em;
@@ -225,11 +225,11 @@ button, a.button {
   color: inherit;
   text-decoration: inherit;
 }
-button:hover, a.button:hover {
+button:hover, a.btn:hover {
 background-color: #3aa794;
 }
 button:disabled, button[disabled],
-a.button:disabled, a.button[disabled] {
+a.btn:disabled, a.btn[disabled] {
   cursor: not-allowed;
   pointer-events: none;
   background: rgb(247, 247, 247);
@@ -237,10 +237,15 @@ a.button:disabled, a.button[disabled] {
 }
 
 .btn {
-color: #FFFFFF;
-background-color: #0DC39F;
-padding: 20px;
-width: calc(11rem + 2.3vw);
+  padding: 20px;
+  border: 1px solid rgb(173,221,252);
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1.2em;
+  color: #FFFFFF;
+  background-color: #0DC39F;
+  width: calc(11rem + 2.3vw);
+
 }
 
 /* tos & error modals */
@@ -251,6 +256,10 @@ width: calc(11rem + 2.3vw);
 
 .bold {
     font-weight: bolder
+}
+
+.italic {
+  font-style: italic;
 }
 
 #fixed-overlay-error {
@@ -325,9 +334,9 @@ width: calc(11rem + 2.3vw);
 .progressbar li {
   flex: 1;
   list-style-type: none;
-  color: white;
+  color: #24292e;
   text-transform: uppercase;
-  font-size: 9px;
+  font-size: 15px;
   position: relative;
   letter-spacing: 1px;
 }
@@ -339,7 +348,7 @@ width: calc(11rem + 2.3vw);
   counter-increment: step;
   width: 4em;
   height: 4em;
-  line-height: 26px;
+  line-height: 50px;
   display: block;
   font-size: 12px;
   color: .333;

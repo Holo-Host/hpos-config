@@ -13,9 +13,10 @@ Usage: holo-config-generate --email EMAIL --password STRING [--seed-from PATH]
 Creates Holo config file that contains seed and admin email/password.
 
 Options:
-  --email EMAIL      HoloPort admin email address
-  --password STRING  HoloPort admin password
-  --seed-from PATH   Use SHA-512 hash of given file truncated to 256 bits as seed
+  --email EMAIL          HoloPort admin email address
+  --password STRING      HoloPort admin password
+  --device_name STRING   HoloPort admin device_name
+  --seed-from PATH       Use SHA-512 hash of given file truncated to 256 bits as seed
 ";
 
 #[derive(Deserialize)]

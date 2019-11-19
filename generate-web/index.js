@@ -12,17 +12,26 @@ import './style.css'
     download: document.querySelector('#downloadButton'),
     copied: document.querySelector('#copiedButton'),
     openOlay: document.querySelector('#open-overlay'),
-    closeOlay: document.querySelector('#close-overlay')
+    closeOlay: document.querySelector('#close-overlay'),
+    back2: document.querySelector('#backButton2'),
+    back3: document.querySelector('#backButton3')
   }
 
   const inputs = {
     email: document.querySelector('#email'),
-    password: document.querySelector('#password')
+    password: document.querySelector('#password'),
+    passwordCheck: document.querySelector('#password-check'),
+    deviceName: document.querySelector('#device-name')
   }
+
+  const inlineVariables = {
+    emailPlaceholder: document.querySelector('#emailPlaceholder')
+  } 
 
   const user = {
     email: '',
-    password: ''
+    password: '',
+    device_name: ''
   }
 
   // Actions executed at button click
@@ -34,19 +43,34 @@ import './style.css'
       }
 
       updateUiStep(1)
-      updateProgressBar(1)
     },
     generate: () => {
       // Read inputs
       user.email = inputs.email.value
       user.password = inputs.password.value
+      user.device_name = inputs.deviceName.value
+      
+      
+      console.log('user config : ', user)
+      
 
       // Check for email and pass
-      if (!validateEmail(user.email)) {
+      if(!user.password && !user.email && !user.device_name) {
+        alert('Form cannot be empty')
+        return null
+      }
+      else if (!validateEmail(user.email)) {
         alert('Wrong format of email')
-        return
+        return null
       } else if (!user.password) {
         alert('Password cannot be empty')
+        return null
+      // Verify password and passwordCheck match
+      } else if (inputs.password.value !== inputs.passwordCheck.value) {
+        alert('Passwords do not match')
+        return null
+      } else if (!user.device_name) {
+        alert('Device cannot be empty')
         return null
       }
 
@@ -68,7 +92,7 @@ import './style.css'
         buttons.generate.disabled = false
         buttons.generate.innerText = 'Generate'
         updateUiStep(2)
-        updateProgressBar(2)
+        updateProgressBar(1)
       }, 50)
     },
     download: () => {
@@ -84,18 +108,28 @@ import './style.css'
         buttons.download.disabled = false
         buttons.download.innerText = 'Download'
         updateUiStep(3)
-        updateProgressBar(3)
+        updateProgressBar(2)
       }, 1000)
     },
     copied: () => {
       updateUiStep(4)
-      updateProgressBar(4)
+      updateProgressBar(3)
     },
     openOlay: () => {
-      document.querySelector('#fixed-overlay').style.display = 'block'
+      document.querySelector('#fixed-overlay-tos').style.display = 'block'
     },
     closeOlay: () => {
-      document.querySelector('#fixed-overlay').style.display = 'none'
+      document.querySelector('#fixed-overlay-tos').style.display = 'none'
+    },
+    back2: () => {
+      const rewind = true
+      updateProgressBar(2, rewind)
+      updateUiStep(1)
+    },
+    back3: () => {
+      const rewind = true
+      updateProgressBar(3, rewind)
+      updateUiStep(2)
     }
   }
 
@@ -106,6 +140,12 @@ import './style.css'
   buttons.copied.onclick = click.copied
   buttons.openOlay.onclick = click.openOlay
   buttons.closeOlay.onclick = click.closeOlay
+  buttons.back2.onclick = click.back2
+  buttons.back3.onclick = click.back3
+
+
+  // Email Verification - Display back User Email on Step 4
+  inlineVariables.emailPlaceholder.innerHTML = user.email || 'email@placeholder.com'
 
   /**
    * Validate if string is email (super simple because actual validation is via sent email)
@@ -137,36 +177,34 @@ import './style.css'
       console.log(`Wrong parameter ${step} in updateUiStep()`)
       return null
     }
-    document.body.className = 'step' + step
+    return document.body.className = 'step' + step
   }
 
   /**
    * Update the progresss bar
-   * @param {int} currentStep
+   * @param {int} currentTransition
    * @param {bool} rewind
    */
-  const updateProgressBar = (currentStep, rewind=false) => {
-    if (!validation[currentStep]) {
-      console.log(`Wrong parameter ${currentStep} in updateProgressBar()`)
+  const updateProgressBar = (currentTransition, rewind = false) => {
+    console.log('rewind >> ', rewind)
+    
+    if (currentTransition <= 1) rewind = false
+    if (!validation[currentTransition]) {
+      console.log(`Wrong parameter ${currentTransition} in updateProgressBar()`)
       return null
     }
+    const stepIndex = currentTransition - 1
 
-    const progressbarElement = document.getElementById('progressbar')
-    console.log('progressbarElement : ', progressbarElement)
+    // Locate current step element and remove 'active' class
+    const childListNodes = document.querySelectorAll('li.progressbar-item')
+    const currentlyActive = childListNodes[stepIndex]
+    console.log('currentlyActive : ', currentlyActive.classList)
+    currentlyActive.classList.remove('active')
 
     if (rewind) {
-      const previousStep = currentStep + 1
-      console.log('previousStep : ', previousStep)
-      // activate previous currentStep on progressbar 
-      progressbarElement.childNodes[currentStep].removeClass('active')
-      progressbarElement.childNodes[nextStep].addClass('active')
+      return childListNodes[stepIndex - 1].classList.add('active')
     }
-    else {
-      const nextStep = currentStep + 1
-      console.log('nextStep : ', nextStep)
-      // activate next currentStep on progressbar 
-      progressbarElement.childNodes[nextStep].addClass('active')
-    }
+    else childListNodes[stepIndex + 1].classList.add('active')
   }
 
 
@@ -177,8 +215,8 @@ import './style.css'
    * @param {DomElement} button - a DomElement that will have download and attribute props updated
    */
   const generateDownload = (user, button) => {
-    console.log('generating...')
-    const configData = config(user.email, user.password)
+    console.log('generating keys...')
+    const configData = config(user.email, user.password, user.device_name)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
     const url = URL.createObjectURL(configBlob)
 
@@ -188,6 +226,6 @@ import './style.css'
     button.download = DOWNLOAD_FILE_NAME
 
     // In case we decide to use the HoloPort url it is available right here
-    console.log(configData.url)
+    console.log('Optional HoloPort url : ', configData.url)
   }
 })()
