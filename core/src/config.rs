@@ -48,7 +48,7 @@ pub struct Admin {
         serialize_with = "to_base64"
     )]
     public_key: PublicKey,
-    device_name: Option<String>
+    device_name: String
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -70,7 +70,7 @@ impl Config {
     pub fn new(
         email: String,
         password: String,
-        device_name: Option<String>,
+        device_name: String,
         maybe_seed: Option<Seed>,
     ) -> Result<(Self, PublicKey), Error> {
         let seed = match maybe_seed {
