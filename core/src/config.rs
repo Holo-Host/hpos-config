@@ -122,12 +122,13 @@ mod tests {
     fn admin_public_key() {
         let email: String = "pj@aa.pl".to_string();
         let password: String =  "password".to_string();
-        let seed: Option<[u8; 32]> = Some([55; 32]);
+	let device_name: String = "MyHoloport".to_string();
+        let seed: [u8; 32] = [55; 32];
         let expected_public_key: [u8; 32] = [17, 243, 42, 222, 75, 47, 128, 87, 1, 252, 72, 56, 141, 216, 210, 251, 217, 95, 97, 62, 95, 112, 234, 31, 243, 73, 64, 160, 134, 92, 138, 97];
 
-        let (config, _) = Config::new(email, password, seed).unwrap();
-        if let Config::V1{seed: _, admin} = config {
-            assert_eq!(admin.public_key.to_bytes(), expected_public_key);
+        let (config, _) = Config::new(email, password, device_name, Some(seed)).unwrap();
+        if let Config::V1{seed: _, config} = config {
+            assert_eq!(config.admin.public_key.to_bytes(), expected_public_key);
         } else {
             panic!("Wrong Version of Config implementation");
         }
