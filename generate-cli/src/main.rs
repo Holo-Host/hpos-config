@@ -7,22 +7,23 @@ use sha2::{Digest, Sha512Trunc256};
 use std::{env, fs::File, io, path::PathBuf};
 
 const USAGE: &'static str = "
-Usage: holo-config-generate --email EMAIL --password STRING [--seed-from PATH]
-       holo-config-generate --help
+Usage: holo-config-generate-cli --email EMAIL --password STRING --device-name STRING [--seed-from PATH]
+       holo-config-generate-cli --help
 
 Creates Holo config file that contains seed and admin email/password.
 
 Options:
   --email EMAIL          HoloPort admin email address
   --password STRING      HoloPort admin password
-  --device_name STRING   HoloPort admin device_name
-  --seed-from PATH       Use SHA-512 hash of given file truncated to 256 bits as seed
+  --device-name STRING   HoloPort admin device name
+  --seed-from PATH       Use SHA-512 hash of given file truncated to 256 bits as seed (optional)
 ";
 
 #[derive(Deserialize)]
 struct Args {
     flag_email: String,
     flag_password: String,
+    flag_device_name: String,
     flag_seed_from: Option<PathBuf>,
 }
 
@@ -43,7 +44,7 @@ fn main() -> Result<(), Error> {
         }
     };
 
-    let (config, public_key) = Config::new(args.flag_email, args.flag_password, maybe_seed)?;
+    let (config, public_key) = Config::new(args.flag_email, args.flag_password, args.flag_device_name, maybe_seed)?;
     eprintln!("{}", public_key::to_url(&public_key)?);
     println!("{}", serde_json::to_string_pretty(&config)?);
 
