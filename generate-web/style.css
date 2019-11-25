@@ -331,13 +331,15 @@ label {
 
 /* List Components */
 
-.list-group {
+.list-group,
+.image-block {
   display: inline-block;
   margin: 5px;
   padding: 0;
 }
 
-.list-group-item {
+.list-group-item,
+.image-block-item {
   display: flex;
   justify-content: left;
   list-style-type: none;
@@ -348,7 +350,8 @@ label {
   margin-bottom: 32px; 
 }
 
-.list-icons {
+.list-icons,
+.image-block-icon {
   flex-grow: 0;
   flex-shrink: 0;
   display: inline-block !important;
@@ -380,7 +383,8 @@ label {
   margin: 50px 20px;
   border-bottom: 1px solid #2C405A;
 }
-.form-item.error {
+
+.error {
   border-bottom: 1px solid #EE4266;
 }
 
@@ -426,6 +430,10 @@ label {
 
  .input-note {
   justify-self: flex-end;
+ }
+
+ #form-error-message {
+   margin-left: 22px;
  }
 
 
@@ -510,6 +518,7 @@ a.btn:disabled, a.btn[disabled] {
   color: #FFFFFF;
 }
 
+.action-button,
 .next-btn {
   color: #FFFFFF;
   background-color: #00838D;
@@ -643,11 +652,6 @@ a.btn:disabled, a.btn[disabled] {
 
 
 /* Modal Components */
-
-.tos-link {
-    font-size: x-small;
-}
-
 #fixed-overlay-error {
     display: none;
     position: fixed;

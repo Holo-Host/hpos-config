@@ -22,7 +22,7 @@
             <h1 class="stepLabel step1 step2 step3 step4 greeting">Get your HoloPort configured and ready to host.</h1>
           </div>
           <img id="holoport-flying" class="stepLabel step1 step2 step3 step4" src='assets/images/hports-flying-transparent.png' />
-          <a class="stepLabel step1 step2 step3 step4 help-link" href="#">Holo Customer Service</a>
+          <a class="stepLabel step1 step2 step3 step4 help-link text-white" href="#">Holo Customer Service</a>
           <img id="holo-brand-wrapper" class="stepLabel step1 step2 step3 step4" src='assets/icons/holo-logo-avatar.svg' />
         </aside>
         <main id='content-container-bookend' class="stepHeader step0">
@@ -79,20 +79,20 @@
 
                   <div class="stepLabel step1">
                       <div class="step-label-info"><span class="holo-green">Step 1.</span> Register your HoloPort by making login credentials.</div>
-                      <span id="form-error" class="error-red"></span>
+                      <span id="form-error-message" class="error-red"></span>
                   </div>
                   <div class="stepLabel step2">
-                      <div class="step-label-info"><span class="holo-green">Step 2.</span> Save the configuration file for your HoloPort onto a USB drive.</div>
+                      <div class="step-label-info"><span class="holo-green">Step 2.</span> Download the configuration file, then, drag file from your downloads folder to your HoloPort drive to save file.</div>
                   </div>
                   <div class="stepLabel step3">
-                      <div class="step-label-info"><span class="holo-green">Step 3.</span> Move the configuration file to your HoloPort.</div>
+                      <div class="step-label-info"><span class="holo-green">Step 3.</span> Insert USB to your HoloPort to transfer the configuration file.</div>
                   </div>
                   <div class="stepLabel step4">
                       <div class="step-label-info"><span class="holo-green">Step 4:</span> Connect your HoloPort to the Holo network.</div>
                   </div>
                 </div>
                 <form class="stepBox step1">
-                  <div class='form-item'>
+                  <div id='device-name-form-item' class='form-item'>
                     <div class="input-item">
                       <div class="input-base">
                         <label id="device-name-label" class='input-item-label' data-shrink="false">HoloPort Name:</label>
@@ -102,7 +102,7 @@
                       <span id="device-name-error-message" class="error-red"></span>
                     </div>
                   </div>
-                  <div class='form-item'>
+                  <div id='email-form-item' class='form-item'>
                     <div class="input-item">
                       <div class="input-base">
                         <label id="email-label" class='input-item-label' data-shrink="false">Your Email*:</label>
@@ -112,7 +112,7 @@
                       <span id="email-error-message" class="error-red"></span>
                     </div>
                   </div>
-                  <div class='form-item'>
+                  <div id='password-form-item' class='form-item'>
                     <div class="input-item">
                       <div class="input-base">
                         <label id="password-label" class='input-item-label' data-shrink="false">Your Password:</label>
@@ -122,7 +122,7 @@
                       <span id="password-error-message" class="error-red"></span>
                     </div>
                   </div>
-                  <div class='form-item'>
+                  <div id='password-check-form-item' class='form-item'>
                     <div class="input-item">
                       <div class="input-base">
                         <label id="password-check-label" class='input-item-label' data-shrink="false">Retype Password:</label>
@@ -143,15 +143,27 @@
                     </div>
                   </div>
                 </form>
+
                 <div class="stepBox step2">
-                    <a id="download-button" class="btn button-font next-btn"><span>Save to USB Drive</span></a>
-                    <div>
-                      <p class="tos-link note-text">By clicking the "Save to USB Drive" button, you agree to Holo's <a href="#" id="open-overlay">Terms and Conditions</a></p>
+                    <div class="image-block">
+                      <div class="image-block-item">
+                        <img src="assets/icons/cloud-download-icon.svg" class="image-block-icon card-image" />
+                        <img src="assets/icons/file-montericon.svg" class="image-block-icon" />
+                        <img src="assets/icons/arrow-icon.svg" class="image-block-icon" />
+                        <img src="assets/icons/holo-icon.svg" class="image-block-icon card-image" />
+                      </div>
+                      <a id="download-button" class="btn button-font action-button"><span>Save to USB Drive</span></a>
                     </div>
-                    <button id="back-button2" class="btn button-font previous-btn"><span>Previous</span></button>
-                    <button id="post-download-button" class="btn button-font next-btn"><span>Next</span></button>
+ 
                     <div>
-                        <p class='note-text'>or press Enter</p>
+                      <p class="note-text email-disclaimer">By clicking the "Save to USB Drive" button, you agree to Holo's <a href="#" id="open-overlay" class="holo-green">Terms and Conditions</a>
+                    </div>
+                    <div class="button-wrapper">
+                      <button id="back-button2" class="btn button-font previous-btn"><span>Previous</span></button>
+                      <div class="break-text">
+                        <button id="post-download-button" class="btn button-font next-btn"><span>Next</span></button>
+                        <p class='note-text enter-text'>or press Enter</p>
+                      </div>
                     </div>
                 </div>
                 <div class="stepBox step3">
