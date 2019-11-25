@@ -79,9 +79,10 @@ impl State {
         let holochain_secret_key = SecretKey::from_bytes(&seed)?;
         let holochain_public_key = PublicKey::from(&holochain_secret_key);
 
+        let admin_keypair = admin_keypair_from(holochain_public_key, &email, &password)?;
         let admin = Admin {
             email: email.clone(),
-            public_key: admin_public_key_from(holochain_public_key, &email, &password)?,
+            public_key: admin_keypair.public,
         };
 
         Ok((
@@ -94,11 +95,11 @@ impl State {
     }
 }
 
-fn admin_public_key_from(
+pub fn admin_keypair_from(
     holochain_public_key: PublicKey,
     email: &str,
     password: &str,
-) -> Result<PublicKey, Error> {
+) -> Result<Keypair, Error> {
     // This allows to use email addresses shorter than 8 bytes.
     let salt = Sha512::digest(email.as_bytes());
     let mut hash = [0; SEED_SIZE];
@@ -111,5 +112,11 @@ fn admin_public_key_from(
         ARGON2_ADDITIONAL_DATA,
     );
 
-    Ok(PublicKey::from(&SecretKey::from_bytes(&hash)?))
+    let secret_key = SecretKey::from_bytes(&hash)?;
+    let public_key = PublicKey::from(&secret_key);
+
+    Ok(Keypair{
+        public: public_key,
+        secret: secret_key,
+    })
 }
