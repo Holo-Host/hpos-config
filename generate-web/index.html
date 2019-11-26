@@ -76,12 +76,10 @@
                 </div>
               </div>
             </div>
-            <div class="stepBox step0">
-              <div class=" button-wrapper">
-                <div class="break-text">
-                  <button id="start-button" class="btn first-btn button-font"><span>Get Started!</span></button>
-                  <p class='note-text enter-text text-white'>or press Enter</p>
-                </div>
+            <div class="stepButton step0">
+              <div class="break-text">
+                <button id="start-button" class="btn first-btn button-font"><span>Get Started!</span></button>
+                <p class='note-text enter-text text-white'>or press Enter</p>
               </div>
             </div>
           </div>
@@ -113,7 +111,7 @@
                       <div class="step-label-info"><span class="holo-green">Step 4:</span> Connect your HoloPort to the Holo network.</div>
                   </div>
                 </div>
-                <form class="stepBox step1">
+                <form id= 'step1-form' class="stepBox step1">
                   <div id='device-name-form-item' class='form-item'>
                     <div class="input-item">
                       <div class="input-base">
@@ -161,37 +159,24 @@
                   <div>
                     <p class="note-text email-disclaimer">* You must use the same email you used to purchase the HoloPort or will need to be white listed for testing.</p>
                   </div>
-                  <div class="button-wrapper">
-                    <button id="back-button1" class="btn button-font previous-btn"><span>Previous</span></button>
-                    <div class="break-text">
-                      <button id="generate-button" class="btn button-font next-btn"><span>Next</span></button>
-                      <p class='note-text enter-text'>or press Enter</p>
-                    </div>
-                  </div>
                 </form>
 
                 <div class="stepBox step2">
-                    <div class="image-block">
-                      <div class="image-block-item">
-                        <img src="assets/icons/cloud-download-icon.svg" class="image-block-icon card-image" />
-                        <img id="file-icon" src="assets/icons/file-icon.svg" class="image-block-icon" />
-                        <img id="arrow-icon" src="assets/icons/arrow-icon.svg" class="image-block-icon" />
-                        <img src="assets/icons/holo-icon.svg" class="image-block-icon card-image" />
-                      </div>
-                      <div class="download-button-wrapper">
-                        <a id="download-button" class="btn button-font action-button"><img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span>Save to USB Drive</span></a>
-                      </div>
+                  <div class="image-block">
+                    <div class="image-block-item">
+                      <img src="assets/icons/cloud-download-icon.svg" class="image-block-icon card-image" />
+                      <img id="file-icon" src="assets/icons/file-icon.svg" class="image-block-icon" />
+                      <img id="arrow-icon" src="assets/icons/arrow-icon.svg" class="image-block-icon" />
+                      <img src="assets/icons/holo-icon.svg" class="image-block-icon card-image" />
                     </div>
-                    <div class="block-subtext">
-                      <p class="subheader-text email-disclaimer">* By clicking the "Save to USB Drive" button, you agree to Holo's <a href="#" id="open-overlay" class="holo-green">Terms and Conditions</a>.
+                    <div class="download-button-wrapper">
+                      <a id="download-button" class="btn button-font action-button"><img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span>Save to USB Drive</span></a>
                     </div>
-                    <div class="button-wrapper">
-                      <button id="back-button2" class="btn button-font previous-btn"><span>Previous</span></button>
-                      <div class="break-text">
-                        <button id="post-download-button" class="btn button-font next-btn"><span>Next</span></button>
-                        <p class='note-text enter-text'>or press Enter</p>
-                      </div>
-                    </div>
+                    <span id="generate-config-error-message" class="error-red"></span>
+                  </div>
+                  <div class="block-subtext">
+                    <p class="subheader-text email-disclaimer">* By clicking the "Save to USB Drive" button, you agree to Holo's <a href="#" id="open-overlay" class="holo-green">Terms and Conditions</a>.</p>
+                  </div>
                 </div>
 
                 <div class="stepBox step3">
@@ -202,13 +187,6 @@
                   </div>
                   <div>
                     <p class="subheader-text">* Copy the downloaded <span class="bold">holo-config.json</span> file to a USB Drive, and then that USB Drive into your HoloPort.</p>
-                  </div>
-                  <div class="button-wrapper">
-                    <button id="back-button3" class="btn button-font previous-btn"><span>Back</span></button>
-                    <div class="break-text">
-                      <button id="copied-button" class="btn next-btn button-font"><span>Next</span></button>
-                      <p class='note-text enter-text'>or press Enter</p>
-                    </div>
                   </div>
                 </div>
 
@@ -224,17 +202,43 @@
                   <div class="block-bottom-text">
                     <p class='subheader-text'>Note: If you don’t receive an email within 5 minutes, please reach out to <a href="#" class="holo-green">customer service.</a></p>
                   </div>
-                  <div class="button-wrapper">
-                    <button id="back-button4" class="btn button-font previous-btn"><span>Back</span></button>
-                    <div class="break-text">
-                      <button id="final-stage-button" class="btn next-btn button-font"><span>Next</span></button>
-                      <p class='note-text enter-text'>or press Enter</p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </main>
+
+        <main id='content-container' class="stepButton step1 step2 step3 step4">
+          <div class="button-container">
+            
+            <div class="stepButton step1">
+              <div class="button-wrapper">
+                <button id="back-button1" class="stepButton step1 btn button-font previous-btn"><span>Previous</span></button>
+                <button id="generate-button" class="stepButton step1 btn button-font next-btn"><span>Next</span></button>
+              </div>    
+            </div>
+            <div class="stepButton step2">
+              <div class="button-wrapper">
+                  <button id="back-button2" class="stepButton step2 btn button-font previous-btn"><span>Previous</span></button>
+              <button id="post-download-button" class="stepButton step2 btn button-font next-btn"><span>Next</span></button>
+              </div>
+            </div>    
+            <div class="stepButton step3">
+              <div class="button-wrapper">
+                  <button id="back-button3" class="stepButton step3 btn button-font previous-btn"><span>Back</span></button>
+              <button id="copied-button" class="stepButton step3 btn next-btn button-font"><span>Next</span></button>
+              </div>
+            </div>
+            <div class="stepButton step4">
+              <div class="button-wrapper">
+                  <button id="back-button4" class="stepButton step4 btn button-font previous-btn"><span>Back</span></button>
+              <button id="final-stage-button" class="stepButton step4 btn next-btn button-font"><span>Next</span></button>
+              </div>
+            </div>
+
+            <p class='note-text enter-text'>or press Enter</p>
+          </div>
+
           <div id="fixed-overlay-tos">
               <div class="modal-content">
                   <div class="close" id="close-overlay"></div>
@@ -245,7 +249,8 @@
               </div>
           </div>
           <div id="modal-overlay"></div>
-        </main>
+        </main>   
+
       <script src="index.js"></script>
     </body>
 </html>

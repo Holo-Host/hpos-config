@@ -31,19 +31,22 @@ import './style.css'
   }
 
   const inlineVariables = {
+    contentContainer: document.querySelector('#content-container'),
     emailPlaceholder: document.querySelector('#email-placeholder'),
-    emailLabel: document.querySelector('#email-label'),
-    passwordLabel: document.querySelector('#password-label'),
-    passwordCheckLabel: document.querySelector('#password-check-label'),
-    deviceNameLabel: document.querySelector('#device-name-label'),
-    holoportFlyingBookend: document.querySelector('#holoport-flying-bookend')
+    emailInputArea: document.querySelector('#email-form-item'),
+    passwordInputArea: document.querySelector('#password-form-item'),
+    passwordCheckInputArea: document.querySelector('#password-check-form-item'),
+    deviceNameInputArea: document.querySelector('#device-name-form-item'),
+    holoportFlyingBookend: document.querySelector('#holoport-flying-bookend'),
+    generateConfigErrorMessage: document.querySelector('#generate-config-error-message')
   }
 
   const errorMessages = {
     missingFields: '*Please complete missing fields.',
     email: '*Email domain not recognized',
     password: '*Your password needs to be at least eight character in length',
-    passwordCheck: '*Passwords do not match'
+    passwordCheck: '*Passwords do not match',
+    generateConfig: '*Your download was unsuccessful'
   }
 
   const user = {
@@ -63,17 +66,17 @@ import './style.css'
         return null
       }
       // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
-      updateUiStep(1)
+      // updateUiStep(1)
   
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      // updateUiStep(2)
+      updateUiStep(2)
     },  
     generate: () => {
       /* Set user config */
       user.email = inputs.email.value
       user.password = inputs.password.value
       user.device_name = inputs.deviceName.value
-      console.log('user config : ', user) 
+      console.log('user config : ', user)
 
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
@@ -82,9 +85,11 @@ import './style.css'
       setTimeout(() => {
         /* Generate hpos-state.json and create download blob attached to url */
         try {
+          inlineVariables.generateConfigErrorMessage.innerHTML = ''
           generateDownload(user, buttons.download)
         } catch (e) {
           console.log(`Error executing generateDownload with an error ${e}`)
+          inlineVariables.generateConfigErrorMessage.innerHTML = errorMessages.generateConfig
           return null
         }
 
@@ -164,8 +169,11 @@ import './style.css'
           }
         }
       }
-      labelId.classList.add('input-active')
-      labelId.dataset.shrink = 'true'
+
+      if (labelId) {
+        labelId.classList.add('input-active')
+        labelId.dataset.shrink = 'true'
+      }
       
       verifyInputData()
     }
@@ -190,26 +198,31 @@ import './style.css'
   buttons.back4.onclick = click.back4
   
   /* Bind listeners to inputs */
-  inlineVariables.deviceNameLabel.onclick = inputs.deviceName.click()
-  inlineVariables.emailLabel.onclick = inputs.email.click()
-  inlineVariables.passwordLabel.onclick = inputs.password.click()
-  inlineVariables.passwordCheckLabel.onclick = inputs.passwordCheck.click()
+  inlineVariables.deviceNameInputArea.onclick = () => inputs.deviceName.focus()
+  inlineVariables.emailInputArea.onclick = () => inputs.email.focus()
+  inlineVariables.passwordInputArea.onclick = () => inputs.password.focus()
+  inlineVariables.passwordCheckInputArea.onclick = () => inputs.passwordCheck.focus()
 
   inputs.deviceName.onfocus = click.activateInput
   inputs.email.onfocus = click.activateInput
   inputs.password.onfocus = click.activateInput
   inputs.passwordCheck.onfocus = click.activateInput
-  /* TODO: Update the password inputs to haave passive event listeners... */
-  // inputs.password.addEventListener('focus', click.activateInput, true) = click.activateInput
-  // inputs.passwordCheck.addEventListener('focus', click.activateInput, true) = click.activateInput
-
-
 
   /** Helper Functions :
   * =============================
-  *
-  * Email Verification - Display back User Email on Step 4 */
-  inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email'
+  * 
+  * Step Listener to initiate step specific actions
+  */
+  const constantCheck = ()=>{
+    console.log("CHECKING: ", stepTracker)
+    if (stepTracker === 1) {
+      /* Add click listener to page container on Page 2 form intake */
+      inlineVariables.contentContainer.onclick = click.activateInput
+    } else if(stepTracker === 4) {
+      /* Display back User Email on Page 4 for visual email verification -  */
+      inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('User Email not found. Config may be corrupted.')
+    }
+  }
 
   /**
    * Validate if string is email (super simple because actual validation is via sent email)
@@ -240,14 +253,19 @@ import './style.css'
       return null
     }
     stepTracker = step
-    renderStyle(stepTracker)
+
+    console.log('step : ', step)
     console.log('stepTracker : ', stepTracker)
+
+    renderStyle(stepTracker)
+    constantCheck()
     
     return document.body.className = 'step' + step
   }
 
   /**
    * Update the progresss bar
+   * 
    * @param {int} currentTransition
    * @param {bool} rewind
   */
@@ -299,12 +317,10 @@ import './style.css'
   */
   const resetFields = (inputElements) => {    
     for (let inputElement of inputElements) {
-      document.querySelector(`#${inputElement.id}-form-item`).classList.remove('error')
-      inputElement.parentElement.querySelector('.input-item-label').classList.remove('error')
+      document.querySelector(`#${inputElement.id}-form-item`).classList.remove('error-red')
+      inputElement.parentElement.querySelector('.input-item-label').classList.remove('error-red')
       document.querySelector('#form-error-message').innerHTML = ''
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
-
-      // console.log(inputElement, inputElement.parentElement.parentElement.parentElement.parentElement.querySelector('.form-item').classList)
     }
   }
 
@@ -318,8 +334,8 @@ import './style.css'
     console.log('errorMessage', errorMessage)
     console.log('errorFieldsArray', errorFieldsArray)
     for (let errorField of errorFieldsArray) {    
-      document.querySelector(`#${errorField.id}-form-item`).classList.add('error')
-      errorField.parentElement.querySelector('.input-item-label').classList.add('error')
+      document.querySelector(`#${errorField.id}-form-item`).classList.add('error-red')
+      errorField.parentElement.querySelector('.input-item-label').classList.add('error-red')
 
       if (errorMessage === errorMessages.missingFields) document.querySelector('#form-error-message').innerHTML = errorMessage
       else document.querySelector(`#${errorField.id}-error-message`).innerHTML = errorMessage
@@ -335,9 +351,9 @@ import './style.css'
   const confirmValidInput = () => {
     const inputElements = Object.values(inputs)
     resetFields(inputElements)
-    if(!inputs.deviceName.value || !inputs.email.value || !inputs.password.value || !inputs.passwordCheck.value) {
-    const missingFields = inputElements.filter(inputElement => !inputElement.value) 
-    renderInputError(errorMessages.missingFields, missingFields)
+    if(!inputs.deviceName.value || !inputs.email.value) {
+      const missingFields = inputElements.filter(inputs => !inputs.value) 
+      renderInputError(errorMessages.missingFields, missingFields)
       return false
     } else if (!validateEmail(inputs.email.value)) {
       renderInputError(errorMessages.email, [inputs.email])
@@ -346,7 +362,7 @@ import './style.css'
       renderInputError(errorMessages.password, [inputs.password])
       return false
     } else if (inputs.password.value !== inputs.passwordCheck.value) {
-      const errorInputs = [inputs.password.value, inputs.passwordCheck.value]
+      const errorInputs = [inputs.password, inputs.passwordCheck]
       renderInputError(errorMessages.passwordCheck, errorInputs)
       return false
     } else {
@@ -377,7 +393,6 @@ import './style.css'
   */
   const verifyDownloadComplete = (configDownloaded) => {
     if(configDownloaded) {
-      console.log('CONFIG IS DOWNLOADED ... ')
       buttons.postDownload.disabled = false
     }
     return configDownloaded
@@ -389,8 +404,8 @@ import './style.css'
   const renderStyle = (step = stepTracker = 0) => {
     if (step === 1 || step === 2 || step === 3){
       inlineVariables.holoportFlyingBookend.style.zIndex = '2'
+      console.log('step (should be 1, 2, or 3), inlineVariables.holoportFlyingBookend.style : ', step, inlineVariables.holoportFlyingBookend.style)
     }
     return step
   }
-  renderStyle(stepTracker)
 })()

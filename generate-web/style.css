@@ -18,7 +18,7 @@ body.loading {
   display: none;
 }
 
-.stepHeader, .stepLabel, .stepBox {
+.stepHeader, .stepLabel, .stepBox, .stepButton {
   display: none;
 }
 
@@ -61,7 +61,7 @@ p.break-text span{
 .error-red {
   color: #EE4266;
   mix-blend-mode: normal;
-  opacity: 0.4;
+  opacity: 0.8;
 }
 
 .clam-grey {
@@ -465,11 +465,11 @@ label {
 }
 
 .form-item {
-  margin: 80px 20px 15px;
+  margin: 6vh 20px 15px;
   border-bottom: 1px solid #2C405A;
 }
 
-.form-item.error {
+.form-item.error-red {
   border-bottom: 1px solid #EE4266;
 }
 
@@ -496,7 +496,7 @@ label {
   transform-origin: top left;
   transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;  
 }
-.input-item-label.error {
+.input-item-label.error-red {
   color: #EE4266;
 }
 
@@ -560,7 +560,7 @@ label {
   max-width: 640px;
 }
 
-.step2 .card-transparent {
+body.step2 .card-transparent {
   margin: 6vh;
   margin-bottom: 0px;
   max-width: 68%;
@@ -584,11 +584,11 @@ label {
   justify-content: center;
   margin-top: 50px;
 }
-
-.step0 .button-wrapper {
+/* 
+.step0 .stepButton {
   justify-content: center;
   position: unset;
-}
+} */
 
 button {
   padding: 4px 23px;
