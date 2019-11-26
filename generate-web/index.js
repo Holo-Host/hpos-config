@@ -63,10 +63,10 @@ import './style.css'
         return null
       }
       // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
-      // updateUiStep(1)
+      updateUiStep(1)
   
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      updateUiStep(3)
+      // updateUiStep(3)
     },  
     generate: () => {
       /* Set user config */
