@@ -26,7 +26,8 @@ body.step-monitor .step0,
  body.step1 .step1,
  body.step2 .step2,
  body.step3 .step3,
- body.step4 .step4
+ body.step4 .step4,
+ body.step5 .step5
 {
   display: flex;
   flex-flow: column;
@@ -43,6 +44,10 @@ body.step-monitor .step0,
 
 p.break-text span{
   display: table;
+}
+
+.break-text {
+  text-align: center;
 }
 
 
@@ -102,7 +107,6 @@ form {
   flex-flow: row nowrap;
   -ms-flex-pack: center;
   margin: 10px 5px;
-  /* margin: 0 auto; */
   padding: 0;
   border: 0;
   outline: 0;
@@ -175,16 +179,29 @@ label {
   color: rgba(44, 64, 90, 0.6);
 }
 
-.email-disclaimer {
-  margin-top: -10px;
+.subheader-text {
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: -0.4px;
+  color: #2C405A;
+}
+
+.block-subtext {
+  margin-top: 5vh;
 }
 
 .enter-text {
   text-align: center;
 }
 
-/* Icon Elements */
+.pageHeader {
+  font-size: 100px;
+  line-height: 40px;
+  text-align: center;
+}
 
+
+/* Image & Icon Elements */
 #holo-banner-wrapper {
   position: absolute;
   top: 50px;
@@ -232,6 +249,39 @@ label {
   width: 50vw;
   height: calc(50vw * 0.55);
 }
+
+.image-block-icon {
+  height: 50px !important;
+  width: 55px !important;
+  margin: 0px 30px;
+}
+
+.card-image {
+  padding: 30px;
+  background: #FFFFFF;
+  box-shadow: 0px 2.5px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.step2 #holo-icon {
+  margin-right: none;
+}
+
+#file-icon {
+  align-self: center;
+  width: 40px !important;
+}
+
+#arrow-icon {
+  align-self: center;
+  height: 16px !important;
+}
+
+.main-display-image {
+  height: 10vw;
+  width: 20vw;
+}
+
 
 
 /* Page Content Containers & Wrappers */
@@ -297,6 +347,7 @@ label {
   color: #3aa794;
 }
 
+.step5-header
 .step0-header {
   margin: 0 auto;
   font-weight: 300;
@@ -305,6 +356,7 @@ label {
   margin-top: 1rem;
 }
 
+.step5-label-info
 .step0-label-info {
   display: block;
   margin-top: 0;
@@ -320,7 +372,6 @@ label {
 .step-label-info {
   color: #2C405A;
   display: block;
-  margin: 0 auto;
   margin-bottom: 2rem;
   font-style: normal;
   font-weight: bold;
@@ -328,8 +379,12 @@ label {
   line-height: 35px;
 }
 
+.stepLabel .step2.pageHeader {
+  max-width: 746px;
+}
 
-/* List Components */
+
+/* List & Image Block Components */
 
 .list-group,
 .image-block {
@@ -364,6 +419,11 @@ label {
   margin: 0px
 }
 
+.image-block {
+  min-width: 238px;
+  margin: 0 auto;
+}
+
 
 /* Form Fields & Inputs */
 
@@ -380,11 +440,11 @@ label {
 }
 
 .form-item {
-  margin: 50px 20px;
+  margin: 80px 20px 15px;
   border-bottom: 1px solid #2C405A;
 }
 
-.error {
+.form-item.error {
   border-bottom: 1px solid #EE4266;
 }
 
@@ -434,7 +494,13 @@ label {
 
  #form-error-message {
    margin-left: 22px;
+   margin-bottom: 0px;
  }
+
+ span.error-red {
+  margin: 20px;
+  margin-top: -10px;
+}
 
 
 /* Card Components */
@@ -447,6 +513,7 @@ label {
   justify-content: baseline;
 }
 
+.step5 .card-wrapper,
 .step0 .card-wrapper {
   margin: 6vh;
   margin-bottom: 0px;
@@ -463,9 +530,17 @@ label {
   transition: margin-top 0.3s ease-in-out;
 }
 
+.step5 .card-transparent,
 .step0 .card-transparent {
   max-width: 640px;
 }
+
+.step2 .card-transparent {
+  margin: 6vh;
+  margin-bottom: 0px;
+  max-width: 68%;
+}
+
 
 /* Button Components */
 
@@ -476,6 +551,13 @@ label {
   position: fixed;
   bottom: 40px;
   right: 72px;
+}
+
+.download-button-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 50px;
 }
 
 .step0 .button-wrapper {
@@ -571,6 +653,12 @@ a.btn:disabled, a.btn[disabled] {
   left: 0;
 }
 
+#download-button {
+  width: 324px;
+  height: 30px;
+  line-height: 28px;
+}
+
 /* Link Elements */
 
 .help-link {
@@ -652,21 +740,8 @@ a.btn:disabled, a.btn[disabled] {
 
 
 /* Modal Components */
+
 #fixed-overlay-error {
-    display: none;
-    position: fixed;
-    top: 3em;
-    bottom: 3em;
-    left: 3em;
-    right: 3em;
-    background: #fff;
-    border-radius: 2em;
-    border: 1px #ddd solid;
-    overflow: hidden;
-}
-
-
-#fixed-overlay-tos {
   display: none;
   position: fixed;
   top: 3em;
@@ -679,36 +754,63 @@ a.btn:disabled, a.btn[disabled] {
   overflow: hidden;
 }
 
+#fixed-overlay-tos {
+  display: none;
+  position: fixed;
+  top: calc(30% - 6em);
+  left: calc(30% + 6em);
+  width: 60%;
+  max-width: 800px;
+  height: 40%;
+  max-height: 505px;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px #ddd solid;
+  overflow: hidden;
+  z-index: 1010;
+}
+
+#modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(44, 64, 90, 0.46);
+  z-index: 1000;
+}
+
 .modal-content {
-    margin: 3em;
-    padding: 0 1em;
-    overflow: auto; 
-    height: calc(100% - 6em);
+  margin: 3em;
+  padding: 0 1em;
+  overflow: auto; 
+  height: calc(100% - 6em);
 }
 
 .close {
-    position: absolute;
-    right: 1.7em;
-    top: 1.2em;
-    width: 32px;
-    height: 32px;
-    opacity: 0.3;
+  position: absolute;
+  right: 1.7em;
+  top: 0.4em;
+  width: 41px;
+  height: 11px;
+  opacity: 0.3;
   }
 .close:hover {
-    opacity: 1;
+  opacity: 1;
 }
 .close:before, .close:after {
-    position: absolute;
-    left: 15px;
-    content: ' ';
-    height: 33px;
-    width: 2px;
-    background-color: #333;
+  position: absolute;
+  left: 15px;
+  content: ' ';
+  height: 22px;
+  width: 2px;
+  background-color: #333;
 }
 .close:before {
-    transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 .close:after {
-    transform: rotate(-45deg);
+  transform: rotate(-45deg);
 }
 

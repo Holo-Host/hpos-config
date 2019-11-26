@@ -6,7 +6,6 @@ import './style.css'
   const DOWNLOAD_FILE_NAME = 'hpos-state.json'
 
   let stepTracker
-  let configDownloaded
 
   /* Parse HTML elements */
   const buttons = {
@@ -15,11 +14,13 @@ import './style.css'
     download: document.querySelector('#download-button'),
     postDownload: document.querySelector('#post-download-button'),
     copied: document.querySelector('#copied-button'),
+    finalStage: document.querySelector('#final-stage-button'),
     openOlay: document.querySelector('#open-overlay'),
     closeOlay: document.querySelector('#close-overlay'),
     back1: document.querySelector('#back-button1'),
     back2: document.querySelector('#back-button2'),
-    back3: document.querySelector('#back-button3')
+    back3: document.querySelector('#back-button3'),
+    back4: document.querySelector('#back-button4')
   }
 
   const inputs = {
@@ -40,9 +41,9 @@ import './style.css'
 
   const errorMessages = {
     missingFields: '*Please complete missing fields.',
-    email: 'Email domain not recognized',
-    password: 'Password cannot be empty',
-    passwordCheck: 'Your password needs to be at least eight characters in length'
+    email: '*Email domain not recognized',
+    password: '*Your password needs to be at least eight character in length',
+    passwordCheck: '*Passwords do not match'
   }
 
   const user = {
@@ -61,8 +62,12 @@ import './style.css'
         alert('Please upgrade your browser to newer version.')
         return null
       }
-      updateUiStep(1)
-    },
+      // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
+      // updateUiStep(1)
+  
+      // DEV MODE HACK TO SWITCH THROUGH PAGES
+      updateUiStep(3)
+    },  
     generate: () => {
       /* Set user config */
       user.email = inputs.email.value
@@ -72,7 +77,6 @@ import './style.css'
 
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
-      buttons.generate.innerText = 'Generating Keys...'
 
       /* Move generateDownload out of exec flow */
       setTimeout(() => {
@@ -102,10 +106,10 @@ import './style.css'
       setTimeout(() => {
         buttons.download.disabled = false
         buttons.download.innerText = 'Save to USB Drive'
-        configDownloaded = true
+        verifyDownloadComplete(true)
       }, 1000)
     },
-    postDownload: () => {
+    postDownload: () => {      
       updateUiStep(3)
       updateProgressBar(2)
     },
@@ -113,11 +117,20 @@ import './style.css'
       updateUiStep(4)
       updateProgressBar(3)
     },
+    finalStage: () => {
+      updateUiStep(5)
+    },
     openOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'block'
+      document.querySelector('#modal-overlay').style.display = 'block'
+      console.log('holo-brand-wrapper El', document.querySelector('#holo-brand-wrapper'));
+      console.log('holo-brand-wrapper z-index', document.querySelector('#holo-brand-wrapper').style);
+      // document.querySelector('#holo-brand-wrapper').style.zIndex = '1'
     },
     closeOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'none'
+      document.querySelector('#modal-overlay').style.display = 'none'
+      document.querySelector('#holo-brand-wrapper').style.zIndex = '99'
     },
     back1: () => {
       const rewind = true
@@ -134,15 +147,15 @@ import './style.css'
       updateProgressBar(3, rewind)
       updateUiStep(2)
     },
+    back4: () => {
+      const rewind = true
+      updateProgressBar(4, rewind)
+      updateUiStep(3)
+    },
     activateInput: event => {
-      console.log('INSIDE ACTIVE INPUT');
-      
       const inputId = event.target.id
       const labelId = document.querySelector(`#${inputId}-label`)
       const activeInputs = document.querySelectorAll('.input-active')
-
-      console.log('activeInputs', activeInputs);
-
       if (activeInputs) {
         for (let activeInput of activeInputs) {
           if (!activeInput.parentElement.querySelector('input').value){
@@ -166,13 +179,15 @@ import './style.css'
   buttons.start.onclick = click.start
   buttons.generate.onclick = click.generate
   buttons.download.onclick = click.download
-  buttons.postDownload.onClick = click.postDownload
+  buttons.postDownload.onclick = click.postDownload
   buttons.copied.onclick = click.copied
+  buttons.finalStage.onclick = click.finalStage
   buttons.openOlay.onclick = click.openOlay
   buttons.closeOlay.onclick = click.closeOlay
   buttons.back1.onclick = click.back1
   buttons.back2.onclick = click.back2
   buttons.back3.onclick = click.back3
+  buttons.back4.onclick = click.back4
   
   /* Bind listeners to inputs */
   inlineVariables.deviceNameLabel.onclick = inputs.deviceName.click()
@@ -194,7 +209,7 @@ import './style.css'
   * =============================
   *
   * Email Verification - Display back User Email on Step 4 */
-  inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('No valid email registered for user.')
+  inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email'
 
   /**
    * Validate if string is email (super simple because actual validation is via sent email)
@@ -218,7 +233,7 @@ import './style.css'
    *
    * @param {int} step
    */
-  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0 }
+  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
   const updateUiStep = (step) => {
     if (!validation[step]) {
       console.log(`Wrong parameter ${step} in updateUiStep()`)
@@ -226,6 +241,8 @@ import './style.css'
     }
     stepTracker = step
     renderStyle(stepTracker)
+    console.log('stepTracker : ', stepTracker)
+    
     return document.body.className = 'step' + step
   }
 
@@ -282,11 +299,12 @@ import './style.css'
   */
   const resetFields = (inputElements) => {    
     for (let inputElement of inputElements) {
-      document.querySelector(`#${errorField.id}-form-item`).classList.remove('error')
+      document.querySelector(`#${inputElement.id}-form-item`).classList.remove('error')
       inputElement.parentElement.querySelector('.input-item-label').classList.remove('error')
-      inputElement.parentElement.parentElement.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
+      document.querySelector('#form-error-message').innerHTML = ''
+      document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
 
-      console.log(document.querySelector(`#${errorField.id}-form-item`).classList);
+      // console.log(inputElement, inputElement.parentElement.parentElement.parentElement.parentElement.querySelector('.form-item').classList)
     }
   }
 
@@ -299,13 +317,11 @@ import './style.css'
   const renderInputError = (errorMessage, errorFieldsArray) => {
     console.log('errorMessage', errorMessage)
     console.log('errorFieldsArray', errorFieldsArray)
-    for (let errorField of errorFieldsArray) {
+    for (let errorField of errorFieldsArray) {    
       document.querySelector(`#${errorField.id}-form-item`).classList.add('error')
       errorField.parentElement.querySelector('.input-item-label').classList.add('error')
 
-      console.log(document.querySelector(`#${errorField.id}-form-item`).classList);
-
-      if(errorMessage === errorMessages.missingFields) document.querySelector('#form-error-message').innerHTML = errorMessage
+      if (errorMessage === errorMessages.missingFields) document.querySelector('#form-error-message').innerHTML = errorMessage
       else document.querySelector(`#${errorField.id}-error-message`).innerHTML = errorMessage
     }
     return errorMessage
@@ -326,7 +342,7 @@ import './style.css'
     } else if (!validateEmail(inputs.email.value)) {
       renderInputError(errorMessages.email, [inputs.email])
       return false
-    } else if (!inputs.password.value || inputs.password.value.length <= 8) {
+    } else if (!inputs.password.value || inputs.password.value.length <= 7) {
       renderInputError(errorMessages.password, [inputs.password])
       return false
     } else if (inputs.password.value !== inputs.passwordCheck.value) {
@@ -350,28 +366,28 @@ import './style.css'
         buttons.generate.disabled = true
       }
     }
-    console.log('inputValidity ... ', inputValidity)
     return inputValidity
   }
 
   /**
    * Ensure download function has completd before allowing progression to next page
+   *
+   * @param {Boolean} configDownloaded
+   * 
   */
-  const verifyDownloadComplete = () => {
+  const verifyDownloadComplete = (configDownloaded) => {
     if(configDownloaded) {
       console.log('CONFIG IS DOWNLOADED ... ')
       buttons.postDownload.disabled = false
     }
     return configDownloaded
   }
-  verifyDownloadComplete()
 
   /**
    * Add dyamic styles based on step/page
   */
   const renderStyle = (step = stepTracker = 0) => {
     if (step === 1 || step === 2 || step === 3){
-      console.log('RENDERSTYLE : STEP should equal 1, 2 or 3 >>>> : ', step)
       inlineVariables.holoportFlyingBookend.style.zIndex = '2'
     }
     return step
