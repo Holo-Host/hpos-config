@@ -232,6 +232,9 @@ import './style.css'
 
   const buttonBystep = { 0: buttons.start, 1: buttons.generate, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
 
+  const addMinutes = (dt, minutes) => new Date(dt.getTime() + minutes*60000)
+
+
   /** 
   * Step Listener to initiate step specific actions
   */
@@ -244,9 +247,8 @@ import './style.css'
       inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('User Email not found. Config may be corrupted.')
     } else if (stepTracker === 5) {
       /* Start Timer */
-      const deadline = new Date(Date.parse(new Date(new Date().getTime())) + 15 * 24 * 60 * 60 * 1000 * 1)
-      console.log('DEADLINE : ', deadline);
-      
+      const deadline = addMinutes(new Date(), 30)
+      console.log('Email Delivery Deadline : ', deadline);
       countdownTimer(deadline)
     }
   }
@@ -470,5 +472,4 @@ import './style.css'
     updateClock();
     const timeinterval = setInterval(updateClock, 1)
   }
-
 })()
