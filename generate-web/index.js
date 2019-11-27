@@ -133,14 +133,12 @@ import './style.css'
       document.querySelector('#modal-overlay').style.display = 'block'
       console.log('holo-brand-wrapper El', document.querySelector('#holo-brand-wrapper'));
       console.log('holo-brand-wrapper z-index', document.querySelector('#holo-brand-wrapper').style);
-      // document.querySelector('#holo-brand-wrapper').style.zIndex = '1'
       tosTracker = true
       verifyStep2Complete()
     },
     closeOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'none'
       document.querySelector('#modal-overlay').style.display = 'none'
-      document.querySelector('#holo-brand-wrapper').style.zIndex = '99'
     },
     back1: () => {
       const rewind = true
@@ -283,8 +281,6 @@ import './style.css'
       return null
     }
     stepTracker = step
-
-    renderStyle(stepTracker)
     constantCheck()
     
     return document.body.className = 'step' + step
@@ -309,14 +305,14 @@ import './style.css'
     currentlyActive.classList.remove('active')
 
     if (rewind) {
-      for (let i; currentTransition + 1; i++) {
+      for (let i; i<(stepIndex - 1) + 1; i++) {
         console.log('rewind i', i)
         childListNodes[i].classList.add('active')
       }
       return childListNodes[stepIndex - 1]
     }
     else {
-      for (let i; currentTransition + 1; i++) {
+      for (let i; i<(stepIndex + 1) + 1; i++) {
         console.log('proceed i', i)
         childListNodes[i].classList.add('active')
       }
@@ -430,19 +426,6 @@ import './style.css'
     }
     return inputValidity
   }
-
-  /**
-   * Add dyamic styles based on step/page
-  */
-  const renderStyle = (step = stepTracker = 0) => {
-    if (step === 1 || step === 2 || step === 3){
-      inlineVariables.holoportFlyingBookend.style.zIndex = '2'
-      console.log('step (should be 1, 2, or 3), inlineVariables.holoportFlyingBookend.style : ', step, inlineVariables.holoportFlyingBookend.style)
-    }
-    return step
-  }
-
-
 
   const getTimeRemaining = (endtime) => {
     const datetime = Date.parse(endtime) - Date.parse(new Date());
