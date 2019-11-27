@@ -69,10 +69,10 @@ import './style.css'
         return null
       }
       // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
-      updateUiStep(1)
+      // updateUiStep(1)
   
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      // updateUiStep(4)
+      updateUiStep(5)
     },  
     generate: () => {
       /* Set user config */
@@ -247,7 +247,7 @@ import './style.css'
       inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('User Email not found. Config may be corrupted.')
     } else if (stepTracker === 5) {
       /* Start Timer */
-      const deadline = addMinutesToDateTime(new Date(), 30)
+      const deadline = addMinutesToDateTime(new Date(), 1)
       console.log('Email Delivery Deadline : ', deadline);
       countdownTimer(deadline)
     }
@@ -460,7 +460,7 @@ import './style.css'
   
       if (t.total <= 0) {
         clearInterval(timeinterval)
-        inlineVariables.timerMessage.innerHTML = "Time to check your email!"
+        inlineVariables.timerMessage.innerHTML = "Time is up! Check your email."
       }
     }
   

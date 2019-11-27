@@ -223,6 +223,10 @@ label {
   font-size: 100px;
 }
 
+#timer-sub-text{
+  text-align: center;
+}
+
 
 /* Image & Icon Elements */
 #holo-banner-wrapper {
@@ -832,7 +836,7 @@ a.btn:disabled, a.btn[disabled] {
   display: none;
   position: fixed;
   top: calc(30% - 6em);
-  left: calc(30% + 6em);
+  left: calc(35% + 6em);
   width: 60%;
   max-width: 800px;
   height: 40%;
