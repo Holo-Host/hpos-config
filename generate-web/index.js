@@ -69,10 +69,10 @@ import './style.css'
         return null
       }
       // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
-      // updateUiStep(1)
+      updateUiStep(1)
   
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      updateUiStep(2)
+      // updateUiStep(2)
     },  
     generate: () => {
       /* Set user config */
@@ -235,11 +235,6 @@ import './style.css'
   const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
 
   const buttonBystep = { 0: buttons.start, 1: buttons.generateConfig, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
-  
-  const second = 1000,
-    minute = second * 60,
-    hour = minute * 60,
-    day = hour * 24
 
   /** 
   * Step Listener to initiate step specific actions
@@ -253,7 +248,10 @@ import './style.css'
       inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('User Email not found. Config may be corrupted.')
     } else if (stepTracker === 5) {
       /* Start Timer */
-
+      const deadline = new Date(Date.parse(new Date(new Date().getMinutes() + 30)) + 15 * 24 * 60 * 60 * 1000)
+      console.log('DEADLINE : ', deadline);
+      
+      countdownTimer(deadline)
     }
   }
 
@@ -286,7 +284,6 @@ import './style.css'
     }
     stepTracker = step
 
-
     renderStyle(stepTracker)
     constantCheck()
     
@@ -305,17 +302,26 @@ import './style.css'
       console.log(`Wrong parameter ${currentTransition} in updateProgressBar()`)
       return null
     }
-    const stepIndex = currentTransition - 1
-
     /* Locate current step element and remove 'active' class */
     const childListNodes = document.querySelectorAll('li.progressbar-item')
+    const stepIndex = currentTransition - 1
     const currentlyActive = childListNodes[stepIndex]
     currentlyActive.classList.remove('active')
 
     if (rewind) {
-      return childListNodes[stepIndex - 1].classList.add('active')
+      for (let i; currentTransition + 1; i++) {
+        console.log('rewind i', i)
+        childListNodes[i].classList.add('active')
+      }
+      return childListNodes[stepIndex - 1]
     }
-    else childListNodes[stepIndex + 1].classList.add('active')
+    else {
+      for (let i; currentTransition + 1; i++) {
+        console.log('proceed i', i)
+        childListNodes[i].classList.add('active')
+      }
+      return childListNodes[stepIndex + 1]
+    }
   }
 
 
@@ -346,10 +352,9 @@ import './style.css'
    * Verify all form input before allowing progression to next page
   */
   const verifyStep2Complete = () => {
-    console.log('inside verify downloaded', tosTracker, downloadTracker);
-    // const downloadComplete = downloadTracker
-    // const tosViewed = tosTracker
-    if (downloadTracker && tosTracker) buttons.postDownload.disabled = false
+    const downloadComplete = downloadTracker
+    const tosViewed = tosTracker
+    if (downloadComplete && tosViewed) buttons.postDownload.disabled = false
     else return null
   }
 
@@ -362,7 +367,6 @@ import './style.css'
     for (let inputElement of inputElements) {
       document.querySelector(`#${inputElement.id}-form-item`).classList.remove('error-red')
       inputElement.parentElement.querySelector('.input-item-label').classList.remove('error-red')
-      // document.querySelector('#form-error-message').innerHTML = ''
       inlineVariables.formErrorMessage.innerHTML = ''
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
     }
@@ -375,8 +379,6 @@ import './style.css'
    * @param {Array} errorFieldsArray
   */
   const renderInputError = (errorMessage, errorFieldsArray) => {
-    console.log('errorMessage', errorMessage)
-    console.log('errorFieldsArray', errorFieldsArray)
     for (let errorField of errorFieldsArray) {    
       document.querySelector(`#${errorField.id}-form-item`).classList.add('error-red')
       errorField.parentElement.querySelector('.input-item-label').classList.add('error-red')
@@ -441,68 +443,42 @@ import './style.css'
   }
 
 
-  let countDownThirty = new Date().getMinutes() + 30
-  let x = setInterval(() => {
-    let now = new Date().getTime()
-    let distance = countDown - now
 
-    document.getElementById('minutes').innerText = Math.floor((distance % (hour)) / (minute)),
-    document.getElementById('seconds').innerText = Math.floor((distance % (minute)) / second);
-    document.getElementById('milliseconds').innerText = Math.floor((distance % (second)) / millisecond);  
-
-    if (distance < 0) {
-     clearInterval(x);
-     inlineVariables.timerMessage.innerHTML = "Time to check your email!"
+  const getTimeRemaining = (endtime) => {
+    const datetime = Date.parse(endtime) - Date.parse(new Date());
+    const milliseconds = Math.floor((datetime) % 60);
+    const seconds = Math.floor((datetime / 1000) % 60);
+    const minutes = Math.floor((datetime / 1000 / 60) % 60);
+    return {
+      'total': datetime,
+      'minutes': minutes,
+      'seconds': seconds,
+      'milliseconds': milliseconds
     }
-  }, millisecond)
+  }
 
   /**
    * Initiate Timer Countdown
   */
-  const countdownTimer = () => {
-
+  const countdownTimer = (endtime) => {
+    const minutesSpan = document.getElementById('minutes')
+    const secondsSpan = document.getElementById('seconds').innerText
+    const millisecondSpan = document.getElementById('milliseconds').innerText
+  
+    function updateClock() {
+      const t = getTimeRemaining(endtime)
+      minutesSpan.innerHTML = ('0' + t.minutes).slice(-2)
+      secondsSpan.innerHTML = ('0' + t.seconds).slice(-2)
+      millisecondSpan.innerHTML = ('0' + t.milliseconds).slice(-2)
+  
+      if (t.total <= 0) {
+        clearInterval(timeinterval)
+        inlineVariables.timerMessage.innerHTML = "Time to check your email!"
+      }
+    }
+  
+    updateClock();
+    return timeinterval = setInterval(updateClock, 1)
   }
 
 })()
-
-
-function getTimeRemaining(endtime) {
-  const t = Date.parse(endtime) - Date.parse(new Date());
-  const seconds = Math.floor((t / 1000) % 60);
-  const minutes = Math.floor((t / 1000 / 60) % 60);
-  const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-  const days = Math.floor(t / (1000 * 60 * 60 * 24));
-  return {
-    'total': t,
-    'days': days,
-    'hours': hours,
-    'minutes': minutes,
-    'seconds': seconds
-  };
-}
-
-function initializeClock(id, endtime) {
-  const clock = document.getElementById(id);
-  const minutesSpan = document.getElementById('minutes')
-  const secondsSpan = document.getElementById('seconds').innerText
-  const millisecondSpan = document.getElementById('seconds').innerText
-
-
-  function updateClock() {
-    const t = getTimeRemaining(endtime);
-    daysSpan.innerHTML = t.days;
-    hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-    minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-    secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
-
-    if (t.total <= 0) {
-      clearInterval(timeinterval);
-    }
-  }
-
-  updateClock();
-  const timeinterval = setInterval(updateClock, 1000);
-}
-
-const deadline = new Date(Date.parse(new Date()) + 15 * 24 * 60 * 60 * 1000);
-initializeClock('clockdiv', deadline);

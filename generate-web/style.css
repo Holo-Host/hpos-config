@@ -226,7 +226,8 @@ label {
 
 /* Image & Icon Elements */
 #holo-banner-wrapper {
-  width: 25rem;
+  width: calc(11.11rem + 5vw);
+  margin-top: 5vh;
   margin-left: -2rem;
 }
 
@@ -372,9 +373,9 @@ label {
 /* Headings, Titles & Labels */
 
 .greeting-wrapper {
-  flex: 1;
-  /* margin-top: 45vh; */
-  justify-self: center;
+  margin-left: 2%;
+  max-width: 90%;
+  height: 100vh;
   align-self: center;
 }
 
@@ -386,10 +387,18 @@ label {
 
 .greeting {
   line-height: 1.2em;
-  /* margin: -20rem 0rem; */
+  margin: 30vh 0 10vh;
   font-weight: bold;
   font-size: calc(2.7rem + 1vw);
-  width: 40rem;
+  max-width: 30vw;
+}
+
+.greeting-bookend {
+  line-height: 1.2em;
+  margin: 21vh 0 10vh;
+  font-weight: bold;
+  font-size: calc(2.7rem + 1vw);
+  max-width: 30vw;
 }
 
 .header {
@@ -721,11 +730,13 @@ a.btn:disabled, a.btn[disabled] {
 /* Link Elements */
 
 .help-link {
+  margin-top: 33vh;
+  width: 22vw;
   border-width: .2rem;
-  font-weight: 400;
   text-decoration-line: underline;
   color: #00838D;
   font-weight: bold;
+  font-size: calc(0.21rem + 1vw);
 }
 
 
