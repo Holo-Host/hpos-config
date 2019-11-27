@@ -72,7 +72,7 @@ import './style.css'
       // updateUiStep(1)
   
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      updateUiStep(1)
+      updateUiStep(4)
     },  
     generate: () => {
       /* Set user config */
@@ -131,8 +131,6 @@ import './style.css'
     openOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'block'
       document.querySelector('#modal-overlay').style.display = 'block'
-      console.log('holo-brand-wrapper El', document.querySelector('#holo-brand-wrapper'));
-      console.log('holo-brand-wrapper z-index', document.querySelector('#holo-brand-wrapper').style);
       tosTracker = true
       verifyStep2Complete()
     },
@@ -246,7 +244,7 @@ import './style.css'
       inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('User Email not found. Config may be corrupted.')
     } else if (stepTracker === 5) {
       /* Start Timer */
-      const deadline = new Date(Date.parse(new Date(new Date().getTime())) + 15 * 24 * 60 * 60 * 1000)
+      const deadline = new Date(Date.parse(new Date(new Date().getTime())) + 15 * 24 * 60 * 60 * 1000 * 1)
       console.log('DEADLINE : ', deadline);
       
       countdownTimer(deadline)
@@ -282,7 +280,9 @@ import './style.css'
     }
     stepTracker = step
     constantCheck()
-    
+    if(step === 0) {
+      return document.body.className = 'step-monitor'
+    }
     return document.body.className = 'step' + step
   }
 
@@ -306,14 +306,12 @@ import './style.css'
 
   if (rewind) {
     for (let i=0; i<(stepIndex - 1) + 1; i++) {
-      console.log('rewind i', i)
       childListNodes[i].classList.add('active')
     }
     return childListNodes[stepIndex - 1]
   }
   else {
     for (let i=0; i<(stepIndex + 1) + 1; i++) {
-      console.log('proceed i', i)
       childListNodes[i].classList.add('active')
     }
     return childListNodes[stepIndex + 1]
@@ -428,12 +426,21 @@ import './style.css'
   }
 
   const getTimeRemaining = (endtime) => {
-    const datetime = Date.parse(endtime) - Date.parse(new Date());
-    const milliseconds = Math.floor((datetime) % 60);
-    const seconds = Math.floor((datetime / 1000) % 60);
-    const minutes = Math.floor((datetime / 1000 / 60) % 60);
+    const time = Date.parse(endtime) - Date.parse(new Date());
+
+    // const intTime = time;
+    // const minutes = intTime / 60;
+    // const seconds = intTime % 60;
+    // const milliseconds = time * 1000;
+    // milliseconds = fraction % 1000;
+    // timeText = String.Format ("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
+    // return timeText;
+
+    const milliseconds = Math.floor(((time / 1000) * 1000) % 1000);
+    const seconds = Math.floor((time / 1000) % 60);
+    const minutes = Math.floor((time / 1000 / 60) % 60);
     return {
-      'total': datetime,
+      'total': time,
       'minutes': minutes,
       'seconds': seconds,
       'milliseconds': milliseconds
@@ -445,8 +452,8 @@ import './style.css'
   */
   const countdownTimer = (endtime) => {
     const minutesSpan = document.getElementById('minutes')
-    const secondsSpan = document.getElementById('seconds').innerText
-    const millisecondSpan = document.getElementById('milliseconds').innerText
+    const secondsSpan = document.getElementById('seconds')
+    const millisecondSpan = document.getElementById('milliseconds')
   
     function updateClock() {
       const t = getTimeRemaining(endtime)
@@ -461,7 +468,7 @@ import './style.css'
     }
   
     updateClock();
-    return timeinterval = setInterval(updateClock, 1)
+    const timeinterval = setInterval(updateClock, 1)
   }
 
 })()
