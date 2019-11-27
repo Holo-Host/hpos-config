@@ -428,19 +428,14 @@ import './style.css'
   }
 
   const getTimeRemaining = (endtime) => {
-    const time = Date.parse(endtime) - Date.parse(new Date());
+    const now = new Date();
+    const time = Date.parse(endtime) - Date.parse(now);
 
-    // const intTime = time;
-    // const minutes = intTime / 60;
-    // const seconds = intTime % 60;
-    // const milliseconds = time * 1000;
-    // milliseconds = fraction % 1000;
-    // timeText = String.Format ("{0:00}:{1:00}:{2:000}", minutes, seconds, milliseconds);
-    // return timeText;
 
-    const milliseconds = Math.floor(((time / 1000) * 1000) % 1000);
-    const seconds = Math.floor((time / 1000) % 60);
-    const minutes = Math.floor((time / 1000 / 60) % 60);
+    const minutes = Math.floor((time / 1000 / 60) % 60)
+    const seconds = Math.floor((time / 1000) % 60)
+    const milliseconds = 1000 - now.getMilliseconds()
+
     return {
       'total': time,
       'minutes': minutes,
@@ -461,7 +456,7 @@ import './style.css'
       const t = getTimeRemaining(endtime)
       minutesSpan.innerHTML = ('0' + t.minutes).slice(-2)
       secondsSpan.innerHTML = ('0' + t.seconds).slice(-2)
-      millisecondSpan.innerHTML = ('0' + t.milliseconds).slice(-2)
+      // millisecondSpan.innerHTML = (t.milliseconds)
   
       if (t.total <= 0) {
         clearInterval(timeinterval)

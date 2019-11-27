@@ -206,7 +206,7 @@ label {
 }
 
 .subheader-text-bookend {
-  font-size: calc(0.21rem + 0.9vw);
+  font-size: calc(0.61rem + 0.9vw);
   line-height: calc(0.3rem + 1.3vw);
   letter-spacing: 0.6px;
 }
@@ -432,7 +432,6 @@ label {
 }
 
 .step-label-info-bookend {
-  letter-spacing: 0.2rem;
   display: block;
   margin-bottom: 3rem;
   font-style: normal;
@@ -487,6 +486,10 @@ label {
   margin-left: 8rem;
 }
 
+ul.timer-list {
+  padding: 0;
+}
+
 li.timer-list-item {
   display: inline-block;
   font-size: 1.5em;
@@ -497,7 +500,7 @@ li.timer-list-item {
 
 .timer-text {
   display: block;
-  font-size: 4.5rem;
+  font-size: calc(4.21rem + 2.9vw);
 }
 
 /* Form Fields & Inputs */
@@ -608,6 +611,10 @@ li.timer-list-item {
 .step5 .card-transparent,
 .step0 .card-transparent {
   max-width: 640px;
+}
+
+body.step5 .card-transparent {
+  margin-top: 10vh;
 }
 
 body.step2 .card-transparent {

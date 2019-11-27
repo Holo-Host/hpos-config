@@ -64,18 +64,22 @@
               <div class="stepBox step5">
                 <div class="timer-block">
                   <div class="timer-block-item">
-                    <ul>
+                    <ul class="timer-list">
+                      <li class="timer-list-item"><span id="placeholder-hour" class="timer-text pageHeader text-white">00</span></li>
+                      <li class="timer-list-item"><span class="timer-text pageHeader text-white">:</span></li>
+
                       <li class="timer-list-item"><span id="minutes" class="timer-text pageHeader text-white"></span></li>
                       <li class="timer-list-item"><span class="timer-text pageHeader text-white">:</span></li>
                       <li class="timer-list-item"><span id="seconds" class="timer-text pageHeader text-white"></span></li>
-                      <li class="timer-list-item"><span class="timer-text pageHeader text-white">:</span></li>
-                      <li class="timer-list-item"><span id="milliseconds" class="timer-text pageHeader text-white"></span></li>
+                      <!-- Determine whether we'd like to show ms -->
+                      <!-- <li class="timer-list-item"><span class="timer-text pageHeader text-white">:</span></li>
+                      <li class="timer-list-item"><span id="milliseconds" class="timer-text pageHeader text-white"></span></li> -->
                     </ul>
                     <h4 id="timer-sub-text" class="text-white subheader-text-bookend"></h4>
                   </div>
                 </div>
                 <div class="stepLabel step5 block-subtext">
-                  <p class="subheader-text text-white"> Once your HoloPort is connected to the Holo network you will receive an email with a link to your HoloPort admin panel.</p>
+                  <p class="subheader-text-bookend text-white"> Once your HoloPort is connected to the Holo network you will receive an email with a link to your HoloPort admin panel.</p>
                 </div>
                 <div class="stepLabel step5 block-bottom-text">
                   <p class='subheader-text-bookend text-white'>Note: If you don’t receive an email within 5 minutes, please reach out to <a href="#" class="text-white underline">customer service.</a></p>
