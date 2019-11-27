@@ -373,7 +373,7 @@ label {
 
 .greeting-wrapper {
   flex: 1;
-  margin-top: 45vh;
+  /* margin-top: 45vh; */
   justify-self: center;
   align-self: center;
 }
@@ -386,7 +386,7 @@ label {
 
 .greeting {
   line-height: 1.2em;
-  margin: -20rem 0rem;
+  /* margin: -20rem 0rem; */
   font-weight: bold;
   font-size: calc(2.7rem + 1vw);
   width: 40rem;
@@ -476,6 +476,19 @@ label {
 .image-block {
   min-width: 238px;
   margin-left: 8rem;
+}
+
+li.timer-list-item {
+  display: inline-block;
+  font-size: 1.5em;
+  list-style-type: none;
+  padding: 1em;
+  text-transform: uppercase;
+}
+
+.timer-text {
+  display: block;
+  font-size: 4.5rem;
 }
 
 /* Form Fields & Inputs */

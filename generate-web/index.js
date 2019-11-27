@@ -40,7 +40,8 @@ import './style.css'
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     deviceNameInputArea: document.querySelector('#device-name-form-item'),
     holoportFlyingBookend: document.querySelector('#holoport-flying-bookend'),
-    formErrorMessage: document.querySelector('#form-error-message')
+    formErrorMessage: document.querySelector('#form-error-message'),
+    timerMessage: document.querySelector('#timer-sub-text')
   }
 
   const errorMessages = {
@@ -235,6 +236,11 @@ import './style.css'
 
   const buttonBystep = { 0: buttons.start, 1: buttons.generateConfig, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
   
+  const second = 1000,
+    minute = second * 60,
+    hour = minute * 60,
+    day = hour * 24
+
   /** 
   * Step Listener to initiate step specific actions
   */
@@ -243,8 +249,11 @@ import './style.css'
       /* Add click listener to page container on Page 2 form intake */
       inlineVariables.contentContainer.onclick = click.activateInput
     } else if (stepTracker === 4) {
-      /* Display back User Email on Page 4 for visual email verification -  */
+      /* Display back User Email on Page 4 for visual email verification */
       inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('User Email not found. Config may be corrupted.')
+    } else if (stepTracker === 5) {
+      /* Start Timer */
+
     }
   }
 
@@ -332,20 +341,6 @@ import './style.css'
 
     return url
   }
-
-
-  // /**
-  //  * Ensure download function has completd before allowing progression to next page
-  //  *
-  //  * @param {Boolean} configDownloaded
-  //  * 
-  // */
-  // const verifyDownloadComplete = (configDownloaded) => {
-  //   if(configDownloaded) {
-  //     buttons.postDownload.disabled = false
-  //   }
-  //   return configDownloaded
-  // }
 
   /**
    * Verify all form input before allowing progression to next page
@@ -444,4 +439,70 @@ import './style.css'
     }
     return step
   }
+
+
+  let countDownThirty = new Date().getMinutes() + 30
+  let x = setInterval(() => {
+    let now = new Date().getTime()
+    let distance = countDown - now
+
+    document.getElementById('minutes').innerText = Math.floor((distance % (hour)) / (minute)),
+    document.getElementById('seconds').innerText = Math.floor((distance % (minute)) / second);
+    document.getElementById('milliseconds').innerText = Math.floor((distance % (second)) / millisecond);  
+
+    if (distance < 0) {
+     clearInterval(x);
+     inlineVariables.timerMessage.innerHTML = "Time to check your email!"
+    }
+  }, millisecond)
+
+  /**
+   * Initiate Timer Countdown
+  */
+  const countdownTimer = () => {
+
+  }
+
 })()
+
+
+function getTimeRemaining(endtime) {
+  const t = Date.parse(endtime) - Date.parse(new Date());
+  const seconds = Math.floor((t / 1000) % 60);
+  const minutes = Math.floor((t / 1000 / 60) % 60);
+  const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(t / (1000 * 60 * 60 * 24));
+  return {
+    'total': t,
+    'days': days,
+    'hours': hours,
+    'minutes': minutes,
+    'seconds': seconds
+  };
+}
+
+function initializeClock(id, endtime) {
+  const clock = document.getElementById(id);
+  const minutesSpan = document.getElementById('minutes')
+  const secondsSpan = document.getElementById('seconds').innerText
+  const millisecondSpan = document.getElementById('seconds').innerText
+
+
+  function updateClock() {
+    const t = getTimeRemaining(endtime);
+    daysSpan.innerHTML = t.days;
+    hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+    minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+    secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+
+    if (t.total <= 0) {
+      clearInterval(timeinterval);
+    }
+  }
+
+  updateClock();
+  const timeinterval = setInterval(updateClock, 1000);
+}
+
+const deadline = new Date(Date.parse(new Date()) + 15 * 24 * 60 * 60 * 1000);
+initializeClock('clockdiv', deadline);
