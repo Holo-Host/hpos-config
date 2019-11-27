@@ -385,7 +385,7 @@ label {
   color: #FFFFFF
 }
 
-.greeting {
+.greeting-step0 {
   line-height: 1.2em;
   margin: 30vh 0 10vh;
   font-weight: bold;
@@ -393,7 +393,7 @@ label {
   max-width: 30vw;
 }
 
-.greeting-bookend {
+.greeting {
   line-height: 1.2em;
   margin: 21vh 0 10vh;
   font-weight: bold;
