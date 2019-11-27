@@ -69,10 +69,10 @@ import './style.css'
         return null
       }
       // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
-      updateUiStep(1)
+      // updateUiStep(1)
   
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      // updateUiStep(2)
+      updateUiStep(1)
     },  
     generate: () => {
       /* Set user config */
@@ -232,7 +232,7 @@ import './style.css'
 
   const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
 
-  const buttonBystep = { 0: buttons.start, 1: buttons.generateConfig, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
+  const buttonBystep = { 0: buttons.start, 1: buttons.generate, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
 
   /** 
   * Step Listener to initiate step specific actions
@@ -246,7 +246,7 @@ import './style.css'
       inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('User Email not found. Config may be corrupted.')
     } else if (stepTracker === 5) {
       /* Start Timer */
-      const deadline = new Date(Date.parse(new Date(new Date().getMinutes() + 30)) + 15 * 24 * 60 * 60 * 1000)
+      const deadline = new Date(Date.parse(new Date(new Date().getTime())) + 15 * 24 * 60 * 60 * 1000)
       console.log('DEADLINE : ', deadline);
       
       countdownTimer(deadline)
@@ -286,39 +286,39 @@ import './style.css'
     return document.body.className = 'step' + step
   }
 
-  /**
+ /**
    * Update the progresss bar
-   * 
+   *
    * @param {int} currentTransition
    * @param {bool} rewind
   */
-  const updateProgressBar = (currentTransition, rewind = false) => {
-    if (currentTransition <= 1) rewind = false
-    if (!validation[currentTransition]) {
-      console.log(`Wrong parameter ${currentTransition} in updateProgressBar()`)
-      return null
-    }
-    /* Locate current step element and remove 'active' class */
-    const childListNodes = document.querySelectorAll('li.progressbar-item')
-    const stepIndex = currentTransition - 1
-    const currentlyActive = childListNodes[stepIndex]
-    currentlyActive.classList.remove('active')
-
-    if (rewind) {
-      for (let i; i<(stepIndex - 1) + 1; i++) {
-        console.log('rewind i', i)
-        childListNodes[i].classList.add('active')
-      }
-      return childListNodes[stepIndex - 1]
-    }
-    else {
-      for (let i; i<(stepIndex + 1) + 1; i++) {
-        console.log('proceed i', i)
-        childListNodes[i].classList.add('active')
-      }
-      return childListNodes[stepIndex + 1]
-    }
+ const updateProgressBar = (currentTransition, rewind = false) => {
+  if (currentTransition <= 1) rewind = false
+  if (!validation[currentTransition]) {
+    console.log(`Wrong parameter ${currentTransition} in updateProgressBar()`)
+    return null
   }
+  /* Locate current step element and remove 'active' class */
+  const childListNodes = document.querySelectorAll('li.progressbar-item')
+  const stepIndex = currentTransition - 1
+  const currentlyActive = childListNodes[stepIndex]
+  currentlyActive.classList.remove('active')
+
+  if (rewind) {
+    for (let i=0; i<(stepIndex - 1) + 1; i++) {
+      console.log('rewind i', i)
+      childListNodes[i].classList.add('active')
+    }
+    return childListNodes[stepIndex - 1]
+  }
+  else {
+    for (let i=0; i<(stepIndex + 1) + 1; i++) {
+      console.log('proceed i', i)
+      childListNodes[i].classList.add('active')
+    }
+    return childListNodes[stepIndex + 1]
+  }
+}
 
 
   /**
