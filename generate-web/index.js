@@ -6,6 +6,8 @@ import './style.css'
   const DOWNLOAD_FILE_NAME = 'hpos-state.json'
 
   let stepTracker
+  let downloadTracker
+  let tosTracker
 
   /* Parse HTML elements */
   const buttons = {
@@ -38,7 +40,7 @@ import './style.css'
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     deviceNameInputArea: document.querySelector('#device-name-form-item'),
     holoportFlyingBookend: document.querySelector('#holoport-flying-bookend'),
-    generateConfigErrorMessage: document.querySelector('#generate-config-error-message')
+    formErrorMessage: document.querySelector('#form-error-message')
   }
 
   const errorMessages = {
@@ -46,7 +48,7 @@ import './style.css'
     email: '*Email domain not recognized',
     password: '*Your password needs to be at least eight character in length',
     passwordCheck: '*Passwords do not match',
-    generateConfig: '*Your download was unsuccessful'
+    generateConfig: '*An error occured when configuring your user file. Please update your information and try again.'
   }
 
   const user = {
@@ -81,15 +83,14 @@ import './style.css'
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
 
-      /* Move generateDownload out of exec flow */
       setTimeout(() => {
         /* Generate hpos-state.json and create download blob attached to url */
         try {
-          inlineVariables.generateConfigErrorMessage.innerHTML = ''
+          inlineVariables.formErrorMessage.innerHTML = ''
           generateDownload(user, buttons.download)
         } catch (e) {
           console.log(`Error executing generateDownload with an error ${e}`)
-          inlineVariables.generateConfigErrorMessage.innerHTML = errorMessages.generateConfig
+          inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
           return null
         }
 
@@ -104,17 +105,18 @@ import './style.css'
       /* Communicate visually that something is happening in the bkgd */
       buttons.download.disabled = true
       buttons.download.innerText = 'Saving to USB Drive...'
-      /* Update user email in the UI */
-      document.querySelector('#email-placeholder').innerText = user.email
 
-      /* Clean State */
       setTimeout(() => {
+        /* Clean State */
         buttons.download.disabled = false
-        buttons.download.innerText = 'Save to USB Drive'
-        verifyDownloadComplete(true)
+        buttons.download.innerText = 'Saved to USB Drive'
+        // verifyDownloadComplete(true)
+        
+        downloadTracker = true
+        verifyStep2Complete()
       }, 1000)
     },
-    postDownload: () => {      
+    postDownload: () => {  
       updateUiStep(3)
       updateProgressBar(2)
     },
@@ -131,6 +133,8 @@ import './style.css'
       console.log('holo-brand-wrapper El', document.querySelector('#holo-brand-wrapper'));
       console.log('holo-brand-wrapper z-index', document.querySelector('#holo-brand-wrapper').style);
       // document.querySelector('#holo-brand-wrapper').style.zIndex = '1'
+      tosTracker = true
+      verifyStep2Complete()
     },
     closeOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'none'
@@ -143,6 +147,7 @@ import './style.css'
       updateUiStep(0)
     },
     back2: () => {
+      downloadTracker = false 
       const rewind = true
       updateProgressBar(2, rewind)
       updateUiStep(1)
@@ -156,6 +161,16 @@ import './style.css'
       const rewind = true
       updateProgressBar(4, rewind)
       updateUiStep(3)
+    },
+    handleEnter: event => {
+      const step = stepTracker || 0
+      const keycode = (event.keyCode ? event.keyCode : event.which)
+      /* Number 13 is the "Enter" key on the keyboard */
+      if (keycode === 13 && step <= 4) {
+        const stepButton = buttonBystep[step]
+        stepButton.click()
+      }
+      else return null
     },
     activateInput: event => {
       const inputId = event.target.id
@@ -179,6 +194,9 @@ import './style.css'
     }
   }
 
+  /* Bind keystroke action to listener */
+  document.querySelector('body').onkeyup = click.handleEnter
+
   /* Set intial state for all config actions buttons to 'disabled' */
   buttons.generate.disabled = true
   buttons.postDownload.disabled = true
@@ -196,29 +214,35 @@ import './style.css'
   buttons.back2.onclick = click.back2
   buttons.back3.onclick = click.back3
   buttons.back4.onclick = click.back4
-  
-  /* Bind listeners to inputs */
+  /* Bind input actions to inputArea actions */
   inlineVariables.deviceNameInputArea.onclick = () => inputs.deviceName.focus()
   inlineVariables.emailInputArea.onclick = () => inputs.email.focus()
   inlineVariables.passwordInputArea.onclick = () => inputs.password.focus()
   inlineVariables.passwordCheckInputArea.onclick = () => inputs.passwordCheck.focus()
-
+  /* Bind actions to inputs */
   inputs.deviceName.onfocus = click.activateInput
   inputs.email.onfocus = click.activateInput
   inputs.password.onfocus = click.activateInput
   inputs.passwordCheck.onfocus = click.activateInput
 
+
   /** Helper Functions :
   * =============================
   * 
+  */
+
+  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
+
+  const buttonBystep = { 0: buttons.start, 1: buttons.generateConfig, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
+  
+  /** 
   * Step Listener to initiate step specific actions
   */
-  const constantCheck = ()=>{
-    console.log("CHECKING: ", stepTracker)
+  const constantCheck = () => {
     if (stepTracker === 1) {
       /* Add click listener to page container on Page 2 form intake */
       inlineVariables.contentContainer.onclick = click.activateInput
-    } else if(stepTracker === 4) {
+    } else if (stepTracker === 4) {
       /* Display back User Email on Page 4 for visual email verification -  */
       inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('User Email not found. Config may be corrupted.')
     }
@@ -246,7 +270,6 @@ import './style.css'
    *
    * @param {int} step
    */
-  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
   const updateUiStep = (step) => {
     if (!validation[step]) {
       console.log(`Wrong parameter ${step} in updateUiStep()`)
@@ -254,8 +277,6 @@ import './style.css'
     }
     stepTracker = step
 
-    console.log('step : ', step)
-    console.log('stepTracker : ', stepTracker)
 
     renderStyle(stepTracker)
     constantCheck()
@@ -296,7 +317,7 @@ import './style.css'
    * @param {DomElement} button - a DomElement that will have download and attribute props updated
   */
   const generateDownload = (user, button) => {
-    console.log('Generating User Keys...')
+    console.log('Generating User Keys and creating Config...')
     const configData = config(user.email, user.password, user.device_name)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
     const url = URL.createObjectURL(configBlob)
@@ -308,6 +329,33 @@ import './style.css'
 
     /* In case we decide to use the HoloPort url it is available right here */
     console.log('Optional HoloPort url : ', configData.url)
+
+    return url
+  }
+
+
+  // /**
+  //  * Ensure download function has completd before allowing progression to next page
+  //  *
+  //  * @param {Boolean} configDownloaded
+  //  * 
+  // */
+  // const verifyDownloadComplete = (configDownloaded) => {
+  //   if(configDownloaded) {
+  //     buttons.postDownload.disabled = false
+  //   }
+  //   return configDownloaded
+  // }
+
+  /**
+   * Verify all form input before allowing progression to next page
+  */
+  const verifyStep2Complete = () => {
+    console.log('inside verify downloaded', tosTracker, downloadTracker);
+    // const downloadComplete = downloadTracker
+    // const tosViewed = tosTracker
+    if (downloadTracker && tosTracker) buttons.postDownload.disabled = false
+    else return null
   }
 
   /**
@@ -319,7 +367,8 @@ import './style.css'
     for (let inputElement of inputElements) {
       document.querySelector(`#${inputElement.id}-form-item`).classList.remove('error-red')
       inputElement.parentElement.querySelector('.input-item-label').classList.remove('error-red')
-      document.querySelector('#form-error-message').innerHTML = ''
+      // document.querySelector('#form-error-message').innerHTML = ''
+      inlineVariables.formErrorMessage.innerHTML = ''
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
     }
   }
@@ -376,26 +425,13 @@ import './style.css'
   const verifyInputData = () => {
     let inputValidity = confirmValidInput()
     if(inputs.deviceName.value && inputs.email.value && inputs.password.value && inputs.passwordCheck.value) {
-      if(inputValidity) buttons.generate.disabled = false
+      if (inputValidity) buttons.generate.disabled = false
       else {
         inputValidity = false
         buttons.generate.disabled = true
       }
     }
     return inputValidity
-  }
-
-  /**
-   * Ensure download function has completd before allowing progression to next page
-   *
-   * @param {Boolean} configDownloaded
-   * 
-  */
-  const verifyDownloadComplete = (configDownloaded) => {
-    if(configDownloaded) {
-      buttons.postDownload.disabled = false
-    }
-    return configDownloaded
   }
 
   /**

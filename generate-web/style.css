@@ -55,6 +55,10 @@ p.break-text span{
   text-align: center;
 }
 
+.left-margin {
+  margin-left: 10%;
+}
+
 
 /* Colors */
 
@@ -164,6 +168,10 @@ label {
   font-style: italic;
 }
 
+.underline {
+  text-decoration: underline;
+}
+
 :focus {
   outline-color: transparent;
   outline-style: none;
@@ -177,6 +185,11 @@ label {
   margin: 0 auto;
 }
 
+.button-text {
+  vertical-align: text-bottom;
+  cursor: pointer;
+}
+
 .note-text {
   margin: 20px;
   font-size: 14px;
@@ -185,14 +198,21 @@ label {
 }
 
 .subheader-text {
-  font-size: 16px;
-  line-height: 22px;
+  font-size: calc(0.21rem + 0.9vw);
+  line-height: calc(0.8rem + 1.2vw);
   letter-spacing: -0.4px;
   color: #2C405A;
+  max-width: 58%;
+}
+
+.subheader-text-bookend {
+  font-size: calc(0.21rem + 0.9vw);
+  line-height: calc(0.3rem + 1.3vw);
+  letter-spacing: 0.6px;
 }
 
 .block-subtext {
-  margin-top: 5vh;
+  margin-top: 2vh;
 }
 
 .enter-text {
@@ -206,9 +226,8 @@ label {
 
 /* Image & Icon Elements */
 #holo-banner-wrapper {
-  position: absolute;
-  top: 50px;
-  left: 60px;
+  width: 25rem;
+  margin-left: -2rem;
 }
 
 #holo-brand-wrapper {
@@ -266,10 +285,6 @@ label {
   border-radius: 4px;
 }
 
-.inline-icon {
-  margin: 0 20px -21px !important;
-}
-
 .step2 #holo-icon {
   margin-right: none;
 }
@@ -284,11 +299,37 @@ label {
   height: 16px !important;
 }
 
+#connected-icon {
+  height: 3rem;
+  width: 2.2rem;
+  /* margin-left: 0.5%; */
+}
+
+#laptop-icon {
+  height: 2.4rem;
+  width: 2.5rem;
+  margin-top: 2%;
+}
+
+#locked-icon {
+  height: 3rem;
+  width: 2.2rem;
+}
+
 .main-display-image {
   height: 10vw;
   width: 20vw;
 }
 
+.inline-icon-wrapper {
+  display: inline-flex;
+}
+
+.inline-icon {
+  cursor: pointer;
+  height: 23px !important;
+  width: 23px !important;
+}
 
 
 /* Page Content Containers & Wrappers */
@@ -316,11 +357,17 @@ label {
 .content-wrapper {
   display: block;
   margin: 0 auto;
+  margin-left: 7%;
   position: relative;
   justify-content: center;
   overflow: hidden;
+  height: 100vh;
 }
-
+.content-wrapper.bookend {
+  margin-left: 0;
+  margin: 0 auto;
+  width: 80%;
+}
 
 /* Headings, Titles & Labels */
 
@@ -338,10 +385,11 @@ label {
 }
 
 .greeting {
-  line-height: 1.2;
-  margin: -110px 75px;
+  line-height: 1.2em;
+  margin: -20rem 0rem;
   font-weight: bold;
-  font-size: calc(2rem + 1vw);
+  font-size: calc(2.7rem + 1vw);
+  width: 40rem;
 }
 
 .header {
@@ -363,19 +411,6 @@ label {
   margin-top: 1rem;
 }
 
-.step5-label-info
-.step0-label-info {
-  display: block;
-  margin-top: 0;
-  margin-bottom: 3rem;
-  font-size: 1.5rem;
-  font-weight: 300;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 30px;
-  line-height: 35px;
-}
-
 .step-label-info {
   color: #2C405A;
   display: block;
@@ -384,10 +419,17 @@ label {
   font-weight: bold;
   font-size: 30px;
   line-height: 35px;
+  max-width: 63%;
 }
 
-.stepLabel .step2.pageHeader {
-  max-width: 746px;
+.step-label-info-bookend {
+  letter-spacing: 0.2rem;
+  display: block;
+  margin-bottom: 3rem;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 3vh;
+  line-height: 4rem;
 }
 
 
@@ -398,6 +440,7 @@ label {
   display: inline-block;
   margin: 5px;
   padding: 0;
+  max-width: 90%;
 }
 
 .list-group-item,
@@ -409,7 +452,7 @@ label {
   font-weight: 400 !important;
   line-height: 2.5 !important;
   color: #FFFFFF;
-  margin-bottom: 32px; 
+  margin-bottom: 5%; 
 }
 
 .list-icons,
@@ -432,22 +475,7 @@ label {
 
 .image-block {
   min-width: 238px;
-  margin: 0 auto;
-}
-
-#laptop-icon {
-  width: 37px;
-}
-
-#lock-icon {
-  height: 40px;
-  width: 35px;
-}
-
-#connected-icon {
-  height: 32px;
-  width: 25px;
-  margin-left: 7px;
+  margin-left: 8rem;
 }
 
 /* Form Fields & Inputs */
@@ -573,22 +601,14 @@ body.step2 .card-transparent {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  position: fixed;
-  bottom: 40px;
-  right: 72px;
+  margin: 2% 4%;
 }
 
 .download-button-wrapper {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   margin-top: 50px;
 }
-/* 
-.step0 .stepButton {
-  justify-content: center;
-  position: unset;
-} */
 
 button {
   padding: 4px 23px;
@@ -610,6 +630,7 @@ a.btn:disabled, a.btn[disabled] {
 }
 
 .btn {
+  cursor: pointer;
   padding: 20px;
   border-radius: 100px;
   text-decoration: none;
@@ -617,8 +638,8 @@ a.btn:disabled, a.btn[disabled] {
   color: #00838D;
   background-color: #FFFFFF;
   margin: 8px;
-  width: 155px;
-  height: 60px;
+  width: 15rem;
+  height: 4rem;
 }
 .btn:disabled, .btn[disabled] {
   background: #94CBCF;
@@ -687,11 +708,8 @@ a.btn:disabled, a.btn[disabled] {
 /* Link Elements */
 
 .help-link {
-  margin: 0px 0px 35px 74px;
   border-width: .2rem;
   font-weight: 400;
-  font-size: 16px;
-  line-height: 19px;
   text-decoration-line: underline;
   color: #00838D;
   font-weight: bold;
@@ -815,8 +833,8 @@ a.btn:disabled, a.btn[disabled] {
 
 .close {
   position: absolute;
-  right: 1.7em;
-  top: 0.4em;
+  right: 0em;
+  top: 1em;
   width: 41px;
   height: 11px;
   opacity: 0.3;
