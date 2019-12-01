@@ -211,20 +211,23 @@ label {
   letter-spacing: 0.6px;
 }
 
+
 .block-subtext {
   margin-top: 2vh;
+}
+
+.timer-block {
+  margin: 5% 0;
 }
 
 .enter-text {
   text-align: center;
 }
 
-.timer-text{
-  font-size: 100px;
-}
-
-#timer-sub-text{
+#timer-sub-text {
+  display: none;
   text-align: center;
+  font-size: calc(0.21rem + 2.9vw);
 }
 
 
@@ -496,15 +499,14 @@ ul.timer-list {
 
 li.timer-list-item {
   display: inline-block;
-  font-size: 1.5em;
   list-style-type: none;
-  padding: 1em;
   text-transform: uppercase;
 }
 
 .timer-text {
   display: block;
-  font-size: calc(4.21rem + 2.9vw);
+  font-size: calc(4.21rem + 5.9vw);
+  /* font-size: calc(4.21rem + 2.9vw); */
 }
 
 /* Form Fields & Inputs */

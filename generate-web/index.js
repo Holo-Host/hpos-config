@@ -448,6 +448,8 @@ import './style.css'
    * Initiate Timer Countdown
   */
   const countdownTimer = (endtime) => {
+    inlineVariables.timerMessage.style.display = 'none'
+
     const minutesSpan = document.getElementById('minutes')
     const secondsSpan = document.getElementById('seconds')
     const millisecondSpan = document.getElementById('milliseconds')
@@ -460,7 +462,8 @@ import './style.css'
   
       if (t.total <= 0) {
         clearInterval(timeinterval)
-        inlineVariables.timerMessage.innerHTML = "Time is up! Check your email."
+        inlineVariables.timerMessage.style.display = 'block'
+        inlineVariables.timerMessage.innerHTML = 'Check your email'
       }
     }
   
