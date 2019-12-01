@@ -197,12 +197,23 @@ label {
   color: rgba(44, 64, 90, 0.6);
 }
 
+.email-text {
+  display: block;
+  margin-left: 3%;
+  font-size: calc(0.21rem + 1.3vw);
+  line-height: calc(0.8rem + 2.4vw);
+}
+
 .subheader-text {
-  font-size: calc(0.21rem + 0.9vw);
+  font-size: calc(0.39rem + 1vw);
   line-height: calc(0.8rem + 1.2vw);
   letter-spacing: -0.4px;
   color: #2C405A;
   max-width: 58%;
+}
+
+body.step4 .subheader-text {
+  max-width: 64%;
 }
 
 .subheader-text-bookend {
@@ -239,11 +250,16 @@ label {
 }
 
 #holo-brand-wrapper {
+  width: 4%;
   position: fixed;
-  top: 38vh;
-  left: 33.5275vw;
+  top: 37vh;
+  left: 33.0275vw;
   border-radius: 100px;
   z-index: 99;
+}
+
+body.step-monitor #holo-brand-wrapper {
+  top: 40.5vh;
 }
 
 #greeting-container-bookend {
@@ -257,8 +273,8 @@ label {
 #holoport-flying-bookend {
   background-repeat: no-repeat;
   position: fixed;
-  bottom: -12rem;
-  right: -15rem;
+  bottom: calc(0.3rem - 9vw);
+  right: -9vw;
   width: 40%;
   height: auto;
 }
@@ -274,10 +290,10 @@ label {
 #holoport-flying {
   background-repeat: no-repeat;
   position: fixed;
-  bottom: -4rem;
+  bottom: -5rem;
   left: 4rem;
-  width: 50vw;
-  height: calc(50vw * 0.55);
+  width: 45vw;
+  height: calc(47vw * 0.55);
 }
 
 .image-block-icon {
@@ -310,7 +326,6 @@ label {
 #connected-icon {
   height: 3rem;
   width: 2.2rem;
-  /* margin-left: 0.5%; */
 }
 
 #laptop-icon {
@@ -365,7 +380,8 @@ label {
 .content-wrapper {
   display: block;
   margin: 0 auto;
-  margin-left: 7%;
+  margin-left: 12%;
+  /* margin-left: 7%; */
   position: relative;
   justify-content: center;
   overflow: hidden;
@@ -376,6 +392,7 @@ label {
   margin: 0 auto;
   width: 80%;
 }
+
 
 /* Headings, Titles & Labels */
 
@@ -419,7 +436,7 @@ label {
 }
 
 .step5-header
-.step0-header {
+.step-monitor-header {
   margin: 0 auto;
   font-weight: 300;
   font-size: 2rem;
@@ -433,9 +450,17 @@ label {
   margin-bottom: 2rem;
   font-style: normal;
   font-weight: bold;
-  font-size: 30px;
-  line-height: 35px;
-  max-width: 63%;
+  font-size: calc(0.21rem + 1.4vw);
+  line-height: calc(0.8rem + 1.5vw);
+  max-width: 80%;
+}
+
+body.step1 .step-label-info {
+  max-width: 94%;
+}
+
+body.step2 .step-label-info {
+  max-width: 62%;
 }
 
 .step-label-info-bookend {
@@ -443,8 +468,8 @@ label {
   margin-bottom: 3rem;
   font-style: normal;
   font-weight: bold;
-  font-size: 3vh;
-  line-height: 4rem;
+  font-size: calc(0.21rem + 1.8vw);
+  line-height: calc(0.8rem + 1.5vw);
 }
 
 
@@ -490,6 +515,7 @@ label {
 
 .image-block {
   min-width: 238px;
+  margin: 3%;
   margin-left: 8rem;
 }
 
@@ -506,8 +532,9 @@ li.timer-list-item {
 .timer-text {
   display: block;
   font-size: calc(4.21rem + 5.9vw);
-  /* font-size: calc(4.21rem + 2.9vw); */
+  line-height: 1em;
 }
+
 
 /* Form Fields & Inputs */
 
@@ -541,7 +568,7 @@ li.timer-list-item {
   min-width: 0;
   flex-direction: column;
   vertical-align: top;
-  /* extract typography into it's own section.. */
+  /* extract font styles into typography section.. */
   font-size: 1.6rem;
   font-weight: 400;
   line-height: 2.5;
@@ -591,15 +618,14 @@ li.timer-list-item {
 
 .card-wrapper {
   margin: 1vh;
-  /* align-self: center; */
   display: flex;
   position: relative;
   justify-content: baseline;
 }
 
 .step5 .card-wrapper,
-.step0 .card-wrapper {
-  margin: 6vh;
+.step-monitor .card-wrapper {
+  margin: 4vh;
   margin-bottom: 0px;
 }
 
@@ -614,19 +640,13 @@ li.timer-list-item {
   transition: margin-top 0.3s ease-in-out;
 }
 
-.step5 .card-transparent,
-.step0 .card-transparent {
+body.step-monitor .card-transparent,
+body.step5 .card-transparent {
   max-width: 640px;
 }
 
 body.step5 .card-transparent {
-  margin-top: 10vh;
-}
-
-body.step2 .card-transparent {
-  margin: 6vh;
-  margin-bottom: 0px;
-  max-width: 68%;
+  margin-top: 5vh;
 }
 
 
@@ -740,6 +760,12 @@ a.btn:disabled, a.btn[disabled] {
   line-height: 28px;
 }
 
+body.step-monitor .stepButton,
+body.step5 .stepButton {
+  margin-top: 5%;
+}
+
+
 /* Link Elements */
 
 .help-link {
@@ -800,14 +826,14 @@ a.btn:disabled, a.btn[disabled] {
   position: absolute;
   left: -200%;
   top: 20px;
-  z-index: -1; /*put it behind the numbers*/
+  z-index: -1;
   font-size: 50px;
   opacity: 0.4;
   box-shadow: 0px 2.5px 10px rgba(44, 64, 90, 0.15);
 }
 
 .progressbar li:first-child:after {
-  /*connector not needed before the first step*/
+  /*The connector bar isn't needed prior to the first step*/
   content: none;
 }
 
