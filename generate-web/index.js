@@ -227,7 +227,6 @@ import './style.css'
   * =============================
   * 
   */
-
   const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
 
   const buttonBystep = { 0: buttons.start, 1: buttons.generate, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
@@ -448,22 +447,20 @@ import './style.css'
    * Initiate Timer Countdown
   */
   const countdownTimer = (endtime) => {
-    inlineVariables.timerMessage.style.display = 'none'
-
+    // inlineVariables.timerMessage.style.display = 'none'
     const minutesSpan = document.getElementById('minutes')
     const secondsSpan = document.getElementById('seconds')
-    const millisecondSpan = document.getElementById('milliseconds')
   
     function updateClock() {
       const t = getTimeRemaining(endtime)
       minutesSpan.innerHTML = ('0' + t.minutes).slice(-2)
       secondsSpan.innerHTML = ('0' + t.seconds).slice(-2)
-      // millisecondSpan.innerHTML = (t.milliseconds)
   
       if (t.total <= 0) {
         clearInterval(timeinterval)
-        inlineVariables.timerMessage.style.display = 'block'
-        inlineVariables.timerMessage.innerHTML = 'Check your email'
+        // Determine whether we'd like to display user message once timer completes:
+        // inlineVariables.timerMessage.style.display = 'block'
+        // inlineVariables.timerMessage.innerHTML = 'Check your email'
       }
     }
   

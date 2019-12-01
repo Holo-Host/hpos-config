@@ -227,7 +227,7 @@ label {
 #timer-sub-text {
   display: none;
   text-align: center;
-  font-size: calc(0.21rem + 2.9vw);
+  /* font-size: calc(0.21rem + 2.9vw); */
 }
 
 
