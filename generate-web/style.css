@@ -191,7 +191,8 @@ label {
 }
 
 .note-text {
-  margin: 20px;
+  margin: 15px;
+  margin-left: 20px;
   font-size: 14px;
   line-height: 19px;
   color: rgba(44, 64, 90, 0.6);
@@ -200,13 +201,13 @@ label {
 .email-text {
   display: block;
   margin-left: 3%;
-  font-size: calc(0.21rem + 1.3vw);
-  line-height: calc(0.8rem + 2.4vw);
+  font-size: calc(0.21rem + 1.1vw);
+  line-height: calc(0.8rem + 1.9vw);
 }
 
 .subheader-text {
-  font-size: calc(0.39rem + 1vw);
-  line-height: calc(0.8rem + 1.2vw);
+  font-size: calc(0.4rem + 0.8vw);
+  line-height: calc(0.8rem + 1vw);
   letter-spacing: -0.4px;
   color: #2C405A;
   max-width: 58%;
@@ -450,9 +451,9 @@ body.step-monitor #holo-brand-wrapper {
   margin-bottom: 2rem;
   font-style: normal;
   font-weight: bold;
-  font-size: calc(0.21rem + 1.4vw);
+  font-size: calc(0.41rem + 1.1vw);
   line-height: calc(0.8rem + 1.5vw);
-  max-width: 80%;
+  max-width: 85%;
 }
 
 body.step1 .step-label-info {
@@ -519,7 +520,7 @@ body.step3 .image-block-item {
 
 .image-block {
   min-width: 238px;
-  margin: 3%;
+  margin: 2%;
   margin-left: 8rem;
 }
 
@@ -881,7 +882,7 @@ a.btn:disabled, a.btn[disabled] {
 
 body.step-monitor .stepButton,
 body.step5 .stepButton {
-  margin-top: 5%;
+  margin-top: 4%;
 }
 
 
