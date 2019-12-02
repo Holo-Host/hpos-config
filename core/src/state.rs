@@ -93,6 +93,13 @@ impl State {
             holochain_public_key,
         ))
     }
+
+    pub fn get_admin_public_key(&self) -> Result<PublicKey, Error> {
+        match self {
+            State::V1{seed: _, config: c} => Ok(c.admin.public_key),
+            _ => panic!("Wrong version of hpos_state file. Expecting v1.")
+        }
+    }
 }
 
 pub fn admin_keypair_from(
