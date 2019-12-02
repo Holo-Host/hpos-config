@@ -218,7 +218,7 @@ body.step4 .subheader-text {
 
 .subheader-text-bookend {
   font-size: calc(0.61rem + 0.9vw);
-  line-height: calc(0.3rem + 1.3vw);
+  line-height: calc(0.7rem + 1.3vw);
   letter-spacing: 0.6px;
 }
 

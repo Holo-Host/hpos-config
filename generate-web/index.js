@@ -73,7 +73,7 @@ import './style.css'
       // updateUiStep(1)
   
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      updateUiStep(1)
+      updateUiStep(5)
     },  
     generate: () => {
       /* Set user config */
