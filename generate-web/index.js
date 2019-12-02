@@ -7,13 +7,13 @@ import './style.css'
 
   let stepTracker
   let downloadTracker
-  let tosTracker
 
   /* Parse HTML elements */
   const buttons = {
     start: document.querySelector('#start-button'),
     generate: document.querySelector('#generate-button'),
     download: document.querySelector('#download-button'),
+    termsAndConditionsCheck: document.querySelector('#tac-checkbox'),
     postDownload: document.querySelector('#post-download-button'),
     copied: document.querySelector('#copied-button'),
     finalStage: document.querySelector('#final-stage-button'),
@@ -40,6 +40,7 @@ import './style.css'
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     deviceNameInputArea: document.querySelector('#device-name-form-item'),
     holoportFlyingBookend: document.querySelector('#holoport-flying-bookend'),
+    formSuccessMessage: document.querySelector('#form-success-message'),
     formErrorMessage: document.querySelector('#form-error-message'),
     timerMessage: document.querySelector('#timer-sub-text')
   }
@@ -72,7 +73,7 @@ import './style.css'
       // updateUiStep(1)
   
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      updateUiStep(4)
+      updateUiStep(1)
     },  
     generate: () => {
       /* Set user config */
@@ -95,9 +96,11 @@ import './style.css'
           return null
         }
 
+        /* Placeholder: Visually communicate that config generated in the bkgd : */
+        // inlineVariables.formSuccessMessage.innerText = 'Your User File has been successfully generated.'
+
         /* Clean State */
         buttons.generate.disabled = false
-        buttons.generate.innerText = 'Generate'
         updateUiStep(2)
         updateProgressBar(1)
       }, 50)
@@ -111,10 +114,8 @@ import './style.css'
         /* Clean State */
         buttons.download.disabled = false
         buttons.download.innerText = 'Saved to USB Drive'
-        // verifyDownloadComplete(true)
-        
         downloadTracker = true
-        verifyStep2Complete()
+        verifyDownloadComplete(downloadTracker)
       }, 1000)
     },
     postDownload: () => {  
@@ -131,8 +132,6 @@ import './style.css'
     openOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'block'
       document.querySelector('#modal-overlay').style.display = 'block'
-      tosTracker = true
-      verifyStep2Complete()
     },
     closeOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'none'
@@ -243,10 +242,10 @@ import './style.css'
       inlineVariables.contentContainer.onclick = click.activateInput
     } else if (stepTracker === 4) {
       /* Display back User Email on Page 4 for visual email verification */
-      inlineVariables.emailPlaceholder.innerHTML = user.email || 'your registered email' && console.error('User Email not found. Config may be corrupted.')
+      inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
     } else if (stepTracker === 5) {
       /* Start Timer */
-      const deadline = addMinutesToDateTime(new Date(), 1)
+      const deadline = addMinutesToDateTime(new Date(), 5)
       console.log('Email Delivery Deadline : ', deadline);
       countdownTimer(deadline)
     }
@@ -344,13 +343,16 @@ import './style.css'
   }
 
   /**
-   * Verify all form input before allowing progression to next page
+   * Verify config was downloaded before allowing progression to next page
+   *
+   * @param {Boolean} downloadComplete
   */
-  const verifyStep2Complete = () => {
-    const downloadComplete = downloadTracker
-    const tosViewed = tosTracker
-    if (downloadComplete && tosViewed) buttons.postDownload.disabled = false
-    else return null
+  const verifyDownloadComplete = (downloadComplete = downloadTracker) => {
+    if (downloadComplete) {
+      buttons.postDownload.disabled = false      
+      buttons.termsAndConditionsCheck.checked = true
+    }
+    else return buttons.postDownload.disabled = true
   }
 
   /**
@@ -378,13 +380,13 @@ import './style.css'
       document.querySelector(`#${errorField.id}-form-item`).classList.add('error-red')
       errorField.parentElement.querySelector('.input-item-label').classList.add('error-red')
 
-      if (errorMessage === errorMessages.missingFields) document.querySelector('#form-error-message').innerHTML = errorMessage
+      if (errorMessage === errorMessages.missingFields) inlineVariables.formErrorMessage.innerHTML = errorMessage
       else document.querySelector(`#${errorField.id}-error-message`).innerHTML = errorMessage
     }
     return errorMessage
   }
 
-
+  
   /**
    * Input form error check
    *
@@ -458,6 +460,7 @@ import './style.css'
   
       if (t.total <= 0) {
         clearInterval(timeinterval)
+
         // Determine whether we'd like to display user message once timer completes:
         // inlineVariables.timerMessage.style.display = 'block'
         // inlineVariables.timerMessage.innerHTML = 'Check your email'

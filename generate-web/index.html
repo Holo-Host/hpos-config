@@ -109,6 +109,7 @@
                 <div class="stepLabel step1 pageHeader">
                     <div class="step-label-info"><span class="holo-green">Step 1.</span> Register your HoloPort by making login credentials.</div>
                     <span id="form-error-message" class="error-red"></span>
+                    <span id="form-success-message" class="holo-green"></span>
                 </div>
                 <div class="stepLabel step2 pageHeader">
                     <div class="step-label-info"><span class="holo-green">Step 2.</span> Download the configuration file, then, drag file from your downloads folder to your HoloPort drive to save file.</div>
@@ -184,6 +185,10 @@
                 </div>
                 <div class="block-subtext">
                   <p class="subheader-text">* By clicking the "Save to USB Drive" button, you agree to Holo's <a href="#" id="open-overlay" class="holo-green">Terms and Conditions</a>.</p>
+                  <div class="checkbox-label">
+                    <input id="tac-checkbox" class="holo-green" type="checkbox"/>
+                    <span class="checkbox-custom"></span>
+                  </div>
                 </div>
               </div>
 
@@ -208,7 +213,7 @@
                 <div>
                   <p class="subheader-text">
                     <span>Check your email for a link to verify your email address,</span> 
-                    <span id="email-placeholder" class="email-text bold"></span>
+                    <span id="email-placeholder" class="email-text bold"><span>,</span></span>
                     <span>and connect your HoloPort to the Holo network.</span>
                   </p>
                 </div>
