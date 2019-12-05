@@ -93,6 +93,13 @@ impl State {
             holochain_public_key,
         ))
     }
+
+    pub fn admin_public_key(&self) -> PublicKey {
+        match self {
+            State::V1{seed: _, config: c} => Ok(c.admin.public_key),
+            _ => unreachable!()
+        }
+    }
 }
 
 pub fn admin_keypair_from(
