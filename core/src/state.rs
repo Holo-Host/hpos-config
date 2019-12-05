@@ -97,7 +97,7 @@ impl State {
     pub fn get_admin_public_key(&self) -> Result<PublicKey, Error> {
         match self {
             State::V1{seed: _, config: c} => Ok(c.admin.public_key),
-            _ => panic!("Wrong version of hpos_state file. Expecting v1.")
+            _ => unreachable!()
         }
     }
 }
