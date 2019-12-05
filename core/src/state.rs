@@ -94,7 +94,7 @@ impl State {
         ))
     }
 
-    pub fn get_admin_public_key(&self) -> Result<PublicKey, Error> {
+    pub fn admin_public_key(&self) -> PublicKey {
         match self {
             State::V1{seed: _, config: c} => Ok(c.admin.public_key),
             _ => unreachable!()
