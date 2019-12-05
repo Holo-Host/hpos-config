@@ -213,8 +213,13 @@ label {
   max-width: 58%;
 }
 
+body.step2 .subheader-text {
+  display: inline;
+  margin-left: 46px;
+}
+
 body.step4 .subheader-text {
-  max-width: 64%;
+  max-width: 67%;
 }
 
 .subheader-text-bookend {
@@ -556,7 +561,7 @@ li.timer-list-item {
 }
 
 .form-item {
-  margin: 6vh 20px 15px;
+  margin: 6vh 20px 15px 0px;
   border-bottom: 1px solid #2C405A;
 }
 
