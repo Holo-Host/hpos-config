@@ -222,8 +222,8 @@ body.step4 .subheader-text {
 }
 
 .subheader-text-bookend {
-  font-size: calc(0.61rem + 0.9vw);
-  line-height: calc(0.7rem + 1.3vw);
+  font-size: calc(0.71rem + 0.5vw);
+  line-height: calc(0.7rem + 1.1vw);
   letter-spacing: 0.6px;
 }
 
@@ -272,10 +272,6 @@ body.step-monitor #holo-brand-wrapper {
   background: #FFFFFF;
 }
 
-#content-container-bookend {
-  background: #00838D;
-}
-
 #holoport-flying-bookend {
   background-repeat: no-repeat;
   position: fixed;
@@ -287,10 +283,6 @@ body.step-monitor #holo-brand-wrapper {
 
 #greeting-container {
   background: #00838D;
-}
-
-#content-container {
-  background: #FFFFFF;
 }
 
 #holoport-flying {
@@ -355,6 +347,7 @@ body.step-monitor #holo-brand-wrapper {
 }
 
 .inline-icon {
+  margin: 0px 15px 0px;
   cursor: pointer;
   height: 23px !important;
   width: 23px !important;
@@ -373,24 +366,26 @@ body.step-monitor #holo-brand-wrapper {
 }
 
 #content-container-bookend {
+  overflow-y: scroll;
   flex: 1;
   width: 65vw;
+  background: #00838D;
 }
 #content-container {
+  overflow-y: scroll;
   flex: 1;
   width: 65vw;
   /* z-index must be higher than flying-hp icon */
   z-index: 3;
+  background: #FFFFFF;
 }
 
 .content-wrapper {
   display: block;
   margin: 0 auto;
   margin-left: 12%;
-  /* margin-left: 7%; */
   position: relative;
   justify-content: center;
-  overflow: hidden;
   height: 100vh;
 }
 .content-wrapper.bookend {
@@ -474,7 +469,7 @@ body.step2 .step-label-info {
   margin-bottom: 3rem;
   font-style: normal;
   font-weight: bold;
-  font-size: calc(0.21rem + 1.8vw);
+  font-size: calc(0.21rem + 1.6vw);
   line-height: calc(1rem + 1.5vw);
 }
 
@@ -880,8 +875,9 @@ a.btn:disabled, a.btn[disabled] {
 }
 
 #download-button {
-  width: 36%;
+  width: 24%;
   max-width: 26rem;
+  min-width: 16rem;
   height: 2rem;
   line-height: 2rem;
 }
