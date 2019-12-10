@@ -16,7 +16,7 @@ import './style.css'
     termsAndConditionsCheck: document.querySelector('#tac-checkbox'),
     postDownload: document.querySelector('#post-download-button'),
     copied: document.querySelector('#copied-button'),
-    finalStage: document.querySelector('#final-stage-button'),
+    // finalStage: document.querySelector('#final-stage-button'),
     openOlay: document.querySelector('#open-overlay'),
     closeOlay: document.querySelector('#close-overlay'),
     back1: document.querySelector('#back-button1'),
@@ -70,10 +70,10 @@ import './style.css'
         return null
       }
       // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
-      // updateUiStep(1)
+      updateUiStep(1)
   
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      updateUiStep(2)
+      // updateUiStep(2)
     },  
     generate: () => {
       /* Set user config */
@@ -126,9 +126,9 @@ import './style.css'
       updateUiStep(4)
       updateProgressBar(3)
     },
-    finalStage: () => {
-      updateUiStep(5)
-    },
+    // finalStage: () => {
+    //   updateUiStep(5)
+    // },
     openOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'block'
       document.querySelector('#modal-overlay').style.display = 'block'
@@ -203,7 +203,7 @@ import './style.css'
   buttons.download.onclick = click.download
   buttons.postDownload.onclick = click.postDownload
   buttons.copied.onclick = click.copied
-  buttons.finalStage.onclick = click.finalStage
+  // buttons.finalStage.onclick = click.finalStage
   buttons.openOlay.onclick = click.openOlay
   buttons.closeOlay.onclick = click.closeOlay
   buttons.back1.onclick = click.back1
@@ -226,7 +226,7 @@ import './style.css'
   * =============================
   * 
   */
-  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
+  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0 } //  5: !0 
 
   const buttonBystep = { 0: buttons.start, 1: buttons.generate, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
 

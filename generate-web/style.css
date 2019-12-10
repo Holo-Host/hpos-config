@@ -417,10 +417,10 @@ body.step-monitor #holo-brand-wrapper {
 
 .greeting-step0 {
   line-height: 1.2em;
-  margin: 30vh 0 10vh;
+  margin: 40vh 0 10vh;
   font-weight: bold;
-  font-size: calc(2.7rem + 1vw);
-  max-width: 30vw;
+  font-size: calc(2.2rem + 1vw);
+  max-width: 28vw;
 }
 
 .greeting {
