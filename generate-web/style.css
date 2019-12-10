@@ -156,7 +156,7 @@ label {
 
 .button-font {
   font-size: 16px;
-  line-height: 19px;
+  line-height: 4px;
   text-align: center;
 }
 
@@ -215,7 +215,6 @@ label {
 
 body.step2 .subheader-text {
   display: inline;
-  margin-left: 46px;
 }
 
 body.step4 .subheader-text {
@@ -250,6 +249,7 @@ body.step4 .subheader-text {
 
 /* Image & Icon Elements */
 #holo-banner-wrapper {
+  position: absolute;
   width: calc(11.11rem + 5vw);
   margin-top: 5vh;
   margin-left: -2rem;
@@ -425,10 +425,10 @@ body.step-monitor #holo-brand-wrapper {
 
 .greeting {
   line-height: 1.2em;
-  margin: 21vh 0 10vh;
+  margin: 30vh 0 10vh;
   font-weight: bold;
-  font-size: calc(2.7rem + 1vw);
-  max-width: 30vw;
+  font-size: calc(2.2rem + 1vw);
+  max-width: 28vw;
 }
 
 .header {
@@ -466,7 +466,7 @@ body.step1 .step-label-info {
 }
 
 body.step2 .step-label-info {
-  max-width: 62%;
+  max-width: 80%;
 }
 
 .step-label-info-bookend {
@@ -787,7 +787,7 @@ body.step5 .card-transparent {
 .download-button-wrapper {
   display: flex;
   flex-wrap: wrap;
-  margin-top: 50px;
+  margin-top: 3%;
 }
 
 button {
@@ -818,8 +818,8 @@ a.btn:disabled, a.btn[disabled] {
   color: #00838D;
   background-color: #FFFFFF;
   margin: 8px;
-  width: 15rem;
-  height: 4rem;
+  width: 12rem;
+  height: 3.5rem;
 }
 .btn:disabled, .btn[disabled] {
   background: #94CBCF;
@@ -880,9 +880,10 @@ a.btn:disabled, a.btn[disabled] {
 }
 
 #download-button {
-  width: 324px;
-  height: 30px;
-  line-height: 28px;
+  width: 36%;
+  max-width: 26rem;
+  height: 2rem;
+  line-height: 2rem;
 }
 
 body.step-monitor .stepButton,
@@ -894,7 +895,8 @@ body.step5 .stepButton {
 /* Link Elements */
 
 .help-link {
-  margin-top: 33vh;
+  position: absolute;
+  margin-top: 90vh;
   width: 22vw;
   border-width: .2rem;
   text-decoration-line: underline;
