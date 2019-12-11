@@ -47,7 +47,7 @@ pub struct Admin {
         deserialize_with = "public_key_from_base64",
         serialize_with = "to_base64"
     )]
-    public_key: PublicKey
+    public_key: PublicKey,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -96,8 +96,8 @@ impl State {
 
     pub fn admin_public_key(&self) -> PublicKey {
         match self {
-            State::V1{seed: _, config: c} => c.admin.public_key,
-            _ => unreachable!()
+            State::V1 { seed: _, config: c } => c.admin.public_key,
+            _ => unreachable!(),
         }
     }
 }
@@ -122,7 +122,7 @@ pub fn admin_keypair_from(
     let secret_key = SecretKey::from_bytes(&hash)?;
     let public_key = PublicKey::from(&secret_key);
 
-    Ok(Keypair{
+    Ok(Keypair {
         public: public_key,
         secret: secret_key,
     })
