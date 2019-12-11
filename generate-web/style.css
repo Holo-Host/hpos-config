@@ -522,6 +522,10 @@ body.step4 .image-block {
   margin-bottom: 5%; 
 }
 
+body.step2 .image-block-item {
+  margin: 5% 0; 
+}
+
 body.step3 .image-block-item {
   margin: 5% 0; 
 }
