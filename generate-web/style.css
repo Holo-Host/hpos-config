@@ -875,10 +875,6 @@ a.btn:disabled, a.btn[disabled] {
   left: 0;
 }
 
-.last-btn {
-  margin-bottom: 2vw;
-}
-
 #download-button {
   display: inline;
   width: 24%;

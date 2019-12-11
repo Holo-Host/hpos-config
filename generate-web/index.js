@@ -7,13 +7,14 @@ import './style.css'
 
   let stepTracker
   let downloadTracker
+  let resetUserConfig
 
   /* Parse HTML elements */
   const buttons = {
     start: document.querySelector('#start-button'),
     generate: document.querySelector('#generate-button'),
     download: document.querySelector('#download-button'),
-    termsAndConditionsCheck: document.querySelector('#tac-checkbox'),
+    // termsAndConditionsCheck: document.querySelector('#tac-checkbox'),
     postDownload: document.querySelector('#post-download-button'),
     copied: document.querySelector('#copied-button'),
     // finalStage: document.querySelector('#final-stage-button'),
@@ -84,6 +85,7 @@ import './style.css'
 
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
+      resetUserConfig = true
 
       setTimeout(() => {
         /* Generate hpos-state.json and create download blob attached to url */
@@ -143,7 +145,7 @@ import './style.css'
       updateUiStep(0)
     },
     back2: () => {
-      downloadTracker = false 
+      downloadTracker = false
       const rewind = true
       updateProgressBar(2, rewind)
       updateUiStep(1)
@@ -243,6 +245,9 @@ import './style.css'
     } else if (stepTracker === 4) {
       /* Display back User Email on Page 4 for visual email verification */
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
+    } else if (stepTracker === 2) {
+      /* Check for download*/
+      verifyDownloadComplete()
     } else if (stepTracker === 5) {
       /* Start Timer */
       const deadline = addMinutesToDateTime(new Date(), 5)
@@ -347,10 +352,19 @@ import './style.css'
    *
    * @param {Boolean} downloadComplete
   */
-  const verifyDownloadComplete = (downloadComplete = downloadTracker) => {
+  const verifyDownloadComplete = (downloadComplete = downloadTracker, newConfig = resetUserConfig) => {
+    console.log('resetUserConfig : ', resetUserConfig);
+    console.log('newConfig : ', newConfig);
+
+    
     if (downloadComplete) {
-      buttons.postDownload.disabled = false      
-      buttons.termsAndConditionsCheck.checked = true
+      buttons.postDownload.disabled = false
+      // buttons.termsAndConditionsCheck.checked = true
+    }
+    else if (!downloadComplete && newConfig ) {
+      buttons.postDownload.disabled = true
+      buttons.download.innerText = 'Save new config to USB Drive'
+      resetUserConfig = false
     }
     else return buttons.postDownload.disabled = true
   }
