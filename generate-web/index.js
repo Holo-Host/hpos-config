@@ -85,7 +85,7 @@ import './style.css'
 
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
-      resetUserConfig = true
+      downloadTracker = false
 
       setTimeout(() => {
         /* Generate hpos-state.json and create download blob attached to url */
@@ -145,7 +145,8 @@ import './style.css'
       updateUiStep(0)
     },
     back2: () => {
-      downloadTracker = false
+      console.log('inside back 2')
+      resetUserConfig = true
       const rewind = true
       updateProgressBar(2, rewind)
       updateUiStep(1)
@@ -171,8 +172,15 @@ import './style.css'
       else return null
     },
     activateInput: event => {
-      const inputId = event.target.id
-      const labelId = document.querySelector(`#${inputId}-label`)
+      console.log('event log: ', event.target.id)
+
+      let labelId
+      if (event.target.id.split('-')[2] && event.target.id.split('-')[2] === 'label') labelId = event.target.id.split('-')[2]
+      else {
+        const inputId = event.target.id 
+        labelId = document.querySelector(`#${inputId}-label`)
+      }
+      
       const activeInputs = document.querySelectorAll('.input-active')
       if (activeInputs) {
         for (let activeInput of activeInputs) {
@@ -213,10 +221,10 @@ import './style.css'
   buttons.back3.onclick = click.back3
   buttons.back4.onclick = click.back4
   /* Bind input actions to inputArea actions */
-  inlineVariables.deviceNameInputArea.onclick = () => inputs.deviceName.focus()
-  inlineVariables.emailInputArea.onclick = () => inputs.email.focus()
-  inlineVariables.passwordInputArea.onclick = () => inputs.password.focus()
-  inlineVariables.passwordCheckInputArea.onclick = () => inputs.passwordCheck.focus()
+  inlineVariables.deviceNameInputArea.onclick = e => { inputs.deviceName.focus(); return click.activateInput(e) }
+  inlineVariables.emailInputArea.onclick = () => { inputs.email.focus(); return click.activateInput(e) }
+  inlineVariables.passwordInputArea.onclick = () => { inputs.password.focus(); return click.activateInput(e) }
+  inlineVariables.passwordCheckInputArea.onclick = () => { inputs.passwordCheck.focus(); return click.activateInput(e) }
   /* Bind actions to inputs */
   inputs.deviceName.onfocus = click.activateInput
   inputs.email.onfocus = click.activateInput
@@ -247,6 +255,8 @@ import './style.css'
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
     } else if (stepTracker === 2) {
       /* Check for download*/
+      console.log('resetUserConfig', resetUserConfig)
+      console.log('downloadTracker', downloadTracker)
       verifyDownloadComplete()
     } else if (stepTracker === 5) {
       /* Start Timer */

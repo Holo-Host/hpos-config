@@ -211,6 +211,7 @@ label {
   letter-spacing: -0.4px;
   color: #2C405A;
   max-width: 66%;
+  margin-top: 5px;
 }
 
 body.step2 .subheader-text {
@@ -337,9 +338,14 @@ body.step-monitor #holo-brand-wrapper {
   width: 2.2rem;
 }
 
-.main-display-image {
+.display-image-holoport {
   height: 10vw;
   width: 20vw;
+}
+
+.display-image-connected {
+  height: 14vw;
+  width: 30vw;
 }
 
 .inline-icon-wrapper {
@@ -449,7 +455,7 @@ body.step-monitor #holo-brand-wrapper {
 .step-label-info {
   color: #2C405A;
   display: block;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   font-style: normal;
   font-weight: bold;
   font-size: calc(0.55rem + 1vw);
@@ -486,6 +492,22 @@ body.step2 .step-label-info {
   max-width: 90%;
 }
 
+.image-block {
+  min-width: 238px;
+  margin: 2%;
+  margin-left: 8rem;
+}
+
+body.step2 .image-block {
+  margin: 0;
+  margin-left: 0;
+}
+
+body.step4 .image-block {
+  margin: 2%;
+  margin-left: 1rem;
+}
+
 .list-group-item,
 .image-block-item {
   display: flex;
@@ -500,6 +522,10 @@ body.step2 .step-label-info {
 
 body.step3 .image-block-item {
   margin: 5% 0; 
+}
+
+body.step4 .image-block-item {
+  margin-bottom: 1rem;
 }
 
 .list-icons,
@@ -518,12 +544,6 @@ body.step3 .image-block-item {
 
 .list-content {
   margin: 0px
-}
-
-.image-block {
-  min-width: 238px;
-  margin: 2%;
-  margin-left: 8rem;
 }
 
 ul.timer-list {
@@ -941,6 +961,7 @@ body.step5 .stepButton {
   display: block;
   border-radius: 25px;
   margin: 0 auto 10px auto;
+  font-weight: bold;
   font-size: 13px;
   text-align: center;
   letter-spacing: -0.4px;
@@ -962,15 +983,6 @@ body.step5 .stepButton {
   opacity: 0.4;
   box-shadow: 0px 2.5px 10px rgba(44, 64, 90, 0.15);
 }
-
-/* width: 10vw;
-    height: 2px;
-    background: #00838D;
-    position: absolute;
-    left: -8vw;
-    top: 20px;
-    z-index: -1;
-    font-size: 50px; */
 
 .progressbar li:first-child:after {
   /*The connector bar isn't needed prior to the first step*/
