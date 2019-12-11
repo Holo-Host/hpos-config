@@ -172,10 +172,8 @@ import './style.css'
       else return null
     },
     activateInput: event => {
-      console.log('event log: ', event.target.id)
-
       let labelId
-      if (event.target.id.split('-')[2] && event.target.id.split('-')[2] === 'label') labelId = event.target.id.split('-')[2]
+      if (event.target.id.includes('label')) labelId = document.querySelector(`#${event.target.id}`)
       else {
         const inputId = event.target.id 
         labelId = document.querySelector(`#${inputId}-label`)
@@ -222,9 +220,9 @@ import './style.css'
   buttons.back4.onclick = click.back4
   /* Bind input actions to inputArea actions */
   inlineVariables.deviceNameInputArea.onclick = e => { inputs.deviceName.focus(); return click.activateInput(e) }
-  inlineVariables.emailInputArea.onclick = () => { inputs.email.focus(); return click.activateInput(e) }
-  inlineVariables.passwordInputArea.onclick = () => { inputs.password.focus(); return click.activateInput(e) }
-  inlineVariables.passwordCheckInputArea.onclick = () => { inputs.passwordCheck.focus(); return click.activateInput(e) }
+  inlineVariables.emailInputArea.onclick = e => { inputs.email.focus(); return click.activateInput(e) }
+  inlineVariables.passwordInputArea.onclick = e => { inputs.password.focus(); return click.activateInput(e) }
+  inlineVariables.passwordCheckInputArea.onclick = e => { inputs.passwordCheck.focus(); return click.activateInput(e) }
   /* Bind actions to inputs */
   inputs.deviceName.onfocus = click.activateInput
   inputs.email.onfocus = click.activateInput
