@@ -1017,10 +1017,10 @@ body.step5 .stepButton {
   display: none;
   position: fixed;
   top: calc(30% - 6em);
-  left: calc(35% + 6em);
-  width: 60%;
-  max-width: 800px;
-  height: 40%;
+  left: 42%;
+  width: 50%;
+  max-width: 900px;
+  height: 60%;
   max-height: 505px;
   background: #fff;
   border-radius: 4px;
