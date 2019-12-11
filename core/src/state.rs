@@ -95,10 +95,8 @@ impl State {
     }
 
     pub fn admin_public_key(&self) -> PublicKey {
-        match self {
-            State::V1 { seed: _, config: c } => c.admin.public_key,
-            _ => unreachable!(),
-        }
+        let State::V1 { config, seed: _ } = self;
+        config.admin.public_key
     }
 }
 
