@@ -197,7 +197,8 @@ import './style.css'
       }
       
       verifyInputData()
-    }
+	},
+	confirmValidInput: () => confirmValidInput()
   }
 
   /* Bind keystroke action to listener */
@@ -230,7 +231,9 @@ import './style.css'
   inputs.email.onfocus = click.activateInput
   inputs.password.onfocus = click.activateInput
   inputs.passwordCheck.onfocus = click.activateInput
-
+  /* Bind check to passwords while typing */
+  inputs.password.onkeyup = click.confirmValidInput
+  inputs.passwordCheck.onkeyup = click.confirmValidInput
 
   /** Helper Functions :
   * =============================
@@ -423,7 +426,7 @@ import './style.css'
       renderInputError(errorMessages.password, [inputs.password])
       return false
     } else if (inputs.password.value !== inputs.passwordCheck.value) {
-      const errorInputs = [inputs.password, inputs.passwordCheck]
+      const errorInputs = [inputs.passwordCheck]
       renderInputError(errorMessages.passwordCheck, errorInputs)
       return false
     } else {
