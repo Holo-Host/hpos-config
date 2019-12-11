@@ -217,6 +217,7 @@ import './style.css'
   buttons.back2.onclick = click.back2
   buttons.back3.onclick = click.back3
   buttons.back4.onclick = click.back4
+  document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
   inlineVariables.emailInputArea.onclick = e => { inputs.email.focus(); return click.activateInput(e) }
   inlineVariables.passwordInputArea.onclick = e => { inputs.password.focus(); return click.activateInput(e) }
