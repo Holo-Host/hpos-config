@@ -47,7 +47,7 @@ pub struct Admin {
         deserialize_with = "public_key_from_base64",
         serialize_with = "to_base64"
     )]
-    public_key: PublicKey,
+    public_key: PublicKey
 }
 
 #[derive(Debug, Deserialize, Serialize)]
