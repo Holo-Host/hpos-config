@@ -95,10 +95,8 @@ impl State {
     }
 
     pub fn admin_public_key(&self) -> PublicKey {
-        match self {
-            State::V1{seed: _, config: c} => c.admin.public_key,
-            _ => unreachable!()
-        }
+        let State::V1 { config, seed: _ } = self;
+        config.admin.public_key
     }
 }
 
@@ -122,7 +120,7 @@ pub fn admin_keypair_from(
     let secret_key = SecretKey::from_bytes(&hash)?;
     let public_key = PublicKey::from(&secret_key);
 
-    Ok(Keypair{
+    Ok(Keypair {
         public: public_key,
         secret: secret_key,
     })
