@@ -269,10 +269,6 @@ body.step-monitor #holo-brand-wrapper {
   top: 40.5vh;
 }
 
-#greeting-container-bookend {
-  background: #FFFFFF;
-}
-
 #holoport-flying-bookend {
   background-repeat: no-repeat;
   position: fixed;
@@ -281,10 +277,6 @@ body.step-monitor #holo-brand-wrapper {
   width: 40%;
   height: auto;
   opacity: 0.6;
-}
-
-#greeting-container {
-  background: #00838D;
 }
 
 #holoport-flying {
@@ -368,9 +360,12 @@ body.step-monitor #holo-brand-wrapper {
   width: 35vw;
   /* z-index must be higher than flying-hp icon */
   z-index: 3;
+  background: #FFFFFF;
 }
+
 #greeting-container {
   width: 35vw;
+  background: #00838D;
 }
 
 #content-container-bookend {

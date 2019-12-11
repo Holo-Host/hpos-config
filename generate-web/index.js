@@ -76,7 +76,10 @@ import './style.css'
       // DEV MODE HACK TO SWITCH THROUGH PAGES
       // updateUiStep(2)
     },  
-    generate: () => {
+    generate: async () => {
+      const inputValidity = await verifyInputData()
+      if (!inputValidity) return buttons.generate.disabled = true
+
       /* Set user config */
       user.email = inputs.email.value
       user.password = inputs.password.value
@@ -246,7 +249,7 @@ import './style.css'
   const constantCheck = () => {
     if (stepTracker === 1) {
       /* Add click listener to page container on Page 2 form intake */
-      inlineVariables.contentContainer.onclick = click.activateInput
+      inlineVariables.contentContainer.onclick = verifyInputData()
     } else if (stepTracker === 4) {
       /* Display back User Email on Page 4 for visual email verification */
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
