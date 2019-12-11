@@ -276,10 +276,11 @@ body.step-monitor #holo-brand-wrapper {
 #holoport-flying-bookend {
   background-repeat: no-repeat;
   position: fixed;
-  bottom: calc(0.3rem - 9vw);
-  right: -9vw;
+  bottom: calc(0.8rem - 9vw);
+  right: -8vw;
   width: 40%;
   height: auto;
+  opacity: 0.6;
 }
 
 #greeting-container {
@@ -289,10 +290,11 @@ body.step-monitor #holo-brand-wrapper {
 #holoport-flying {
   background-repeat: no-repeat;
   position: fixed;
-  bottom: -5rem;
-  left: 4rem;
-  width: 45vw;
-  height: calc(47vw * 0.55);
+  bottom: -2rem;
+  left: 6rem;
+  width: 42vw;
+  height: calc(45vw * 0.55);
+  opacity: 0.6;
 }
 
 .image-block-icon {
