@@ -145,7 +145,6 @@ import './style.css'
       updateUiStep(0)
     },
     back2: () => {
-      console.log('inside back 2')
       resetUserConfig = true
       const rewind = true
       updateProgressBar(2, rewind)
@@ -253,8 +252,6 @@ import './style.css'
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
     } else if (stepTracker === 2) {
       /* Check for download*/
-      console.log('resetUserConfig', resetUserConfig)
-      console.log('downloadTracker', downloadTracker)
       verifyDownloadComplete()
     } else if (stepTracker === 5) {
       /* Start Timer */
@@ -361,10 +358,6 @@ import './style.css'
    * @param {Boolean} downloadComplete
   */
   const verifyDownloadComplete = (downloadComplete = downloadTracker, newConfig = resetUserConfig) => {
-    console.log('resetUserConfig : ', resetUserConfig);
-    console.log('newConfig : ', newConfig);
-
-    
     if (downloadComplete) {
       buttons.postDownload.disabled = false
       // buttons.termsAndConditionsCheck.checked = true
