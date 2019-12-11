@@ -55,7 +55,7 @@ in
     '';
 
     installPhase = ''
-      mv target/webpack $out
+      mv dist $out
     '';
 
     doCheck = false;

@@ -1,7 +1,5 @@
-import './style.css'
-
 (async () => {
-  const { state } = await import('./pkg')
+  const { state } = await import('../pkg')
 
   const DOWNLOAD_FILE_NAME = 'hpos-state.json'
 
