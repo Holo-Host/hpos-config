@@ -249,7 +249,7 @@ import './style.css'
   const constantCheck = () => {
     if (stepTracker === 1) {
       /* Add click listener to page container on Page 2 form intake */
-      inlineVariables.contentContainer.onclick = verifyInputData()
+      inlineVariables.contentContainer.onclick =  verifyInputData
     } else if (stepTracker === 4) {
       /* Display back User Email on Page 4 for visual email verification */
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
