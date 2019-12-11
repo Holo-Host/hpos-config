@@ -26,11 +26,6 @@ module.exports = {
     }),
     new WasmPackPlugin({
       crateDirectory: path.resolve(__dirname, '.')
-    }),
-    // https://caniuse.com/#feat=textencoder
-    new webpack.ProvidePlugin({
-      TextDecoder: ['text-encoding', 'TextDecoder'],
-      TextEncoder: ['text-encoding', 'TextEncoder']
     })
   ],
   module: {
