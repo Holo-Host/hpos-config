@@ -786,6 +786,10 @@ body.step5 .card-transparent {
   margin-top: 3%;
 }
 
+.button-wrapper.last-btn {
+  margin: 0 4% 4%;
+}
+
 button {
   padding: 4px 23px;
   border-radius: 5px;
