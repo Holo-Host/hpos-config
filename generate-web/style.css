@@ -192,7 +192,7 @@ label {
 
 .note-text {
   margin: 15px;
-  margin-left: 20px;
+  margin-left: 0px;
   font-size: 14px;
   line-height: 19px;
   color: rgba(44, 64, 90, 0.6);
@@ -206,11 +206,11 @@ label {
 }
 
 .subheader-text {
-  font-size: calc(0.4rem + 0.8vw);
+  font-size: calc(0.5rem + 0.8vw);
   line-height: calc(0.8rem + 1vw);
   letter-spacing: -0.4px;
   color: #2C405A;
-  max-width: 58%;
+  max-width: 66%;
 }
 
 body.step2 .subheader-text {
@@ -218,7 +218,7 @@ body.step2 .subheader-text {
 }
 
 body.step4 .subheader-text {
-  max-width: 67%;
+  max-width: 80%;
 }
 
 .subheader-text-bookend {
@@ -347,7 +347,7 @@ body.step-monitor #holo-brand-wrapper {
 }
 
 .inline-icon {
-  margin: 0px 15px 0px;
+  margin: 0px 15px 0px 20px !important;
   cursor: pointer;
   height: 23px !important;
   width: 23px !important;
@@ -420,10 +420,10 @@ body.step-monitor #holo-brand-wrapper {
 
 .greeting {
   line-height: 1.2em;
-  margin: 30vh 0 10vh;
+  margin: 32vh 0 10vh;
   font-weight: bold;
-  font-size: calc(2.2rem + 1vw);
-  max-width: 28vw;
+  font-size: calc(1.9rem + 0.9vw);
+  max-width: 25vw;
 }
 
 .header {
@@ -451,13 +451,14 @@ body.step-monitor #holo-brand-wrapper {
   margin-bottom: 2rem;
   font-style: normal;
   font-weight: bold;
-  font-size: calc(0.41rem + 1.1vw);
+  font-size: calc(0.55rem + 1vw);
   line-height: calc(0.8rem + 1.5vw);
   max-width: 85%;
 }
 
 body.step1 .step-label-info {
   max-width: 94%;
+  margin-bottom: 0.5rem;
 }
 
 body.step2 .step-label-info {
@@ -466,7 +467,7 @@ body.step2 .step-label-info {
 
 .step-label-info-bookend {
   display: block;
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
   font-style: normal;
   font-weight: bold;
   font-size: calc(0.21rem + 1.6vw);
@@ -581,7 +582,7 @@ li.timer-list-item {
 
 .input-item-label {
   margin: 0px 10px;
-  font-size: 1rem;
+  font-size: 0.8rem;
   padding: 0;
   transform: translate(0, -10px) scale(1);
   transform-origin: top left;
@@ -609,13 +610,12 @@ li.timer-list-item {
  }
 
  #form-error-message {
-   margin-left: 22px;
    margin-bottom: 0px;
  }
 
  span.error-red {
-  margin: 20px;
-  margin-top: -10px;
+  margin: 5px 0px 0px 0px;
+  margin-top: -5px;
 }
 
 
@@ -875,16 +875,22 @@ a.btn:disabled, a.btn[disabled] {
 }
 
 #download-button {
+  display: inline;
   width: 24%;
   max-width: 26rem;
   min-width: 16rem;
-  height: 2rem;
+  height: 1rem;
   line-height: 2rem;
+  text-align: center;
 }
 
 body.step-monitor .stepButton,
 body.step5 .stepButton {
-  margin-top: 4%;
+  margin-top: 2%;
+}
+
+.last-btn {
+  margin-bottom: 4vw;
 }
 
 
@@ -906,14 +912,15 @@ body.step5 .stepButton {
 
 .progressbar {
   display: flex;
-  margin-left: -50px;
+  margin-left: -3vw;
   padding: 0px;
   overflow: hidden;
   counter-reset: step;
 }
 
 .progressbar li {
-  margin: 50px;
+  margin: 3vw;
+  margin-bottom: 1vw;
   list-style-type: none;
   color: #00838D;
   text-transform: uppercase;
@@ -943,17 +950,26 @@ body.step5 .stepButton {
 /*progressbar connectors*/
 .progressbar li:after {
   content: '';
-  width: 150px;
+  width: 10vw;
   height: 2px;
   background: #00838D;
   position: absolute;
-  left: -200%;
+  left: -8vw;
   top: 20px;
   z-index: -1;
   font-size: 50px;
   opacity: 0.4;
   box-shadow: 0px 2.5px 10px rgba(44, 64, 90, 0.15);
 }
+
+/* width: 10vw;
+    height: 2px;
+    background: #00838D;
+    position: absolute;
+    left: -8vw;
+    top: 20px;
+    z-index: -1;
+    font-size: 50px; */
 
 .progressbar li:first-child:after {
   /*The connector bar isn't needed prior to the first step*/
