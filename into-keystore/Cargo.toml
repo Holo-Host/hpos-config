@@ -1,5 +1,5 @@
 [package]
-name = "hpos-config-derive-keystore"
+name = "hpos-config-into-keystore"
 version = "0.0.0"
 authors = ["perry.kundert@holo.host", "yegortimoshenko@transumption.com"]
 edition = "2018"

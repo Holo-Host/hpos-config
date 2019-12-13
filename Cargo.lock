@@ -1334,18 +1334,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hpos-config-derive-keystore"
-version = "0.0.0"
-dependencies = [
- "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "holochain_common 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
- "holochain_conductor_api 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
- "holochain_dpki 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
- "hpos-config-core 0.0.0",
- "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "hpos-config-gen-cli"
 version = "0.0.0"
 dependencies = [
@@ -1367,6 +1355,18 @@ dependencies = [
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
  "wasm-bindgen 0.2.55 (registry+https://github.com/rust-lang/crates.io-index)",
  "wasm-bindgen-cli 0.2.55 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "hpos-config-into-keystore"
+version = "0.0.0"
+dependencies = [
+ "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "holochain_common 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
+ "holochain_conductor_api 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
+ "holochain_dpki 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
+ "hpos-config-core 0.0.0",
+ "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

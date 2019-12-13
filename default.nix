@@ -8,20 +8,6 @@ let
 in
 
 {
-  hpos-config-derive-keystore = buildRustPackage rustPlatform {
-    name = "hpos-config-derive-keystore";
-    src = gitignoreSource ./.;
-    cargoDir = "derive-keystore";
-
-    RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
-    RUST_SODIUM_SHARED = "1";
-
-    nativeBuildInputs = with buildPackages; [ perl ];
-    buildInputs = lib.optionals stdenv.isDarwin [ CoreServices ];
-
-    doCheck = false;
-  };
-
   hpos-config-gen-cli = buildRustPackage rustPlatform {
     name = "hpos-config-gen-cli";
     src = gitignoreSource ./.;
@@ -57,6 +43,20 @@ in
     installPhase = ''
       mv dist $out
     '';
+
+    doCheck = false;
+  };
+
+  hpos-config-into-keystore = buildRustPackage rustPlatform {
+    name = "hpos-config-into-keystore";
+    src = gitignoreSource ./.;
+    cargoDir = "into-keystore";
+
+    RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
+    RUST_SODIUM_SHARED = "1";
+
+    nativeBuildInputs = with buildPackages; [ perl ];
+    buildInputs = lib.optionals stdenv.isDarwin [ CoreServices ];
 
     doCheck = false;
   };
