@@ -1,6 +1,6 @@
 repository:
-  name: hpos-state
-  description: HoloPortOS state initialization and management
+  name: hpos-config
+  description: HoloPortOS config initialization and management
   topics: hpos
   private: false
   has_issues: true

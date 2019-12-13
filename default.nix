@@ -8,8 +8,8 @@ let
 in
 
 {
-  hpos-state-derive-keystore = buildRustPackage rustPlatform {
-    name = "hpos-state-derive-keystore";
+  hpos-config-derive-keystore = buildRustPackage rustPlatform {
+    name = "hpos-config-derive-keystore";
     src = gitignoreSource ./.;
     cargoDir = "derive-keystore";
 
@@ -22,8 +22,8 @@ in
     doCheck = false;
   };
 
-  hpos-state-gen-cli = buildRustPackage rustPlatform {
-    name = "hpos-state-gen-cli";
+  hpos-config-gen-cli = buildRustPackage rustPlatform {
+    name = "hpos-config-gen-cli";
     src = gitignoreSource ./.;
     cargoDir = "gen-cli";
 
@@ -32,8 +32,8 @@ in
     doCheck = false;
   };
 
-  hpos-state-gen-web = buildRustPackage rustPlatform rec {
-    name = "hpos-state-gen-web";
+  hpos-config-gen-web = buildRustPackage rustPlatform rec {
+    name = "hpos-config-gen-web";
     src = gitignoreSource ./.;
     cargoDir = "gen-web";
 

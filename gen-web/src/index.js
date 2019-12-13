@@ -1,7 +1,7 @@
 (async () => {
-  const { state } = await import('../pkg')
+  const { config } = await import('../pkg')
 
-  const DOWNLOAD_FILE_NAME = 'hpos-state.json'
+  const DOWNLOAD_FILE_NAME = 'hpos-config.json'
 
   let stepTracker
   let downloadTracker
@@ -86,7 +86,7 @@
       click.openLoader()
 
       setTimeout(() => {
-        // Generate hpos-state.json and create download blob attached to url
+        // Generate hpos-config.json and create download blob attached to url
         try {
           inlineVariables.formErrorMessage.innerHTML = ''
           generateDownload(user, buttons.download)
@@ -339,14 +339,14 @@
 
 
   /**
-   * Generate download link of hpos-state.json and attach to `button` domElement
+   * Generate download link of hpos-config.json and attach to `button` domElement
    *
    * @param {Object} user
    * @param {DomElement} button - a DomElement that will have download and attribute props updated
   */
   const generateDownload = (user, button) => {
     console.log('Generating User Keys and creating Config...')
-    const configData = state(user.email, user.password)
+    const configData = config(user.email, user.password)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
     const url = URL.createObjectURL(configBlob)
 
