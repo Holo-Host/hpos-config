@@ -36,7 +36,7 @@ where
     serializer.serialize_str(&base64::encode_config(x.as_ref(), base64::STANDARD_NO_PAD))
 }
 
-const ARGON2_ADDITIONAL_DATA: &[u8] = b"hpos-state admin ed25519 key v1";
+const ARGON2_ADDITIONAL_DATA: &[u8] = b"hpos-config admin ed25519 key v1";
 
 pub type Seed = [u8; SEED_SIZE];
 
@@ -51,21 +51,21 @@ pub struct Admin {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Config {
+pub struct Settings {
     admin: Admin,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub enum State {
+pub enum Config {
     #[serde(rename = "v1")]
     V1 {
         #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
-        config: Config,
+        settings: Settings,
     },
 }
 
-impl State {
+impl Config {
     pub fn new(
         email: String,
         password: String,
@@ -86,17 +86,17 @@ impl State {
         };
 
         Ok((
-            State::V1 {
+            Config::V1 {
                 seed,
-                config: Config { admin },
+                settings: Settings { admin },
             },
             holochain_public_key,
         ))
     }
 
     pub fn admin_public_key(&self) -> PublicKey {
-        let State::V1 { config, seed: _ } = self;
-        config.admin.public_key
+        let Config::V1 { seed: _, settings } = self;
+        settings.admin.public_key
     }
 }
 
