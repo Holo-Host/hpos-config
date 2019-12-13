@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Quickstart</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body id='container-fluid' class="step-monitor">
+      <aside id='greeting-container-bookend' class="stepHeader step0 step5">  
+        <div class="stepLabel step0 step5 greeting-wrapper ">
+          <img id="holo-banner-wrapper" class="stepLabel step0 step5" src='assets/images/holo-banner.svg' />
+          <h1 class="stepLabel step0 greeting-step0">Welcome to Holo!</h1>              
+          <h1 class="stepLabel step5 greeting"> Your HoloPort is making it’s first contact!</h1>
+          <a class="stepLabel step0 step5 help-link subheader-text" href="https://forum.holo.host" target="_blank">Holo Customer Service</a>
+        </div>
+        <img id="holo-brand-wrapper" class="stepLabel step0 step5" src='assets/icons/holo-logo-avatar.svg' />
+      </aside>
+      <aside id='greeting-container' class="stepHeader step1 step2 step3 step4">
+        <div class="stepLabel step1 step2 step3 step4 greeting-wrapper ">
+          <img id="holo-banner-wrapper" class="stepLabel step1 step2 step3 step4" src='assets/images/holo-banner-white.svg' />
+          <h1 class="stepLabel step1 step2 step3 step4 greeting">Get your HoloPort configured and ready to host.</h1>
+          <a class="stepLabel step1 step2 step3 step4 help-link subheader-text text-white" href="https://forum.holo.host" target="_blank">Holo Customer Service</a>
+        </div>
+        <img id="holoport-flying" class="stepLabel step1 step2 step3 step4" src='assets/images/hports-flying-transparent.png' />
+        <img id="holo-brand-wrapper" class="stepLabel step1 step2 step3 step4" src='assets/icons/holo-logo-avatar.svg' />
+      </aside>
+      <main id='content-container-bookend' class="stepHeader step0 step5">
+        <div class="content-wrapper bookend">
+          <div class="stepHeader step0 step5 card-wrapper">
+            <div class="card-transparent">
+              <div class="stepLabel step0 step0-header">
+                <h2 class="step-label-info-bookend text-white">We are excited you’re here! But, before we get started there are a few things we’d like you to know:</h2>
+              </div>
+              <div class="stepBox step0">
+                <ul class="list-group">
+                  <li class="list-group-item">
+                    <img id="connected-icon" src="assets/icons/connected-icon.svg" class="stepLabel step0 list-icons" />
+                    <div class="list-content stepLabel step0 subheader-text-bookend">You'll need a USB drive (one came in the box with your HoloPort)</div>
+                  </li>
+                  <li class="list-group-item">
+                    <img id="laptop-icon" src="assets/icons/laptop-icon.svg" class="stepLabel step0 list-icons" />
+                    <div class="list-content stepLabel step0 subheader-text-bookend">Because of the point above, you'll need to configure your HoloPort from a laptop or computer</div>
+                  </li>
+                  <li class="list-group-item">
+                    <img id="locked-icon" src="assets/icons/locked-icon.svg" class="stepLabel step0 list-icons" />
+                    <div class="list-content stepLabel step0 subheader-text-bookend">Keep the password you create for registration somewhere handy: cryptographic keys are not replaceable</div>
+                  </li>
+                  <li class="list-group-item">
+                    <img src="assets/icons/person-icon.svg" class="stepLabel step0 list-icons" />
+                    <div class="list-content stepLabel step0 subheader-text-bookend">Be sure to register your HoloPort using the same email you purchased it with</div>
+                  </li>
+                  <li class="list-group-item">
+                    <img src="assets/icons/world-icon.svg" class="stepLabel step0 list-icons" />
+                    <div class="list-content stepLabel step0 subheader-text-bookend">Be sure your HoloPort is connected to the Internet</div>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="stepLabel step5 step5-header">
+                <h2 class="step-label-info-bookend text-white">Your HoloPort is now connecting to the Holo network! This could take a few minutes.</h2>
+              </div>
+              <div class="stepBox step5">
+                <div class="timer-block">
+                  <div class="timer-block-item">
+                    <ul class="timer-list">
+                      <li class="timer-list-item"><span id="placeholder-hour" class="timer-text pageHeader text-white">00</span></li>
+                      <li class="timer-list-item"><span class="timer-text pageHeader text-white">:</span></li>
+
+                      <li class="timer-list-item"><span id="minutes" class="timer-text pageHeader text-white"></span></li>
+                      <li class="timer-list-item"><span class="timer-text pageHeader text-white">:</span></li>
+                      <li class="timer-list-item"><span id="seconds" class="timer-text pageHeader text-white"></span></li>
+                    </ul>
+                    <!-- Determine whether we'd like to display a message once timer completes: -->
+                    <h4 id="timer-sub-text" class="text-white subheader-text-bookend"></h4>
+                  </div>
+                </div>
+                <div class="stepLabel step5">
+                  <p class="subheader-text-bookend text-white"> Once your HoloPort is connected to the Holo network you will receive an email with a link to your HoloPort admin panel.</p>
+                </div>
+                <div class="stepLabel step5 block-bottom-text">
+                  <p class='subheader-text-bookend text-white'>Note: If you don’t receive an email within 5 minutes, please reach out to <a href="https://forum.holo.host" target="_blank" class="text-white underline">customer service</a>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="stepButton step0">
+            <div class="break-text">
+              <button id="start-button" class="btn first-btn button-font"><span>Next</span></button>
+              <p class='note-text enter-text text-white'>or press Enter</p>
+            </div>
+          </div>
+        </div>
+        <img id="holoport-flying-bookend" class="stepLabel step0 step5" src='assets/images/hports-flying-transparent.png' />
+      </main>
+      <main id='content-container' class="stepHeader step1 step2 step3 step4">
+        <div class="content-wrapper">
+          <div class="stepHeader step1 step2 step3 step4 card-wrapper">
+            <div class="card-transparent left-margin">
+              <div class="stepLabel step1 step2 step3 step4">
+                <ul class="progressbar">
+                  <li class="progressbar-item 1 active"></li>
+                  <li class="progressbar-item 2"></li>
+                  <li class="progressbar-item 3"></li>
+                  <li class="progressbar-item 4"></li>
+                </ul>
+
+                <div class="stepLabel step1 pageHeader">
+                    <div class="step-label-info"><span class="holo-green">Step 1.</span> Register your HoloPort by making login credentials and generating keys.</div>
+                    <span id="form-error-message" class="error-red"></span>
+                    <span id="form-success-message" class="holo-green"></span>
+                </div>
+                <div class="stepLabel step2 pageHeader">
+                    <div class="step-label-info"><span class="holo-green">Step 2.</span> Download the configuration file, then, drag file from your downloads folder to your USB drive.</div>
+                </div>
+                <div class="stepLabel step3 pageHeader">
+                    <div class="step-label-info"><span class="holo-green">Step 3.</span> Insert USB into your HoloPort to transfer the configuration file.</div>
+                </div>
+                <div class="stepLabel step4 pageHeader">
+                    <div class="step-label-info"><span class="holo-green">Step 4:</span> Connect your HoloPort to the Holo network.</div>
+                </div>
+              </div>
+              <form id= 'step1-form' class="stepBox step1">
+                <div id='email-form-item' class='form-item'>
+                  <div class="input-item">
+                    <div class="input-base">
+                      <label id="email-label" class='input-item-label' data-shrink="false">Your Email*:</label>
+                      <input id="email" class="input-font" name="email" type="text"/>
+                    </div>
+                  </div>
+                </div>
+                <span id="email-error-message" class="error-red"></span>
+
+                <div id='password-form-item' class='form-item'>
+                  <div class="input-item">
+                    <div class="input-base">
+                      <label id="password-label" class='input-item-label' data-shrink="false">Your Password:</label>
+                      <input id="password" class="input-font" name="password" type="password"/>
+                    </div>
+                  </div>
+                </div>
+                <span id="password-error-message" class="error-red"></span>
+
+                <div id='password-check-form-item' class='form-item'>
+                  <div class="input-item">
+                    <div class="input-base">
+                      <label id="password-check-label" class='input-item-label' data-shrink="false">Retype Password:</label>
+                      <input id="password-check" class="input-font" name="password-check" type="password"/>
+                    </div>
+                  </div>
+                </div>
+                <span id="password-check-error-message" class="error-red"></span>
+
+                <div>
+                  <p class="note-text email-disclaimer">* You must use the same email you used to purchase the HoloPort or will need to be white listed for testing.</p>
+                </div>
+              </form>
+
+              <div class="stepBox step2">
+                <div class="image-block">
+                  <div class="image-block-item">
+                    <img src="assets/icons/cloud-download-icon.svg" class="image-block-icon card-image" />
+                    <img id="file-icon" src="assets/icons/file-icon.svg" class="image-block-icon" />
+                    <img id="arrow-icon" src="assets/icons/arrow-icon.svg" class="image-block-icon" />
+                    <img src="assets/icons/holo-icon.svg" class="image-block-icon card-image" />
+                  </div>
+                </div>
+                <div class="block-subtext">
+                  <p class="subheader-text">By clicking the "Save to USB Drive" button, you agree to Holo's <a href="#" id="open-overlay" class="holo-green">Terms and Conditions</a>.</p>
+                  <div class="download-button-wrapper">
+                    <a id="download-button" class="btn button-font action-button"><img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span class="button-text">Save to USB Drive</span></a>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="stepBox step3">
+                <div class="image-block">
+                  <div class="image-block-item">
+                    <img src="assets/icons/holoport-device-icon.svg" class="display-image-holoport" />
+                  </div>
+                </div>
+                <div>
+                  <p class="subheader-text">Copy the downloaded <span class="bold">hpos-state.json</span> file to a USB drive, and then insert that USB drive into your HoloPort.</p>
+                </div>
+              </div>
+
+              <div class="stepBox step4">
+                <div class="image-block">
+                  <div class="image-block-item">
+                    <img src="assets/icons/holoport-plus-router-icon.svg" class="display-image-connected" />
+                  </div>
+                </div>
+                <div>
+                  <p class="subheader-text">A verification email has been sent to <span id="email-placeholder" class="bold"></span>!</p>
+                  <p class="subheader-text">Click the link in your email to connect your HoloPort to the Holo network.</p>
+                </div>
+                <div class="block-bottom-text">
+                  <p class='subheader-text'>Note: If you don’t receive an email within 5 minutes, please reach out to <a href="https://forum.holo.host" target="_blank" class="holo-green">customer service</a>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id='button-container' class="stepButton step1 step2 step3 step4">
+          <div class="stepButton step1">
+            <div class="button-wrapper">
+              <button id="back-button1" class="btn button-font previous-btn"><span>Previous</span></button>
+              <div class="break-text">
+                <button id="generate-button" class="btn button-font next-btn"><span>Next</span></button>
+                <p class='note-text enter-text'>or press Enter</p>
+              </div>
+            </div>    
+          </div>
+          <div class="stepButton step2">
+            <div class="button-wrapper">
+              <button id="back-button2" class="btn button-font previous-btn"><span>Previous</span></button>
+              <div class="break-text">
+                <button id="post-download-button" class="btn button-font next-btn"><span>Next</span></button>
+                <p class='note-text enter-text'>or press Enter</p>
+              </div>
+            </div>
+          </div>    
+          <div class="stepButton step3">
+            <div class="button-wrapper">
+              <button id="back-button3" class="btn button-font previous-btn"><span>Previous</span></button>
+              <div class="break-text">
+                <button id="copied-button" class="btn next-btn button-font"><span>Next</span></button>
+                <p class='note-text enter-text'>or press Enter</p>
+              </div>
+              </div>
+          </div>
+          <div class="stepButton step4">
+            <div class="button-wrapper last-btn">
+              <button id="back-button4" class="btn button-font previous-btn"><span>Previous</span></button>
+            </div>
+          </div>  
+        </div>
+      </main>
+
+      <div id="fixed-overlay-tos">
+        <div class="modal-content">
+          <div class="close" id="close-overlay"></div>
+          <iframe src="https://holo.host/alpha-terms" width="100%" height="100%" frameborder="0">
+            <p>The Holo Terms and Conditions are being displayed through an iframe, which your current browser does not support. Please update or change Browsers and try again.</p>
+          </iframe>
+        </div>
+      </div>
+      <div id="modal-overlay"></div>
+      <div id="fixed-overlay-loader">
+        <div class="modal-content">
+          <div class="close" id="close-overlay"></div>
+          <div class="loader-grid">
+            <div class="flex">
+              <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            </div>
+            <p class="text-white flex">Generating Your Keys</p>
+          </div>
+        </div>
+      </div>
+      <div id="modal-overlay-loader"></div>
+      <script src="main.js"></script>
+    </body>
+</html>
