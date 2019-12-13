@@ -1,7 +1,7 @@
 (async () => {
-  const { state } = await import('../pkg')
+  const { config } = await import('../pkg')
 
-  const DOWNLOAD_FILE_NAME = 'hpos-state.json'
+  const DOWNLOAD_FILE_NAME = 'hpos-config.json'
 
   let stepTracker
   let downloadTracker
@@ -86,7 +86,7 @@
       click.openLoader()
 
       setTimeout(() => {
-        // Generate hpos-state.json and create download blob attached to url
+        // Generate hpos-config.json and create download blob attached to url
         try {
           inlineVariables.formErrorMessage.innerHTML = ''
           generateDownload(user, buttons.download)
@@ -339,16 +339,16 @@
 
 
   /**
-   * Generate download link of hpos-state.json and attach to `button` domElement
+   * Generate download link of hpos-config.json and attach to `button` domElement
    *
    * @param {Object} user
    * @param {DomElement} button - a DomElement that will have download and attribute props updated
   */
   const generateDownload = (user, button) => {
     console.log('Generating User Keys and creating Config...')
-    const stateData = state(user.email, user.password)
-    const stateBlob = new Blob([stateData.state], { type: 'application/json' })
-    const url = URL.createObjectURL(stateBlob)
+    const configData = config(user.email, user.password)
+    const configBlob = new Blob([configData.config], { type: 'application/json' })
+    const url = URL.createObjectURL(configBlob)
 
     if (button.nodeName !== 'A') throw new Error('Download button has to be node <a> type')
 
@@ -356,7 +356,7 @@
     button.download = DOWNLOAD_FILE_NAME
 
     /* In case we decide to use the HoloPort url it is available right here */
-    console.log('Optional HoloPort url : ', stateData.url)
+    console.log('Optional HoloPort url : ', configData.url)
 
     return url
   }

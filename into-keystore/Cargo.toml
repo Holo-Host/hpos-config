@@ -1,13 +1,13 @@
 [package]
-name = "hpos-state-derive-keystore"
+name = "hpos-config-into-keystore"
 version = "0.0.0"
 authors = ["perry.kundert@holo.host", "yegortimoshenko@transumption.com"]
 edition = "2018"
-repository = "https://github.com/Holo-Host/hpos-state"
+repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]
 failure = "0.1.5"
-hpos-state-core = { path = "../core" }
+hpos-config-core = { path = "../core" }
 serde_json = "1.0.39"
 
 [dependencies.holochain_conductor_api]

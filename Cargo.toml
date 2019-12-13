@@ -2,9 +2,9 @@
 
 members = [
   "core",
-  "derive-keystore",
   "gen-cli",
-  "gen-web"
+  "gen-web",
+  "into-keystore"
 ]
 
 # https://github.com/rust-lang/cargo/issues/5478#issuecomment-518026540
