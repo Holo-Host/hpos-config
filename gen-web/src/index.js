@@ -346,9 +346,9 @@
   */
   const generateDownload = (user, button) => {
     console.log('Generating User Keys and creating Config...')
-    const configData = state(user.email, user.password)
-    const configBlob = new Blob([configData.config], { type: 'application/json' })
-    const url = URL.createObjectURL(configBlob)
+    const stateData = state(user.email, user.password)
+    const stateBlob = new Blob([stateData.state], { type: 'application/json' })
+    const url = URL.createObjectURL(stateBlob)
 
     if (button.nodeName !== 'A') throw new Error('Download button has to be node <a> type')
 
@@ -356,7 +356,7 @@
     button.download = DOWNLOAD_FILE_NAME
 
     /* In case we decide to use the HoloPort url it is available right here */
-    console.log('Optional HoloPort url : ', configData.url)
+    console.log('Optional HoloPort url : ', stateData.url)
 
     return url
   }
