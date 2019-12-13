@@ -83,6 +83,7 @@
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
       downloadTracker = false
+      click.openLoader()
 
       setTimeout(() => {
         // Generate hpos-state.json and create download blob attached to url
@@ -100,9 +101,10 @@
 
         /* Clean State */
         buttons.generate.disabled = false
+        click.closeLoader()
         updateUiStep(2)
         updateProgressBar(1)
-      }, 50)
+      }, 100)
     },
     download: () => {
       /* Communicate visually that something is happening in the bkgd */
@@ -135,6 +137,14 @@
     closeOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'none'
       document.querySelector('#modal-overlay').style.display = 'none'
+    },
+    openLoader: () => {
+      document.querySelector('#fixed-overlay-loader').style.display = 'block'
+      document.querySelector('#modal-overlay-loader').style.display = 'block'
+    },
+    closeLoader: () => {
+      document.querySelector('#fixed-overlay-loader').style.display = 'none'
+      document.querySelector('#modal-overlay-loader').style.display = 'none'
     },
     back1: () => {
       const rewind = true

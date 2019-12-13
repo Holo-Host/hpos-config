@@ -53,12 +53,16 @@ p.break-text span{
 
 .break-text {
   text-align: center;
+  z-index: 2;
 }
 
 .left-margin {
   margin-left: 10%;
 }
 
+.flex {
+  flex: 1;
+}
 
 /* Colors */
 
@@ -206,7 +210,7 @@ label {
 }
 
 .subheader-text {
-  font-size: calc(0.5rem + 0.8vw);
+  font-size: calc(0.7rem + 0.6vw);
   line-height: calc(0.8rem + 1vw);
   letter-spacing: -0.4px;
   color: #2C405A;
@@ -258,6 +262,7 @@ body.step4 .subheader-text {
 
 #holo-brand-wrapper {
   width: 4%;
+  min-width: 2rem;
   position: fixed;
   top: 37vh;
   left: 33.0275vw;
@@ -334,12 +339,16 @@ body.step-monitor #holo-brand-wrapper {
 
 .display-image-holoport {
   height: 10vw;
+  min-height: 8rem;
   width: 20vw;
+  min-width: 16rem;
 }
 
 .display-image-connected {
   height: 14vw;
+  min-height: 10rem;
   width: 30vw;
+  min-width: 20rem;
 }
 
 .inline-icon-wrapper {
@@ -347,7 +356,7 @@ body.step-monitor #holo-brand-wrapper {
 }
 
 .inline-icon {
-  margin: 0px 15px 0px 20px !important;
+  margin: 0px 8px !important;
   cursor: pointer;
   height: 23px !important;
   width: 23px !important;
@@ -455,13 +464,13 @@ body.step-monitor #holo-brand-wrapper {
   margin-bottom: 1rem;
   font-style: normal;
   font-weight: bold;
-  font-size: calc(0.55rem + 1vw);
+  font-size: calc(0.95rem + 0.6vw);
   line-height: calc(0.8rem + 1.5vw);
   max-width: 85%;
 }
 
 body.step1 .step-label-info {
-  max-width: 94%;
+  max-width: 85%;
   margin-bottom: 0.5rem;
 }
 
@@ -474,7 +483,7 @@ body.step2 .step-label-info {
   margin-bottom: 1.5rem;
   font-style: normal;
   font-weight: bold;
-  font-size: calc(0.21rem + 1.6vw);
+  font-size: calc(0.81rem + 1.2vw);
   line-height: calc(1rem + 1.5vw);
 }
 
@@ -492,7 +501,7 @@ body.step2 .step-label-info {
 .image-block {
   min-width: 238px;
   margin: 2%;
-  margin-left: 8rem;
+  margin-left: 16%;
 }
 
 body.step2 .image-block {
@@ -502,7 +511,6 @@ body.step2 .image-block {
 
 body.step4 .image-block {
   margin: 2%;
-  margin-left: 1rem;
 }
 
 .list-group-item,
@@ -581,6 +589,7 @@ li.timer-list-item {
 .form-item {
   margin: 6vh 20px 15px 0px;
   border-bottom: 1px solid #2C405A;
+  width: 85%;
 }
 
 .form-item.error-red {
@@ -901,12 +910,13 @@ a.btn:disabled, a.btn[disabled] {
 }
 
 #download-button {
-  display: inline;
-  width: 24%;
-  max-width: 26rem;
-  min-width: 16rem;
+  display: block;
+  width: 40%;
+  max-width: 18rem;
+  min-width: 12rem;
   height: 2rem;
   line-height: 2rem;
+  font-size: calc(0.7rem + 0.4vw);
   text-align: center;
 }
 
@@ -1029,6 +1039,20 @@ body.step5 .stepButton {
   z-index: 1010;
 }
 
+#fixed-overlay-loader {
+  display: none;
+  position: fixed;
+  top: calc(30% - 6em);
+  left: 42%;
+  width: 50%;
+  max-width: 900px;
+  height: 60%;
+  max-height: 505px;
+  background: transparent;
+  overflow: hidden;
+  z-index: 1010;
+}
+
 #modal-overlay {
   display: none;
   position: fixed;
@@ -1040,11 +1064,22 @@ body.step5 .stepButton {
   z-index: 1000;
 }
 
+#modal-overlay-loader {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:rgba(67, 92, 117, 0.68);
+  z-index: 1000;
+}
+
 .modal-content {
   margin: 3em;
   padding: 0 1em;
-  overflow: auto; 
   height: calc(100% - 6em);
+  overflow: hidden;
 }
 
 .close {
@@ -1073,3 +1108,81 @@ body.step5 .stepButton {
   transform: rotate(-45deg);
 }
 
+
+/* Loader Component */
+
+.loader-grid {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  text-align: center;
+}
+
+.lds-grid {
+  display: inline-block;
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+.lds-grid div {
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  margin: 10%;
+  border-radius: 50%;
+  background: #FFFFFF;
+  animation: lds-grid 1.2s linear infinite;
+}
+.lds-grid div:nth-child(1) {
+  top: 8%;
+  left: 8%;
+  animation-delay: 0s;
+}
+.lds-grid div:nth-child(2) {
+  top: 8%;
+  left: 32%;
+  animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(3) {
+  top: 8%;
+  left: 56%;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(4) {
+  top: 32%;
+  left: 8%;
+  animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(5) {
+  top: 32%;
+  left: 32%;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(6) {
+  top: 32%;
+  left: 56%;
+  animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(7) {
+  top: 56%;
+  left: 8%;
+  animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(8) {
+  top: 56%;
+  left: 32%;
+  animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(9) {
+  top: 56%;
+  left: 56%;
+  animation-delay: -1.6s;
+}
+@keyframes lds-grid {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
