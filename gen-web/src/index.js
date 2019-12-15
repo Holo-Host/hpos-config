@@ -4,6 +4,7 @@
   const DOWNLOAD_FILE_NAME = 'hpos-config.json'
 
   let stepTracker
+  let signalKeyGen
   let downloadTracker
   let resetUserConfig
 
@@ -12,10 +13,8 @@
     start: document.querySelector('#start-button'),
     generate: document.querySelector('#generate-button'),
     download: document.querySelector('#download-button'),
-    // termsAndConditionsCheck: document.querySelector('#tac-checkbox'),
     postDownload: document.querySelector('#post-download-button'),
     copied: document.querySelector('#copied-button'),
-    // finalStage: document.querySelector('#final-stage-button'),
     openOlay: document.querySelector('#open-overlay'),
     closeOlay: document.querySelector('#close-overlay'),
     back1: document.querySelector('#back-button1'),
@@ -72,6 +71,7 @@
       // updateUiStep(2)
     },  
     generate: async () => {
+      signalKeyGen = true
       const inputValidity = await verifyInputData()
       if (!inputValidity) return buttons.generate.disabled = true
 
@@ -104,17 +104,17 @@
         click.closeLoader()
         updateUiStep(2)
         updateProgressBar(1)
-      }, 100)
+      }, 1500)
     },
     download: () => {
       /* Communicate visually that something is happening in the bkgd */
       buttons.download.disabled = true
-      buttons.download.innerText = 'Saving to USB Drive...'
+      buttons.download.innerText = 'Downloading File'
 
       setTimeout(() => {
         /* Clean State */
         buttons.download.disabled = false
-        buttons.download.innerText = 'Saved to USB Drive'
+        buttons.download.innerText = 'Download File Again'
         downloadTracker = true
         verifyDownloadComplete(downloadTracker)
       }, 1000)
@@ -127,9 +127,6 @@
       updateUiStep(4)
       updateProgressBar(3)
     },
-    // finalStage: () => {
-    //   updateUiStep(5)
-    // },
     openOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'block'
       document.querySelector('#modal-overlay').style.display = 'block'
@@ -147,8 +144,6 @@
       document.querySelector('#modal-overlay-loader').style.display = 'none'
     },
     back1: () => {
-      const rewind = true
-      updateProgressBar(1, rewind)
       updateUiStep(0)
     },
     back2: () => {
@@ -208,8 +203,8 @@
   /* Bind keystroke action to listener */
   document.querySelector('body').onkeyup = click.handleEnter
 
-  /* Set intial state for all config actions buttons to 'disabled' */
-  buttons.generate.disabled = true
+  /* Set intial 'disable' state for all config actions buttons */
+  buttons.generate.disabled = false
   buttons.postDownload.disabled = true
 
   /* Bind actions to buttons */
@@ -242,7 +237,7 @@
   * =============================
   * 
   */
-  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0 } //  5: !0 
+  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0 }
 
   const buttonBystep = { 0: buttons.start, 1: buttons.generate, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
 
@@ -262,11 +257,6 @@
     } else if (stepTracker === 2) {
       /* Check for download*/
       verifyDownloadComplete()
-    } else if (stepTracker === 5) {
-      /* Start Timer */
-      const deadline = addMinutesToDateTime(new Date(), 5)
-      console.log('Email Delivery Deadline : ', deadline);
-      countdownTimer(deadline)
     }
   }
 
@@ -298,6 +288,7 @@
       return null
     }
     stepTracker = step
+    
     constantCheck()
     if(step === 0) {
       return document.body.className = 'step-monitor'
@@ -311,12 +302,12 @@
    * @param {int} currentTransition
    * @param {bool} rewind
   */
- const updateProgressBar = (currentTransition, rewind = false) => {
-  if (currentTransition <= 1) rewind = false
-  if (!validation[currentTransition]) {
+ const updateProgressBar = (currentTransition, rewind = false) => {  
+  if (!validation[currentTransition] || currentTransition < 1) {
     console.log(`Wrong parameter ${currentTransition} in updateProgressBar()`)
     return null
   }
+
   /* Locate current step element and remove 'active' class */
   const childListNodes = document.querySelectorAll('li.progressbar-item')
   const stepIndex = currentTransition - 1
@@ -369,11 +360,10 @@
   const verifyDownloadComplete = (downloadComplete = downloadTracker, newConfig = resetUserConfig) => {
     if (downloadComplete) {
       buttons.postDownload.disabled = false
-      // buttons.termsAndConditionsCheck.checked = true
     }
     else if (!downloadComplete && newConfig ) {
       buttons.postDownload.disabled = true
-      buttons.download.innerText = 'Save new config to USB Drive'
+      buttons.download.innerText = 'Download Updated File'
       resetUserConfig = false
     }
     else return buttons.postDownload.disabled = true
@@ -415,26 +405,29 @@
    * Input form error check
    *
   */
-  const confirmValidInput = () => {
+  const confirmValidInput = (submitPressed = signalKeyGen) => {
     const inputElements = Object.values(inputs)
     resetFields(inputElements)
-    if(!inputs.email.value) {
-      const missingFields = inputElements.filter(inputs => !inputs.value) 
-      renderInputError(errorMessages.missingFields, missingFields)
-      return false
-    } else if (!validateEmail(inputs.email.value)) {
-      renderInputError(errorMessages.email, [inputs.email])
-      return false
-    } else if (!inputs.password.value || inputs.password.value.length <= 7) {
-      renderInputError(errorMessages.password, [inputs.password])
-      return false
-    } else if (inputs.password.value !== inputs.passwordCheck.value) {
+    if(submitPressed) {
+      if(!inputs.email.value) {
+        const missingFields = inputElements.filter(inputs => !inputs.value) 
+        renderInputError(errorMessages.missingFields, missingFields)
+      } else if (!validateEmail(inputs.email.value)) {
+        renderInputError(errorMessages.email, [inputs.email])
+      } else if (!inputs.password.value || inputs.password.value.length <= 7) {
+        renderInputError(errorMessages.password, [inputs.password])
+      } else if (inputs.password.value && inputs.password.value !== inputs.passwordCheck.value) {
+        const errorInputs = [inputs.passwordCheck]
+        renderInputError(errorMessages.passwordCheck, errorInputs)
+      } else return true
+    } else if (inputs.password.value && inputs.passwordCheck.value && inputs.password.value !== inputs.passwordCheck.value) {
       const errorInputs = [inputs.passwordCheck]
       renderInputError(errorMessages.passwordCheck, errorInputs)
-      return false
-    } else {
-      return true
-    }
+    } else if (inputs.password.value && inputs.password.value.length <= 7) {
+      renderInputError(errorMessages.password, [inputs.password])
+    } else return true
+
+    return false
   }
 
   /**
@@ -442,55 +435,8 @@
   */
   const verifyInputData = () => {
     let inputValidity = confirmValidInput()
-    if(inputs.email.value && inputs.password.value && inputs.passwordCheck.value) {
-      if (inputValidity) buttons.generate.disabled = false
-      else {
-        inputValidity = false
-        buttons.generate.disabled = true
-      }
-    }
+    if (inputValidity) buttons.generate.disabled = false
+    else buttons.generate.disabled = true
     return inputValidity
-  }
-
-  const getTimeRemaining = (endtime) => {
-    const now = new Date();
-    const time = Date.parse(endtime) - Date.parse(now);
-
-    const minutes = Math.floor((time / 1000 / 60) % 60)
-    const seconds = Math.floor((time / 1000) % 60)
-    const milliseconds = 1000 - now.getMilliseconds()
-
-    return {
-      'total': time,
-      'minutes': minutes,
-      'seconds': seconds,
-      'milliseconds': milliseconds
-    }
-  }
-
-  /**
-   * Initiate Timer Countdown
-  */
-  const countdownTimer = (endtime) => {
-    // inlineVariables.timerMessage.style.display = 'none'
-    const minutesSpan = document.getElementById('minutes')
-    const secondsSpan = document.getElementById('seconds')
-  
-    function updateClock() {
-      const t = getTimeRemaining(endtime)
-      minutesSpan.innerHTML = ('0' + t.minutes).slice(-2)
-      secondsSpan.innerHTML = ('0' + t.seconds).slice(-2)
-  
-      if (t.total <= 0) {
-        clearInterval(timeinterval)
-
-        // Determine whether we'd like to display user message once timer completes:
-        // inlineVariables.timerMessage.style.display = 'block'
-        // inlineVariables.timerMessage.innerHTML = 'Check your email'
-      }
-    }
-  
-    updateClock();
-    const timeinterval = setInterval(updateClock, 1)
   }
 })()
