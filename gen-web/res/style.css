@@ -481,7 +481,7 @@ body.step-monitor #holo-brand-wrapper {
   color: #3aa794;
 }
 
-.step5-header
+.step5-header,
 .step-monitor-header {
   margin: 0 auto;
   font-weight: 300;
@@ -865,6 +865,8 @@ button {
   cursor: pointer;
   transition: all 0.5s;
 }
+
+#download-button.disabled,
 button:disabled, button[disabled],
 a.btn:disabled, a.btn[disabled] {
   cursor: not-allowed;
@@ -885,6 +887,8 @@ a.btn:disabled, a.btn[disabled] {
   width: 12rem;
   height: 3.5rem;
 }
+
+#download-button.disabled,
 .btn:disabled, .btn[disabled] {
   background: #94CBCF;
   color: #FFFFFF;
@@ -1063,19 +1067,7 @@ body.step-monitor .help-link {
 
 /* Modal Components */
 
-#fixed-overlay-error {
-  display: none;
-  position: fixed;
-  top: 3em;
-  bottom: 3em;
-  left: 3em;
-  right: 3em;
-  background: #fff;
-  border-radius: 2em;
-  border: 1px #ddd solid;
-  overflow: hidden;
-}
-
+#fixed-overlay-notice,
 #fixed-overlay-tos {
   display: none;
   position: fixed;
@@ -1106,6 +1098,7 @@ body.step-monitor .help-link {
   z-index: 1010;
 }
 
+#modal-overlay-notice,
 #modal-overlay {
   display: none;
   position: fixed;

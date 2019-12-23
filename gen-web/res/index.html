@@ -165,7 +165,7 @@
               <div class="stepBox step2">
                 <div class="image-block">
                   <div class="image-block-item">
-                    <img src="assets/icons/holoport-device-icon.svg" class="display-image-holoport" />
+                    <img src="assets/images/laptop-usb.svg" class="display-image-holoport" />
                   </div>
                 </div>
               </div>
@@ -175,7 +175,6 @@
                   <div class="download-button-wrapper">
                     <a id="download-button" class="btn button-font action-button"><img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span class="button-text bold">Download File</span></a>
                   </div>
-                  <a id="download-butt" href="blob:http://localhost:8080/7074ac88-a2e6-4bf3-ae91-158034b431f4" download="asd.json">asd</a>
                   <p class="subheader-text tac">*By clicking “Download File”, you agree to Holo’s <a href="#" id="open-overlay" class="holo-green">Terms and Conditions</a>.</p>
                 </div>
               </div>
@@ -263,6 +262,7 @@
         </div>
       </div>
       <div id="modal-overlay"></div>
+
       <div id="fixed-overlay-loader">
         <div class="modal-content">
           <div class="loader-grid">
@@ -274,6 +274,24 @@
         </div>
       </div>
       <div id="modal-overlay-loader"></div>
+
+      <div id="fixed-overlay-notice">
+        <div class="modal-content">
+          <div class="pageHeader">
+            <div class="step-label-info">You’ve already generated your keys!</div>
+            <p class="step-label-info"> If you continue, new keys will be generated and you will need to  download a new configuration file.</p>
+            <p class="step-label-info">If you go back to Step 1, you’ll need to ensure the new configuration file is named <span id="download-file" class="bold"></span> before you transfer it to your USB drive.</p>
+          </div>
+          <div class="button-wrapper">
+            <button id="back-button2-confirmation" class="btn button-font previous-btn"><span>Continue</span></button>
+            <div class="break-text">
+              <button id="close-notice" class="btn button-font next-btn"><span>Cancel</span></button>
+              <p class='note-text enter-text'></p>
+            </div>
+          </div> 
+        </div>
+      </div>
+      <div id="modal-overlay-notice"></div>
       <script src="main.js"></script>
     </body>
 </html>

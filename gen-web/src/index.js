@@ -17,11 +17,13 @@
     download: document.querySelector('#download-button'),
     postDownload: document.querySelector('#post-download-button'),
     copied: document.querySelector('#copied-button'),
-    openOlay: document.querySelector('#open-overlay'),
-    closeOlay: document.querySelector('#close-overlay'),
+    openTaC: document.querySelector('#open-overlay'),
+    closeTaC: document.querySelector('#close-overlay'),
+    closeNotice: document.querySelector('#close-notice'),
     back0b: document.querySelector('#back-button0b'),
     back1: document.querySelector('#back-button1'),
     back2: document.querySelector('#back-button2'),
+    back2Confirmation: document.querySelector('#back-button2-confirmation'),
     back3: document.querySelector('#back-button3'),
     back4: document.querySelector('#back-button4'),
     back5: document.querySelector('#back-button5')
@@ -39,10 +41,8 @@
     emailInputArea: document.querySelector('#email-form-item'),
     passwordInputArea: document.querySelector('#password-form-item'),
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
-    holoportFlyingBookend: document.querySelector('#holoport-flying-bookend'),
-    formSuccessMessage: document.querySelector('#form-success-message'),
     formErrorMessage: document.querySelector('#form-error-message'),
-    timerMessage: document.querySelector('#timer-sub-text')
+    downloadFileName: document.querySelector('#download-file')
   }
 
   const errorMessages = {
@@ -85,7 +85,9 @@
       /* Set user config */
       user.email = inputs.email.value
       user.password = inputs.password.value
-      console.log('user config : ', user)
+
+      // DEV MODE - Config Check: 
+      // console.log('user config : ', user)
       
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
@@ -103,14 +105,11 @@
           return null
         }
 
-        /* Placeholder: Visually communicate that config generated in the bkgd : */
-        // inlineVariables.formSuccessMessage.innerText = 'Your User File has been successfully generated.'
-
         /* Clean State */
         buttons.generate.disabled = false
         click.closeLoader()
-        updateUiStep(3)
-        updateProgressBar(2)
+        updateUiStep(2)
+        updateProgressBar(1)
 
         /* Reset Password inputs */
         inputs.password.value = ''
@@ -121,17 +120,17 @@
       updateUiStep(3)
       updateProgressBar(2)
     },
-    download: () => {
-      console.log('inside download');
-      
+    download: () => {      
       /* Communicate visually that something is happening in the bkgd */
+        buttons.download.classList.add('disabled')
         buttons.download.disabled = true
 
-      setTimeout(() => {
+        setTimeout(() => {
         /* Clean State */
+        buttons.download.classList.remove('disabled')
         buttons.download.disabled = false
+        buttons.download.innerHTML = 'Downloading...'
         downloadTracker = true
-        console.log("---");
         
         verifyDownloadComplete(downloadTracker)
       }, 1000)
@@ -144,11 +143,11 @@
       updateUiStep(5)
       updateProgressBar(4)
     },
-    openOlay: () => {
+    openTaC: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'block'
       document.querySelector('#modal-overlay').style.display = 'block'
     },
-    closeOlay: () => {
+    closeTaC: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'none'
       document.querySelector('#modal-overlay').style.display = 'none'
     },
@@ -160,6 +159,14 @@
       document.querySelector('#fixed-overlay-loader').style.display = 'none'
       document.querySelector('#modal-overlay-loader').style.display = 'none'
     },
+    openNotice: () => {
+      document.querySelector('#fixed-overlay-notice').style.display = 'block'
+      document.querySelector('#modal-overlay-notice').style.display = 'block'
+    },
+    closeNotice: () => {
+      document.querySelector('#fixed-overlay-notice').style.display = 'none'
+      document.querySelector('#modal-overlay-notice').style.display = 'none'
+    },
     back0b: () => {
       updateUiStep(0)
     },
@@ -167,6 +174,11 @@
       updateUiStep(0.5)
     },
     back2: () => {
+      click.openNotice()
+
+    },
+    back2Confirmation: () => {
+      click.closeNotice()
       resetUserConfig = true
       const rewind = true
       updateProgressBar(2, rewind)
@@ -222,7 +234,7 @@
       
       verifyInputData()
 	},
-	confirmValidInput: () => confirmValidInput()
+	  confirmValidInput: () => confirmValidInput()
   }
 
   /* Bind keystroke action to listener */
@@ -240,11 +252,13 @@
   buttons.postDownload.onclick = click.postDownload
   buttons.copied.onclick = click.copied
   buttons.plugInDrive.onclick = click.plugInDrive
-  buttons.openOlay.onclick = click.openOlay
-  buttons.closeOlay.onclick = click.closeOlay
+  buttons.openTaC.onclick = click.openTaC
+  buttons.closeTaC.onclick = click.closeTaC
+  buttons.closeNotice.onclick = click.closeNotice
   buttons.back0b.onclick = click.back0b
   buttons.back1.onclick = click.back1
   buttons.back2.onclick = click.back2
+  buttons.back2Confirmation.onclick = click.back2Confirmation
   buttons.back3.onclick = click.back3
   buttons.back4.onclick = click.back4
   buttons.back5.onclick = click.back5
@@ -267,10 +281,7 @@
   */
   const validation = { 0.5: !0, 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
 
-  const buttonBystep = { 0: buttons.startPrep, 0.5: buttons.start, 1: buttons.generate, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
-
-  const addMinutesToDateTime = (dt, minutes) => new Date(dt.getTime() + minutes*60000)
-
+  const buttonBystep = { 0: buttons.startPrep, 0.5: buttons.start, 1: buttons.generate, 2: buttons.plugInDrive, 3: buttons.postDownload, 4: buttons.copied }
 
   /** 
   * Step Listener to initiate step specific actions
@@ -279,13 +290,15 @@
     if (stepTracker === 1) {
       /* Add click listener to page container on Page 2 form intake */
       inlineVariables.contentContainer.onclick =  verifyInputData
-    } else if (stepTracker === 4) {
-      /* Display back User Email on Page 4 for visual email verification */
-      inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
+    } else if (stepTracker === 2) {
+      inlineVariables.downloadFileName = DOWNLOAD_FILE_NAME
     } else if (stepTracker === 3) {
       /* Check for download*/
       verifyDownloadComplete()
-    }
+    } else if (stepTracker === 4) {
+      /* Display back User Email on Page 4 for visual email verification */
+      inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
+    } 
   }
 
   /**
@@ -364,7 +377,6 @@
    * @param {DomElement} button - a DomElement that will have download and attribute props updated
   */
   const generateDownload = (user, button) => {
-    console.log('Generating User Keys and creating Config...')
     const configData = config(user.email, user.password)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
     const url = URL.createObjectURL(configBlob)
@@ -373,10 +385,9 @@
 
     button.href = url
     button.download = DOWNLOAD_FILE_NAME
-    console.log("-->",url);
     
-    /* In case we decide to use the HoloPort url it is available right here */
-    console.log('Optional HoloPort url : ', configData.url)
+    /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
+    // console.log('Optional HoloPort url : ', configData.url)
 
     return url
   }
@@ -386,9 +397,7 @@
    *
    * @param {Boolean} downloadComplete
   */
-  const verifyDownloadComplete = (downloadComplete = downloadTracker, newConfig = resetUserConfig) => {
-    console.log("??");
-    
+  const verifyDownloadComplete = (downloadComplete = downloadTracker, newConfig = resetUserConfig) => {    
     if (downloadComplete) {
       buttons.postDownload.disabled = false
     }
