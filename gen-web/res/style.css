@@ -31,6 +31,7 @@ body.loading {
 }
 
 body.step-monitor .step0,
+ body.step0b .step0b,
  body.step1 .step1,
  body.step2 .step2,
  body.step3 .step3,
@@ -205,6 +206,7 @@ label {
 .button-text {
   vertical-align: text-bottom;
   cursor: pointer;
+  letter-spacing: 1px;
 }
 
 .note-text {
@@ -231,16 +233,17 @@ label {
   margin-top: 5px;
 }
 
-body.step2 .subheader-text {
+body.step3 .subheader-text {
   display: inline-block;
   max-width: 88%;
 }
 
-body.step2 .subheader-text.tac {
+body.step3 .subheader-text.tac {
   margin-top: calc(1rem + 3%);
 }
 
 
+body.step2 .subheader-text,
 body.step4 .subheader-text {
   max-width: 80%;
 }
@@ -305,6 +308,7 @@ body.step-monitor #holo-brand-wrapper {
   width: 40%;
   height: auto;
   opacity: 0.6;
+  z-index: 1;
 }
 
 #holoport-flying {
@@ -330,7 +334,7 @@ body.step-monitor #holo-brand-wrapper {
   border-radius: 4px;
 }
 
-.step2 #holo-icon {
+.step3 #holo-icon {
   margin-right: none;
 }
 
@@ -369,7 +373,7 @@ body.step-monitor #holo-brand-wrapper {
 }
 
 .inline-icon {
-  margin: 0px 50px 0px -60px !important;
+  margin: 0px 50px 0px -30px !important;
   cursor: pointer;
   height: 23px !important;
   width: 23px !important;
@@ -414,10 +418,15 @@ body.step-monitor #holo-brand-wrapper {
   justify-content: center;
   height: 100vh;
 }
+
 .content-wrapper.bookend {
   margin: 0 auto;
   margin-top: 6%;
   width: 80%;
+}
+
+.step0b .content-wrapper.bookend {
+  margin-top: 10%;
 }
 
 
@@ -439,6 +448,7 @@ body.step-monitor #holo-brand-wrapper {
   z-index: 2;
 }
 
+.greeting-step0b,
 .greeting-step0 {
   line-height: 1.2em;
   margin: 40vh 0 10vh;
@@ -496,11 +506,12 @@ body.step1 .step-label-info {
   margin-bottom: 0.5rem;
 }
 
-body.step2 .step-label-info {
+body.step3 .step-label-info {
   max-width: 86%;
 }
 
-body.step3 .step-label-info {
+body.step2 .step-label-info,
+body.step4 .step-label-info {
   max-width: 100%;
 }
 
@@ -530,12 +541,12 @@ body.step3 .step-label-info {
   margin-left: 16%;
 }
 
-body.step2 .image-block {
+body.step3 .image-block {
   margin: 0;
   margin-left: 0;
 }
 
-body.step4 .image-block {
+body.step5 .image-block {
   margin: 2%;
 }
 
@@ -551,16 +562,17 @@ body.step4 .image-block {
   margin-bottom: 5%; 
 }
 
-body.step2 .image-block-item {
+body.step3 .image-block-item {
   margin: 5% 0; 
 }
 
-body.step3 .image-block-item {
+body.step2 .image-block-item,
+body.step4 .image-block-item {
   margin: 5% 0;
   margin-top: 20%;
 }
 
-body.step4 .image-block-item {
+body.step5 .image-block-item {
   margin-bottom: 1rem;
 }
 
@@ -823,10 +835,6 @@ body.step5 .card-transparent {
   max-width: 640px;
 }
 
-body.step5 .card-transparent {
-  margin-top: 5vh;
-}
-
 
 /* Button Components */
 
@@ -913,6 +921,13 @@ a.btn:disabled, a.btn[disabled] {
   right: 0;
 }
 
+.info-step-next {
+  color: #00838D;
+  background-color: #FFFFFF;
+  z-index: 2;
+}
+
+
 .previous-btn span  {
   cursor: pointer;
   display: inline-block;
@@ -933,6 +948,13 @@ a.btn:disabled, a.btn[disabled] {
 .previous-btn:hover span:after {
   opacity: 1;
   left: 0;
+}
+
+.info-step-previous {
+  color: #FFFFFF;
+  background-color: #00838D;
+  border: 1px solid #FFFFFF;
+  z-index: 3;
 }
 
 #download-button {
@@ -982,7 +1004,7 @@ body.step-monitor .help-link {
 }
 
 .progressbar li {
-  margin: 3vw;
+  margin: 2.37vw;
   margin-bottom: 1vw;
   list-style-type: none;
   color: #00838D;
@@ -1014,11 +1036,11 @@ body.step-monitor .help-link {
 /*progressbar connectors*/
 .progressbar li:after {
   content: '';
-  width: 10vw;
+  width: 7vw;
   height: 2px;
   background: #00838D;
   position: absolute;
-  left: -8vw;
+  left: -6vw;
   top: 20px;
   z-index: -1;
   font-size: 50px;

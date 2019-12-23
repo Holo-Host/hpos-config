@@ -1,7 +1,7 @@
 (async () => {
   const { config } = await import('../pkg')
 
-  const DOWNLOAD_FILE_NAME = 'hpos-config.json'
+  const DOWNLOAD_FILE_NAME = 'hposconfig.json'
 
   let stepTracker
   let signalKeyGen
@@ -10,17 +10,21 @@
 
   /* Parse HTML elements */
   const buttons = {
+    startPrep: document.querySelector('#start-prep-button'),
     start: document.querySelector('#start-button'),
     generate: document.querySelector('#generate-button'),
+    plugInDrive: document.querySelector('#drive-plugin-button'),
     download: document.querySelector('#download-button'),
     postDownload: document.querySelector('#post-download-button'),
     copied: document.querySelector('#copied-button'),
     openOlay: document.querySelector('#open-overlay'),
     closeOlay: document.querySelector('#close-overlay'),
+    back0b: document.querySelector('#back-button0b'),
     back1: document.querySelector('#back-button1'),
     back2: document.querySelector('#back-button2'),
     back3: document.querySelector('#back-button3'),
-    back4: document.querySelector('#back-button4')
+    back4: document.querySelector('#back-button4'),
+    back5: document.querySelector('#back-button5')
   }
 
   const inputs = {
@@ -42,11 +46,11 @@
   }
 
   const errorMessages = {
-    missingFields: '*Please complete missing fields.',
-    email: '*Email domain not recognized',
-    password: '*Your password needs to be at least eight character in length',
-    passwordCheck: '*Passwords do not match',
-    generateConfig: '*An error occured when configuring your user file. Please update your information and try again.'
+    missingFields: 'Please complete missing fields.',
+    email: 'Email domain not recognized',
+    password: 'Your password needs to be at least eight character in length',
+    passwordCheck: 'Passwords do not match',
+    generateConfig: 'An error occured when configuring your user file. Please update your information and try again.'
   }
 
   const user = {
@@ -59,27 +63,30 @@
   * ======================================
   */
   const click = {
+    startPrep: () => {
+      // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
+      updateUiStep(0.5)
+
+      // DEV MODE HACK TO SWITCH THROUGH PAGES
+      // updateUiStep(3)
+    },
     start: () => {
       if (!validateBrowser()) {
         alert('Please upgrade your browser to newer version.')
         return null
       }
-      // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
       updateUiStep(1)
-  
-      // DEV MODE HACK TO SWITCH THROUGH PAGES
-      // updateUiStep(2)
     },  
     generate: async () => {
       signalKeyGen = true
       const inputValidity = await verifyInputData()
       if (!inputValidity) return buttons.generate.disabled = true
-
+      
       /* Set user config */
       user.email = inputs.email.value
       user.password = inputs.password.value
       console.log('user config : ', user)
-
+      
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
       downloadTracker = false
@@ -102,30 +109,40 @@
         /* Clean State */
         buttons.generate.disabled = false
         click.closeLoader()
-        updateUiStep(2)
-        updateProgressBar(1)
+        updateUiStep(3)
+        updateProgressBar(2)
+
+        /* Reset Password inputs */
+        inputs.password.value = ''
+        inputs.passwordCheck.value = ''
       }, 1500)
     },
+    plugInDrive: () => {
+      updateUiStep(3)
+      updateProgressBar(2)
+    },
     download: () => {
+      console.log('inside download');
+      
       /* Communicate visually that something is happening in the bkgd */
-      buttons.download.disabled = true
-      buttons.download.innerText = 'Downloading File'
+        buttons.download.disabled = true
 
       setTimeout(() => {
         /* Clean State */
         buttons.download.disabled = false
-        buttons.download.innerText = 'Download File Again'
         downloadTracker = true
+        console.log("---");
+        
         verifyDownloadComplete(downloadTracker)
       }, 1000)
     },
     postDownload: () => {  
-      updateUiStep(3)
-      updateProgressBar(2)
-    },
-    copied: () => {
       updateUiStep(4)
       updateProgressBar(3)
+    },
+    copied: () => {
+      updateUiStep(5)
+      updateProgressBar(4)
     },
     openOlay: () => {
       document.querySelector('#fixed-overlay-tos').style.display = 'block'
@@ -143,8 +160,11 @@
       document.querySelector('#fixed-overlay-loader').style.display = 'none'
       document.querySelector('#modal-overlay-loader').style.display = 'none'
     },
-    back1: () => {
+    back0b: () => {
       updateUiStep(0)
+    },
+    back1: () => {
+      updateUiStep(0.5)
     },
     back2: () => {
       resetUserConfig = true
@@ -161,6 +181,11 @@
       const rewind = true
       updateProgressBar(4, rewind)
       updateUiStep(3)
+    },
+    back5: () => {
+      const rewind = true
+      updateProgressBar(5, rewind)
+      updateUiStep(4)
     },
     handleEnter: event => {
       const step = stepTracker || 0
@@ -208,18 +233,21 @@
   buttons.postDownload.disabled = true
 
   /* Bind actions to buttons */
+  buttons.startPrep.onclick = click.startPrep
   buttons.start.onclick = click.start
   buttons.generate.onclick = click.generate
   buttons.download.onclick = click.download
   buttons.postDownload.onclick = click.postDownload
   buttons.copied.onclick = click.copied
-  // buttons.finalStage.onclick = click.finalStage
+  buttons.plugInDrive.onclick = click.plugInDrive
   buttons.openOlay.onclick = click.openOlay
   buttons.closeOlay.onclick = click.closeOlay
+  buttons.back0b.onclick = click.back0b
   buttons.back1.onclick = click.back1
   buttons.back2.onclick = click.back2
   buttons.back3.onclick = click.back3
   buttons.back4.onclick = click.back4
+  buttons.back5.onclick = click.back5
   document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
   inlineVariables.emailInputArea.onclick = e => { inputs.email.focus(); return click.activateInput(e) }
@@ -237,9 +265,9 @@
   * =============================
   * 
   */
-  const validation = { 0: !0, 1: !0, 2: !0, 3: !0, 4: !0 }
+  const validation = { 0.5: !0, 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
 
-  const buttonBystep = { 0: buttons.start, 1: buttons.generate, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
+  const buttonBystep = { 0: buttons.startPrep, 0.5: buttons.start, 1: buttons.generate, 2: buttons.postDownload, 3: buttons.copied, 4: buttons.finalStage }
 
   const addMinutesToDateTime = (dt, minutes) => new Date(dt.getTime() + minutes*60000)
 
@@ -254,7 +282,7 @@
     } else if (stepTracker === 4) {
       /* Display back User Email on Page 4 for visual email verification */
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
-    } else if (stepTracker === 2) {
+    } else if (stepTracker === 3) {
       /* Check for download*/
       verifyDownloadComplete()
     }
@@ -292,7 +320,7 @@
     constantCheck()
     if(step === 0) {
       return document.body.className = 'step-monitor'
-    }
+    } else if (step === 0.5) return document.body.className = 'step0b'
     return document.body.className = 'step' + step
   }
 
@@ -345,7 +373,8 @@
 
     button.href = url
     button.download = DOWNLOAD_FILE_NAME
-
+    console.log("-->",url);
+    
     /* In case we decide to use the HoloPort url it is available right here */
     console.log('Optional HoloPort url : ', configData.url)
 
@@ -358,12 +387,13 @@
    * @param {Boolean} downloadComplete
   */
   const verifyDownloadComplete = (downloadComplete = downloadTracker, newConfig = resetUserConfig) => {
+    console.log("??");
+    
     if (downloadComplete) {
       buttons.postDownload.disabled = false
     }
     else if (!downloadComplete && newConfig ) {
       buttons.postDownload.disabled = true
-      buttons.download.innerText = 'Download Updated File'
       resetUserConfig = false
     }
     else return buttons.postDownload.disabled = true
