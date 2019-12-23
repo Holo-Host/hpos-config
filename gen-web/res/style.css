@@ -1,7 +1,15 @@
+/* Imports */
+
+@font-face {
+  font-family: 'Circular';
+  src: local('Circular'), url(./assets/fonts/lineto-circular-book.ttf) format('truetype');
+}
+
+
 /* Globals */
 
 html {
-  font-family: 'CircularStd', 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji','Segoe UI Emoji';
+  font-family: 'Circular', 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji','Segoe UI Emoji';
   font-size: 14px;
   line-height: 1.5;
   color: #24292e;
@@ -97,10 +105,11 @@ p.break-text span{
 h1 {
   font-size: 30px;
   line-height: 35px;
+  letter-spacing: 0.1rem;
 }
 
 h2 {
-/*  */
+  letter-spacing: initial;
 }
 
 
@@ -174,6 +183,10 @@ label {
 
 .underline {
   text-decoration: underline;
+}
+
+.inline-contents {
+  display: contents;
 }
 
 :focus {
@@ -321,28 +334,18 @@ body.step-monitor #holo-brand-wrapper {
   margin-right: none;
 }
 
-#file-icon {
-  align-self: center;
-  width: 40px !important;
-}
-
-#arrow-icon {
-  align-self: center;
-  height: 16px !important;
+#world-icon {
+  margin-top: -4px;
 }
 
 #connected-icon {
-  height: 3rem;
-  width: 2.2rem;
-}
-
-#laptop-icon {
-  height: 2.4rem;
-  width: 2.5rem;
-  margin-top: 2%;
+  margin: -4px calc(30px + 0.5rem) 0px 0.5rem;
+  height: 2.8rem;
+  width: 1.8rem;
 }
 
 #locked-icon {
+  margin: 5px calc(30px + 0.3rem) 0px 0.3rem;
   height: 3rem;
   width: 2.2rem;
 }
@@ -439,7 +442,7 @@ body.step-monitor #holo-brand-wrapper {
 .greeting-step0 {
   line-height: 1.2em;
   margin: 40vh 0 10vh;
-  font-weight: bold;
+  font-weight: 500;
   font-size: calc(2.2rem + 1vw);
   max-width: 30vw;
 }
@@ -447,13 +450,13 @@ body.step-monitor #holo-brand-wrapper {
 .greeting {
   line-height: 1.2em;
   margin: 32vh 0 10vh;
-  font-weight: bold;
+  font-weight: 500;
   font-size: calc(1.9rem + 0.9vw);
   max-width: 25vw;
 }
 
 .greeting-modal-title {
-  line-height: 1.2em
+  line-height: 1.2em;
   font-weight: bold;
   font-size: calc(1.9rem + 0.9vw);
 }
@@ -482,7 +485,7 @@ body.step-monitor #holo-brand-wrapper {
   display: block;
   margin-bottom: 1rem;
   font-style: normal;
-  font-weight: bold;
+  font-weight: 500;
   font-size: calc(0.95rem + 0.6vw);
   line-height: calc(0.8rem + 1.5vw);
   max-width: 88%;
@@ -505,7 +508,7 @@ body.step3 .step-label-info {
   display: block;
   margin-bottom: 1.5rem;
   font-style: normal;
-  font-weight: bold;
+  font-weight: 500;
   font-size: calc(0.81rem + 1.2vw);
   line-height: calc(1rem + 1.5vw);
 }
@@ -566,7 +569,7 @@ body.step4 .image-block-item {
   flex-grow: 0;
   flex-shrink: 0;
   display: inline-block !important;
-  margin: 5px 30px 0px 0px;
+  margin: 10px 30px 0px 0px;
   width: 18px;
   height: 32px;
 }
@@ -960,6 +963,7 @@ body.step5 .stepButton {
   color: #00838D;
   font-weight: bold;
   font-size: calc(0.8rem + 0.3vw);
+  letter-spacing: 0.1rem;
 }
 
 body.step-monitor .help-link {
