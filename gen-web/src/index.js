@@ -3,7 +3,7 @@
   const filesaver = require('file-saver');
   const { config } = await import('../pkg')
 
-  const DOWNLOAD_FILE_NAME = 'hposconfig.json'
+  const DOWNLOAD_FILE_NAME = 'hpos-config.json'
 
   let stepTracker
   let signalKeyGen = false
