@@ -75,6 +75,7 @@
     },
     start: () => {
       updateUiStep(1)
+      inputs.email.click()
     },  
     generate: async () => {
       signalKeyGen = true
@@ -122,7 +123,7 @@
       /* Communicate visually that something is happening in the bkgd */
         buttons.download.classList.add('disabled')
         buttons.download.disabled = true
-        buttons.download.innerHTML = 'Saving File...'
+        buttons.download.innerHTML = 'Saving Configuration File...'
 
         setTimeout(() => {
           try {
@@ -135,7 +136,7 @@
           downloadTracker = true
           buttons.download.classList.remove('disabled')
           buttons.download.disabled = false
-          buttons.download.innerHTML = 'Save File Again'
+          buttons.download.innerHTML = 'Save Configuration File Again'
           verifyDownloadComplete(downloadTracker)
         }, 1000)
     },
@@ -394,7 +395,7 @@
     else if (!downloadComplete && newConfig ) {
       buttons.postDownload.disabled = true
       resetUserConfig = false
-      buttons.download.innerHTML = 'Save New File'
+      buttons.download.innerHTML = 'Save New Configuration File'
     }
     else return buttons.postDownload.disabled = true
   }
