@@ -252,6 +252,11 @@ body.step4 .subheader-text {
   max-width: 80%;
 }
 
+.modal-content .subheader-text {
+  max-width: none !important;
+  margin-top: 3rem;
+}
+
 .subheader-text-bookend {
   font-size: calc(0.71rem + 0.5vw);
   line-height: calc(0.7rem + 1.1vw);
@@ -286,7 +291,8 @@ body.step4 .subheader-text {
   margin-left: -2rem;
 }
 
-body.step-monitor #holo-banner-wrapper {
+body.step-monitor #holo-banner-wrapper,
+body.step0b #holo-banner-wrapper {
   margin-left: calc(-1rem + -2vw);
 }
 
@@ -294,14 +300,10 @@ body.step-monitor #holo-banner-wrapper {
   width: 4%;
   min-width: 2rem;
   position: fixed;
-  top: 37vh;
+  top: 40.5vh;
   left: 33.0275vw;
   border-radius: 100px;
   z-index: 99;
-}
-
-body.step-monitor #holo-brand-wrapper {
-  top: 40.5vh;
 }
 
 #holoport-flying-bookend {
@@ -514,7 +516,7 @@ body.step5 .greeting-wrapper {
 .step-label-info {
   color: #2C405A;
   display: block;
-  margin-bottom: 1rem;
+  margin: 1rem 0;
   font-style: normal;
   font-weight: 500;
   font-size: calc(0.95rem + 0.6vw);
@@ -522,10 +524,14 @@ body.step5 .greeting-wrapper {
   max-width: 88%;
 }
 
+.modal-content .step-label-info {
+  font-size: calc(1.95rem + 0.6vw);
+}
+
 body.step1 .step-label-info {
   max-width: 85%;
   margin-bottom: 0.5rem;
-}
+} 
 
 body.step3 .step-label-info {
   max-width: 86%;
@@ -865,6 +871,11 @@ body.step-monitor .card-transparent {
   margin: 2% 4%;
 }
 
+.modal-content .button-wrapper {
+  margin-top: 4rem;
+  justify-content: center;
+}
+
 .download-button-wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -951,6 +962,9 @@ a.btn:disabled, a.btn[disabled] {
   z-index: 2;
 }
 
+.modal-content .next-btn span:after {
+  content: 'X'
+}
 
 .previous-btn span  {
   cursor: pointer;
