@@ -73,6 +73,10 @@ p.break-text span{
   flex: 1;
 }
 
+.center-align {
+  text-align: center !important;
+}
+
 /* Colors */
 
 .error-red {
@@ -361,6 +365,13 @@ body.step-monitor #holo-brand-wrapper {
   min-width: 16rem;
 }
 
+.usb-drive-laptop {
+  height: 15vw;
+  min-height: 8rem;
+  width: 20vw;
+  min-width: 16rem;
+}
+
 .display-image-connected {
   height: 14vw;
   min-height: 10rem;
@@ -448,6 +459,11 @@ body.step-monitor #holo-brand-wrapper {
   z-index: 2;
 }
 
+body.step5 .greeting-wrapper {
+  margin-left: -8%;
+  max-width: 60%;
+}
+
 .greeting-step0b,
 .greeting-step0 {
   line-height: 1.2em;
@@ -463,6 +479,11 @@ body.step-monitor #holo-brand-wrapper {
   font-weight: 500;
   font-size: calc(1.9rem + 0.9vw);
   max-width: 25vw;
+}
+
+.step5 .greeting {
+  font-size: calc(2.2rem + 1.1vw);
+  font-weight: 600;
 }
 
 .greeting-modal-title {
@@ -830,8 +851,7 @@ li.timer-list-item {
   transition: margin-top 0.3s ease-in-out;
 }
 
-body.step-monitor .card-transparent,
-body.step5 .card-transparent {
+body.step-monitor .card-transparent {
   max-width: 640px;
 }
 

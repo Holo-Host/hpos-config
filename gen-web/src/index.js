@@ -1,12 +1,15 @@
+
 (async () => {
+  const filesaver = require('file-saver');
   const { config } = await import('../pkg')
 
   const DOWNLOAD_FILE_NAME = 'hposconfig.json'
 
   let stepTracker
-  let signalKeyGen
-  let downloadTracker
-  let resetUserConfig
+  let signalKeyGen = false
+  let resetUserConfig = false
+  let downloadTracker = {}
+  let configFileBlob = ''
 
   /* Parse HTML elements */
   const buttons = {
@@ -68,13 +71,9 @@
       updateUiStep(0.5)
 
       // DEV MODE HACK TO SWITCH THROUGH PAGES
-      // updateUiStep(3)
+      // updateUiStep(4)
     },
     start: () => {
-      if (!validateBrowser()) {
-        alert('Please upgrade your browser to newer version.')
-        return null
-      }
       updateUiStep(1)
     },  
     generate: async () => {
@@ -98,11 +97,10 @@
         // Generate hpos-config.json and create download blob attached to url
         try {
           inlineVariables.formErrorMessage.innerHTML = ''
-          generateDownload(user, buttons.download)
+          generateBlob(user, buttons.download)
         } catch (e) {
-          console.log(`Error executing generateDownload with an error ${e}`)
           inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
-          return null
+          throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
         }
 
         /* Clean State */
@@ -120,20 +118,26 @@
       updateUiStep(3)
       updateProgressBar(2)
     },
-    download: () => {      
+    download: async () => {      
       /* Communicate visually that something is happening in the bkgd */
         buttons.download.classList.add('disabled')
         buttons.download.disabled = true
+        buttons.download.innerHTML = 'Saving File...'
 
         setTimeout(() => {
-        /* Clean State */
-        buttons.download.classList.remove('disabled')
-        buttons.download.disabled = false
-        buttons.download.innerHTML = 'Downloading...'
-        downloadTracker = true
-        
-        verifyDownloadComplete(downloadTracker)
-      }, 1000)
+          try {
+            filesaver.saveAs(configFileBlob, DOWNLOAD_FILE_NAME)
+          } catch (e) {
+            throw new Error(`Error saving config. Error: ${e}`)
+          }
+
+          /* Clean State */
+          downloadTracker = true
+          buttons.download.classList.remove('disabled')
+          buttons.download.disabled = false
+          buttons.download.innerHTML = 'Save File Again'
+          verifyDownloadComplete(downloadTracker)
+        }, 1000)
     },
     postDownload: () => {  
       updateUiStep(4)
@@ -311,14 +315,6 @@
   }
 
   /**
-   * Validate if browser supports required functions
-   */
-  const validateBrowser = () => {
-    /* Detect if browser supports download attribute on <a> */
-    return (typeof buttons.download.download !== 'undefined')
-  }
-
-  /**
    * Update UI to the `step` step
    *
    * @param {int} step
@@ -369,31 +365,25 @@
   }
 }
 
-
   /**
-   * Generate download link of hpos-config.json and attach to `button` domElement
+   * Generate save link of hpos-config.json and attach to `button` domElement
    *
    * @param {Object} user
-   * @param {DomElement} button - a DomElement that will have download and attribute props updated
   */
-  const generateDownload = (user, button) => {
+  const generateBlob = user => {
     const configData = config(user.email, user.password)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
-    const url = URL.createObjectURL(configBlob)
-
-    if (button.nodeName !== 'A') throw new Error('Download button has to be node <a> type')
-
-    button.href = url
-    button.download = DOWNLOAD_FILE_NAME
     
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
     // console.log('Optional HoloPort url : ', configData.url)
-
-    return url
+   
+    configFileBlob = configBlob
+   
+    return configFileBlob
   }
-
+  
   /**
-   * Verify config was downloaded before allowing progression to next page
+   * Verify config was saved before allowing progression to next page
    *
    * @param {Boolean} downloadComplete
   */
@@ -404,6 +394,7 @@
     else if (!downloadComplete && newConfig ) {
       buttons.postDownload.disabled = true
       resetUserConfig = false
+      buttons.download.innerHTML = 'Save New File'
     }
     else return buttons.postDownload.disabled = true
   }
