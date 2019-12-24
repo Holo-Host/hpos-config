@@ -16,6 +16,8 @@ collaborators: []
 teams:
   - name: central
     permission: push
+  - name: happy
+    permission: push
   - name: hydra
     permission: push
 
