@@ -71,8 +71,8 @@
         console.log('!validateScreenSize() :', !validateScreenSize())
         console.log('detectMobileUserAgent() : ', detectMobileUserAgent())
         
-        alert('Please visit this site on a desktop or laptop computer to continue.')	
-        return null	
+        alert('Please visit this site on a desktop or laptop computer to continue.')
+        return null
       }
 
       // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
