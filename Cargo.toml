@@ -4,6 +4,7 @@ members = [
   "core",
   "gen-cli",
   "gen-web",
+  "into-base36-id",
   "into-keystore"
 ]
 
