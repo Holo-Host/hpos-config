@@ -96,20 +96,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "base-x"
-version = "0.2.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
-name = "base36"
-version = "0.0.0"
-source = "git+https://github.com/transumption-unstable/base36?branch=2019-12-18-nix#4e6981e13ec5f3748dfe9b8870aa4e8ed749096d"
-dependencies = [
- "base-x 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "base64"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1352,15 +1338,11 @@ dependencies = [
 name = "hpos-config-into-keystore"
 version = "0.0.0"
 dependencies = [
- "base36 0.0.0 (git+https://github.com/transumption-unstable/base36?branch=2019-12-18-nix)",
- "docopt 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "holochain_common 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
  "holochain_conductor_api 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
  "holochain_dpki 0.0.32-alpha2 (git+https://github.com/holochain/holochain-rust.git?branch=2019-10-13-hydra)",
  "hpos-config-core 0.0.0",
- "lazy_static 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -4262,8 +4244,6 @@ dependencies = [
 "checksum autocfg 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "b671c8fb71b457dd4ae18c4ba1e59aa81793daacc361d82fcd410cef0d491875"
 "checksum backtrace 0.3.27 (registry+https://github.com/rust-lang/crates.io-index)" = "60ef64f0896c6f4bd4f788de337c099b83de8c8129279c0084558af33f45ee19"
 "checksum backtrace-sys 0.1.31 (registry+https://github.com/rust-lang/crates.io-index)" = "82a830b4ef2d1124a711c71d263c5abdc710ef8e907bd508c88be475cebc422b"
-"checksum base-x 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "1b20b618342cf9891c292c4f5ac2cde7287cc5c87e87e9c769d617793607dec1"
-"checksum base36 0.0.0 (git+https://github.com/transumption-unstable/base36?branch=2019-12-18-nix)" = "<none>"
 "checksum base64 0.10.1 (registry+https://github.com/rust-lang/crates.io-index)" = "0b25d992356d2eb0ed82172f5248873db5560c4721f564b13cb5193bda5e668e"
 "checksum base64 0.9.3 (registry+https://github.com/rust-lang/crates.io-index)" = "489d6c0ed21b11d038c31b6ceccca973e65d73ba3bd8ecb9a2babf5546164643"
 "checksum bincode 1.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "b8ab639324e3ee8774d296864fbc0dbbb256cf1a41c490b94cba90c082915f92"
