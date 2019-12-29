@@ -47,6 +47,16 @@ in
     doCheck = false;
   };
 
+  hpos-config-into-base36-id = buildRustPackage rustPlatform {
+    name = "hpos-config-into-base36-id";
+    src = gitignoreSource ./.;
+    cargoDir = "into-base36-id";
+
+    buildInputs = lib.optionals stdenv.isDarwin [ Security ];
+
+    doCheck = false;
+  };
+
   hpos-config-into-keystore = buildRustPackage rustPlatform {
     name = "hpos-config-into-keystore";
     src = gitignoreSource ./.;
