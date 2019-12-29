@@ -1,4 +1,4 @@
-{ pkgs ? import ./pkgs.nix {} }:
+{ pkgs ? import ./nixpkgs.nix {} }:
 
 with pkgs;
 
@@ -43,6 +43,16 @@ in
     installPhase = ''
       mv dist $out
     '';
+
+    doCheck = false;
+  };
+
+  hpos-config-into-base36-id = buildRustPackage rustPlatform {
+    name = "hpos-config-into-base36-id";
+    src = gitignoreSource ./.;
+    cargoDir = "into-base36-id";
+
+    buildInputs = lib.optionals stdenv.isDarwin [ Security ];
 
     doCheck = false;
   };
