@@ -17,11 +17,10 @@
     start: document.querySelector('#start-button'),
     generate: document.querySelector('#generate-button'),
     plugInDrive: document.querySelector('#drive-plugin-button'),
+    termsAndConditions: document.querySelector('#terms-and-conditions'),
     download: document.querySelector('#download-button'),
     postDownload: document.querySelector('#post-download-button'),
     copied: document.querySelector('#copied-button'),
-    openTaC: document.querySelector('#open-overlay'),
-    closeTaC: document.querySelector('#close-overlay'),
     closeNotice: document.querySelector('#close-notice'),
     back0b: document.querySelector('#back-button0b'),
     back1: document.querySelector('#back-button1'),
@@ -29,7 +28,8 @@
     back2Confirmation: document.querySelector('#back-button2-confirmation'),
     back3: document.querySelector('#back-button3'),
     back4: document.querySelector('#back-button4'),
-    back5: document.querySelector('#back-button5')
+    back5: document.querySelector('#back-button5'),
+    forumHelp: document.querySelector('#forum-help')
   }
 
   const inputs = {
@@ -127,6 +127,13 @@
       updateUiStep(3)
       updateProgressBar(2)
     },
+    termsAndConditions: e => {
+      e.preventDefault()
+      window.open(
+        'https://holo.host/alpha-terms',
+        '_blank'
+      )
+    },
     download: async () => {      
       /* Communicate visually that something is happening in the bkgd */
         buttons.download.classList.add('disabled')
@@ -156,14 +163,6 @@
       updateUiStep(5)
       updateProgressBar(4)
     },
-    openTaC: () => {
-      document.querySelector('#fixed-overlay-tos').style.display = 'block'
-      document.querySelector('#modal-overlay').style.display = 'block'
-    },
-    closeTaC: () => {
-      document.querySelector('#fixed-overlay-tos').style.display = 'none'
-      document.querySelector('#modal-overlay').style.display = 'none'
-    },
     openLoader: () => {
       document.querySelector('#fixed-overlay-loader').style.display = 'block'
       document.querySelector('#modal-overlay-loader').style.display = 'block'
@@ -188,7 +187,6 @@
     },
     back2: () => {
       click.openNotice()
-
     },
     back2Confirmation: () => {
       click.closeNotice()
@@ -211,6 +209,13 @@
       const rewind = true
       updateProgressBar(5, rewind)
       updateUiStep(4)
+    },
+    forumHelp: e => {
+      e.preventDefault()
+      window.open(
+        'https://forum.holo.host',
+        '_blank'
+      )
     },
     handleEnter: event => {
       const step = stepTracker || 0
@@ -261,12 +266,11 @@
   buttons.startPrep.onclick = click.startPrep
   buttons.start.onclick = click.start
   buttons.generate.onclick = click.generate
+  buttons.termsAndConditions.onclick = click.termsAndConditions
   buttons.download.onclick = click.download
   buttons.postDownload.onclick = click.postDownload
   buttons.copied.onclick = click.copied
   buttons.plugInDrive.onclick = click.plugInDrive
-  buttons.openTaC.onclick = click.openTaC
-  buttons.closeTaC.onclick = click.closeTaC
   buttons.closeNotice.onclick = click.closeNotice
   buttons.back0b.onclick = click.back0b
   buttons.back1.onclick = click.back1
@@ -275,6 +279,7 @@
   buttons.back3.onclick = click.back3
   buttons.back4.onclick = click.back4
   buttons.back5.onclick = click.back5
+  buttons.forumHelp.onclick = click.forumHelp
   document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
   inlineVariables.emailInputArea.onclick = e => { inputs.email.focus(); return click.activateInput(e) }

@@ -1001,7 +1001,7 @@ a.btn[disabled] {
   min-width: 12rem;
   height: 2rem;
   line-height: 2rem;
-  font-size: calc(0.7rem + 0.4vw);
+  font-size: calc(0.4rem + 0.5vw);
   text-align: center;
 }
 
@@ -1107,8 +1107,7 @@ body.step3 .help-link {
 
 /* Modal Components */
 
-#fixed-overlay-notice,
-#fixed-overlay-tos {
+#fixed-overlay-notice {
   display: none;
   position: fixed;
   top: calc(26% - 6em);
@@ -1138,8 +1137,7 @@ body.step3 .help-link {
   z-index: 1010;
 }
 
-#modal-overlay-notice,
-#modal-overlay {
+#modal-overlay-notice {
   display: none;
   position: fixed;
   top: 0;
