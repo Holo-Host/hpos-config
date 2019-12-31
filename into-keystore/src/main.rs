@@ -4,8 +4,8 @@ use std::io::stdin;
 use hpos_config_core::{config::Seed, Config};
 
 use holochain_common::DEFAULT_PASSPHRASE;
-use holochain_conductor_api::key_loaders::mock_passphrase_manager;
-use holochain_conductor_api::keystore::*;
+use holochain_conductor_lib::key_loaders::mock_passphrase_manager;
+use holochain_conductor_lib::keystore::*;
 
 pub fn keystore_from_seed(seed: &Seed) -> Result<(Keystore, String), Error> {
     let passphrase_manager = mock_passphrase_manager(DEFAULT_PASSPHRASE.into());
