@@ -1,12 +1,10 @@
-use crate::keystore;
-
 use arrayref::array_ref;
 use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
 
-use holochain_dpki::SEED_SIZE;
+const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
@@ -38,17 +36,7 @@ where
     serializer.serialize_str(&base64::encode_config(x.as_ref(), base64::STANDARD_NO_PAD))
 }
 
-const ARGON2_CONFIG: argon2::Config = argon2::Config {
-    variant: argon2::Variant::Argon2id,
-    version: argon2::Version::Version13,
-    mem_cost: 1 << 16, // 64 MB
-    time_cost: 2,
-    lanes: 4,
-    thread_mode: argon2::ThreadMode::Parallel,
-    secret: &[],
-    ad: b"holo-config admin ed25519 key v1",
-    hash_length: SECRET_KEY_LENGTH as u32,
-};
+const ARGON2_ADDITIONAL_DATA: &[u8] = b"hpos-config admin ed25519 key v1";
 
 pub type Seed = [u8; SEED_SIZE];
 
@@ -63,12 +51,17 @@ pub struct Admin {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+pub struct Settings {
+    admin: Admin,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub enum Config {
     #[serde(rename = "v1")]
     V1 {
         #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
-        admins: Vec<Admin>,
+        settings: Settings,
     },
 }
 
@@ -83,36 +76,52 @@ impl Config {
             Some(s) => s,
         };
 
-        let (_, holochain_public_key) = keystore::from_seed(&seed)?;
+        let holochain_secret_key = SecretKey::from_bytes(&seed)?;
+        let holochain_public_key = PublicKey::from(&holochain_secret_key);
 
+        let admin_keypair = admin_keypair_from(holochain_public_key, &email, &password)?;
         let admin = Admin {
             email: email.clone(),
-            public_key: admin_public_key_from(holochain_public_key, &email, &password)?,
+            public_key: admin_keypair.public,
         };
 
         Ok((
             Config::V1 {
-                admins: vec![admin],
-                seed: seed,
+                seed,
+                settings: Settings { admin },
             },
             holochain_public_key,
         ))
     }
+
+    pub fn admin_public_key(&self) -> PublicKey {
+        let Config::V1 { seed: _, settings } = self;
+        settings.admin.public_key
+    }
 }
 
-fn admin_public_key_from(
+pub fn admin_keypair_from(
     holochain_public_key: PublicKey,
     email: &str,
     password: &str,
-) -> Result<PublicKey, Error> {
+) -> Result<Keypair, Error> {
     // This allows to use email addresses shorter than 8 bytes.
     let salt = Sha512::digest(email.as_bytes());
+    let mut hash = [0; SEED_SIZE];
 
-    let holochain_public_key_bytes = holochain_public_key.to_bytes();
-    let mut config = ARGON2_CONFIG.clone();
-    config.secret = &holochain_public_key_bytes;
+    argon2min::Argon2::new(2, 4, 1 << 16, argon2min::Variant::Argon2id)?.hash(
+        &mut hash,
+        password.as_bytes(),
+        &salt,
+        &holochain_public_key.to_bytes(),
+        ARGON2_ADDITIONAL_DATA,
+    );
 
-    let hash = &argon2::hash_raw(&password.as_bytes(), &salt, &config)?;
+    let secret_key = SecretKey::from_bytes(&hash)?;
+    let public_key = PublicKey::from(&secret_key);
 
-    Ok(PublicKey::from(&SecretKey::from_bytes(hash)?))
+    Ok(Keypair {
+        public: public_key,
+        secret: secret_key,
+    })
 }

@@ -1,41 +1,14 @@
-[package]
-name = "holo-config"
-version = "0.0.0"
-authors = ["perry.kundert@holo.host", "yegortimoshenko@transumption.com"]
-edition = "2018"
-readme = "README.md"
-repository = "https://github.com/Holo-Host/holo-config"
+[workspace]
 
-[dependencies]
-arrayref = "0.3.5"
-base64 = "0.10.1"
-docopt = "1.0.2"
-ed25519-dalek = { version = "1.0.0-pre.1", features = ["serde"] }
-failure = "0.1.5"
-getopts = "0.2.19"
-rand = "0.6.5"
-rust-argon2 = "0.5.1"
-serde = { version = "1.0.89", features = ["derive"] }
-serde_json = "1.0.39"
-sha2 = "0.8.0"
-url = "2.1.0"
+members = [
+  "core",
+  "gen-cli",
+  "gen-web",
+  "into-base36-id",
+  "into-keystore"
+]
 
-[dependencies.holochain_conductor_api]
-git = "https://github.com/holochain/holochain-rust"
-rev = "0d5f7634b9089477d50348855b1ffcf7f2f0dce5"
-
-[dependencies.holochain_common]
-git = "https://github.com/holochain/holochain-rust"
-rev = "0d5f7634b9089477d50348855b1ffcf7f2f0dce5"
-
-[dependencies.holochain_dpki]
-git = "https://github.com/holochain/holochain-rust"
-rev = "0d5f7634b9089477d50348855b1ffcf7f2f0dce5"
-
-[[bin]]
-name = "holo-config-derive"
-path = "src/bin/derive.rs"
-
-[[bin]]
-name = "holo-config-generate"
-path = "src/bin/generate.rs"
+# https://github.com/rust-lang/cargo/issues/5478#issuecomment-518026540
+[patch."https://github.com/holochain/holochain-rust".holochain_core_types]
+git = "https://github.com/holochain/holochain-rust.git"
+branch = "2019-10-13-hydra"

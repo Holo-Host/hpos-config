@@ -1,4 +1,4 @@
-use holo_config::{config::Seed, public_key, Config};
+use hpos_config_core::{public_key, config::Seed, Config};
 
 use docopt::Docopt;
 use failure::Error;
@@ -7,10 +7,10 @@ use sha2::{Digest, Sha512Trunc256};
 use std::{env, fs::File, io, path::PathBuf};
 
 const USAGE: &'static str = "
-Usage: holo-config-generate --email EMAIL --password STRING [--seed-from PATH]
-       holo-config-generate --help
+Usage: hpos-config-gen-cli --email EMAIL --password STRING [--seed-from PATH]
+       hpos-config-gen-cli --help
 
-Creates Holo config file that contains seed and admin email/password.
+Creates HoloPortOS config file that contains seed and admin email/password.
 
 Options:
   --email EMAIL      HoloPort admin email address
