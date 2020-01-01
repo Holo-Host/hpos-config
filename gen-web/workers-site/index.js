@@ -1,6 +1,6 @@
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 
-const handleEvent = event => async {
+const handleEvent = async event => {
   let url = new URL(event.request.url)
   if (url.protocol === 'http:') {
     url.protocol.set('https:')
@@ -8,7 +8,7 @@ const handleEvent = event => async {
   }
 
   return getAssetFromKV(event)
-};
+}
 
 addEventListener('fetch', event => {
   event.respondWith(handleEvent(event))
