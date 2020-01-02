@@ -1,9 +1,10 @@
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 
 const handleEvent = async event => {
-  let url = new URL(event.request.url)
+  const url = new URL(event.request.url)
+
   if (url.protocol === 'http:') {
-    url.protocol.set('https:')
+    url.protocol = 'https:'
     return Response.redirect(url.href, 301)
   }
 
