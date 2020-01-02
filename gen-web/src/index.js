@@ -68,10 +68,7 @@
   const click = {
     startPrep: () => {
       if (!validateScreenSize() || detectMobileUserAgent()) {
-        console.log('!validateScreenSize() :', !validateScreenSize())
-        console.log('detectMobileUserAgent() : ', detectMobileUserAgent())
-
-        var confirmed = confirm("This experience has not been optimized for mobile devices. Please continue only if you are using a laptop or PC.\n\nContinuing on a mobile device may result in unexpected issues.")
+        const confirmed = confirm("This experience has not been optimized for mobile devices. Please continue only if you are using a laptop or PC.\n\nContinuing on a mobile device may result in unexpected issues.")
         if (confirmed == true) return updateUiStep(0.5)
         else return null
       } else {
