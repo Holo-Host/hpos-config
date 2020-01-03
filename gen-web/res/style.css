@@ -309,6 +309,12 @@ body.step0b #holo-banner-wrapper {
   z-index: 99;
 }
 
+@media only screen and (max-width: 600px) {
+  #holo-brand-wrapper {
+    left: 31.0275vw;
+  }
+}
+
 #holoport-flying-bookend {
   background-repeat: no-repeat;
   position: fixed;
@@ -521,7 +527,8 @@ body.step5 .greeting-wrapper {
   font-style: normal;
   font-weight: 500;
   font-size: calc(0.95rem + 0.6vw);
-  line-height: calc(0.8rem + 1.5vw);
+  /* line-height: calc(0.8rem + 1.5vw); */
+  line-height: calc(1.3rem + 1vw);
   max-width: 88%;
 }
 
@@ -640,7 +647,7 @@ li.timer-list-item {
 /* Form Fields & Inputs */
 
 .step1 label {
-  min-width: 17vh;
+  min-width: 11vh;
   display: flex;
 }
 
@@ -648,7 +655,7 @@ li.timer-list-item {
   display: flex;
   border: none;
   mix-blend-mode: normal;
-  width: calc(-10rem + 36vw);
+  width: calc(-1rem + 30vw)
 }
 
 .form-item {
@@ -996,13 +1003,20 @@ a.btn[disabled] {
 
 #download-button {
   display: block;
-  width: 40%;
+  width: 50%;
   max-width: 22rem;
-  min-width: 12rem;
+  min-width: 14rem;
   height: 2rem;
   line-height: 2rem;
-  font-size: calc(0.4rem + 0.5vw);
+  font-size: calc(0.8rem + 0.2vw);
   text-align: center;
+}
+
+#back-button2-confirmation,
+#close-notice {
+  width: 14vw;
+  min-width: 7rem;
+  max-width: 12rem;
 }
 
 body.step-monitor .stepButton,
@@ -1015,7 +1029,7 @@ body.step5 .stepButton {
 .help-link {
   position: absolute;
   margin-top: 92vh;
-  width: 22vw;
+  width: 26vw;
   border-width: 0.2rem;
   flex-flow: row !important;
 }
@@ -1114,6 +1128,7 @@ body.step3 .help-link {
   left: 26%;
   width: 50%;
   max-width: 900px;
+  min-width: 350px;
   height: 60%;
   max-height: 505px;
   background: #fff;
@@ -1130,6 +1145,7 @@ body.step3 .help-link {
   left: 30%;
   width: 50%;
   max-width: 900px;
+  min-width: 300px;
   height: 60%;
   max-height: 505px;
   background: transparent;
@@ -1191,6 +1207,16 @@ body.step3 .help-link {
 }
 .close:after {
   transform: rotate(-45deg);
+}
+
+@media only screen and (max-width: 600px) {
+  #fixed-overlay-notice,
+  #fixed-overlay-loader {
+    position: fixed;
+    top: calc(26% - 6em);
+    left: 0%;
+    width: 100%;
+  }
 }
 
 /* Loader Component */
