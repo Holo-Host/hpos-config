@@ -14,12 +14,12 @@ serde_json = "1.0.39"
 
 [dependencies.holochain_conductor_lib]
 git = "https://github.com/holochain/holochain-rust"
-branch = "keystore-default-hash-config"
+branch = "develop"
 
 [dependencies.holochain_common]
 git = "https://github.com/holochain/holochain-rust"
-branch = "keystore-default-hash-config"
+branch = "develop"
 
 [dependencies.holochain_dpki]
 git = "https://github.com/holochain/holochain-rust"
-branch = "keystore-default-hash-config"
+branch = "develop"
