@@ -1,6 +1,7 @@
 { pkgs ? import ./nixpkgs.nix {} }:
 
 with pkgs;
+with python3Packages;
 
 let
   inherit (rust.packages.nightly) rustPlatform;
@@ -69,5 +70,16 @@ in
     buildInputs = lib.optionals stdenv.isDarwin [ CoreServices ];
 
     doCheck = false;
+  };
+
+  hpos-config-py = buildPythonPackage {
+    name = "hpos_config";
+    src = gitignoreSource ./.;
+
+    checkInputs = [ pytest ];
+    checkPhase = ''
+      python3 -m pytest
+    '';
+    meta.platforms = lib.platforms.all;
   };
 }

@@ -4,3 +4,7 @@ pkg/
 result
 target/
 worker/
+/build/
+/*.egg-info/
+__pycache__/
+/*.eggs/
