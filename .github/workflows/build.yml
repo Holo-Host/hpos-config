@@ -1,0 +1,20 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  gen-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: cachix/install-nix-action@v6
+      - run: |
+          nix-shell \
+            --option substituters 'https://cache.holo.host/ https://cache.nixos.org/' \
+            --option trusted-public-keys \
+              'cache.holo.host-1:lNXIXtJgS9Iuw4Cu6X0HINLu9sTfcjEntnrgwMQIMcE=
+               cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=' \
+            --run 'cd gen-web; npm install; npm run build; wrangler publish'
+        env:
+          CF_API_TOKEN: ${{ secrets.cf_api_token }}

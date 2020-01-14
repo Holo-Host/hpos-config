@@ -1,7 +1,9 @@
 [package]
 name = "hpos-config-into-keystore"
 version = "0.0.0"
-authors = ["perry.kundert@holo.host", "yegortimoshenko@transumption.com"]
+authors = [
+  "Yegor Timoshenko <yegortimoshenko@transumption.com>"
+]
 edition = "2018"
 repository = "https://github.com/Holo-Host/hpos-config"
 
@@ -10,14 +12,14 @@ failure = "0.1.5"
 hpos-config-core = { path = "../core" }
 serde_json = "1.0.39"
 
-[dependencies.holochain_conductor_api]
+[dependencies.holochain_conductor_lib]
 git = "https://github.com/holochain/holochain-rust"
-branch = "2019-10-13-hydra"
+branch = "develop"
 
 [dependencies.holochain_common]
 git = "https://github.com/holochain/holochain-rust"
-branch = "2019-10-13-hydra"
+branch = "develop"
 
 [dependencies.holochain_dpki]
 git = "https://github.com/holochain/holochain-rust"
-branch = "2019-10-13-hydra"
+branch = "develop"

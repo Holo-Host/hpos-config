@@ -4,10 +4,6 @@ members = [
   "core",
   "gen-cli",
   "gen-web",
+  "into-base36-id",
   "into-keystore"
 ]
-
-# https://github.com/rust-lang/cargo/issues/5478#issuecomment-518026540
-[patch."https://github.com/holochain/holochain-rust".holochain_core_types]
-git = "https://github.com/holochain/holochain-rust.git"
-branch = "2019-10-13-hydra"

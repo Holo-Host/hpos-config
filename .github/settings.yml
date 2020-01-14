@@ -16,6 +16,8 @@ collaborators: []
 teams:
   - name: central
     permission: push
+  - name: happy
+    permission: push
   - name: hydra
     permission: push
 
@@ -35,7 +37,9 @@ branches:
       enforce_admins: true
       restrictions:
         users: []
-        teams: []
+        teams:
+        - central
+        - happy
   - name: master
     protection:
       required_pull_request_reviews:
@@ -51,4 +55,6 @@ branches:
       enforce_admins: true
       restrictions:
         users: []
-        teams: []
+        teams:
+        - central
+        - happy
