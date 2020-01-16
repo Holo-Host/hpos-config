@@ -527,7 +527,6 @@ body.step5 .greeting-wrapper {
   font-style: normal;
   font-weight: 500;
   font-size: calc(0.95rem + 0.6vw);
-  /* line-height: calc(0.8rem + 1.5vw); */
   line-height: calc(1.3rem + 1vw);
   max-width: 88%;
 }
@@ -542,7 +541,7 @@ body.step1 .step-label-info {
 }
 
 body.step3 .step-label-info {
-  max-width: 86%;
+  max-width: 84%;
 }
 
 body.step2 .step-label-info,

@@ -42,17 +42,17 @@ pub type Seed = [u8; SEED_SIZE];
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Admin {
-    email: String,
+    pub email: String,
     #[serde(
         deserialize_with = "public_key_from_base64",
         serialize_with = "to_base64"
     )]
-    public_key: PublicKey,
+    pub public_key: PublicKey,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Settings {
-    admin: Admin,
+    pub admin: Admin,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
