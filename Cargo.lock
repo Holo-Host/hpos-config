@@ -1645,6 +1645,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "hpos-config-is-valid"
+version = "0.0.0"
+dependencies = [
+ "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hpos-config-core 0.0.0",
+ "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "http"
 version = "0.1.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
