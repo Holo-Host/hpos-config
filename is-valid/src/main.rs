@@ -1,5 +1,5 @@
 use failure::*;
-use hpos_config_core::*;
+use hpos_config::*;
 use std::io::stdin;
 
 fn main() -> Fallible<()> {

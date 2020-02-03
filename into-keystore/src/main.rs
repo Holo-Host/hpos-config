@@ -1,7 +1,7 @@
 use failure::Error;
 use std::io::stdin;
 
-use hpos_config_core::{config::Seed, Config};
+use hpos_config::{config::Seed, Config};
 
 use holochain_common::DEFAULT_PASSPHRASE;
 use holochain_conductor_lib::key_loaders::mock_passphrase_manager;

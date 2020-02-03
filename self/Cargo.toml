@@ -1,5 +1,5 @@
 [package]
-name = "hpos-config-core"
+name = "hpos-config"
 version = "0.0.0"
 authors = [
   "Perry Kundert <perry@hardconsulting.com>",

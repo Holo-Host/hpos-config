@@ -1583,7 +1583,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "hpos-config-core"
+name = "hpos-config"
 version = "0.0.0"
 dependencies = [
  "argon2min 0.3.0 (git+https://github.com/Holo-Host/argon2min?branch=2019-10-13-holo-config)",
@@ -1604,7 +1604,7 @@ version = "0.0.0"
 dependencies = [
  "docopt 1.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "hpos-config-core 0.0.0",
+ "hpos-config 0.0.0",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
  "sha2 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1615,7 +1615,7 @@ name = "hpos-config-gen-web"
 version = "0.0.0"
 dependencies = [
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "hpos-config-core 0.0.0",
+ "hpos-config 0.0.0",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
  "wasm-bindgen 0.2.57 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1628,7 +1628,7 @@ version = "0.0.0"
 dependencies = [
  "ed25519-dalek 1.0.0-pre.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "hpos-config-core 0.0.0",
+ "hpos-config 0.0.0",
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -1640,7 +1640,7 @@ dependencies = [
  "holochain_common 0.0.42-alpha4 (git+https://github.com/holochain/holochain-rust?branch=develop)",
  "holochain_conductor_lib 0.0.42-alpha4 (git+https://github.com/holochain/holochain-rust?branch=develop)",
  "holochain_dpki 0.0.42-alpha4 (git+https://github.com/holochain/holochain-rust?branch=develop)",
- "hpos-config-core 0.0.0",
+ "hpos-config 0.0.0",
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -1649,7 +1649,7 @@ name = "hpos-config-is-valid"
 version = "0.0.0"
 dependencies = [
  "failure 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)",
- "hpos-config-core 0.0.0",
+ "hpos-config 0.0.0",
  "serde_json 1.0.39 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 

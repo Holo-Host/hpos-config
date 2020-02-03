@@ -1,4 +1,4 @@
-use hpos_config_core::{public_key, config::Seed, Config};
+use hpos_config::{public_key, config::Seed, Config};
 
 use docopt::Docopt;
 use failure::Error;

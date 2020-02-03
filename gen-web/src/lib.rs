@@ -1,5 +1,5 @@
 use failure::Error;
-use hpos_config_core::{public_key, Config};
+use hpos_config::{public_key, Config};
 use serde::*;
 use wasm_bindgen::prelude::*;
 

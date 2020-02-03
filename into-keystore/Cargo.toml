@@ -9,7 +9,7 @@ repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]
 failure = "0.1.5"
-hpos-config-core = { path = "../core" }
+hpos-config = { path = "../self" }
 serde_json = "1.0.39"
 
 [dependencies.holochain_conductor_lib]

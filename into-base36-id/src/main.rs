@@ -1,6 +1,6 @@
 use ed25519_dalek::*;
 use failure::*;
-use hpos_config_core::*;
+use hpos_config::*;
 
 use std::io::stdin;
 
