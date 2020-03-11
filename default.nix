@@ -70,4 +70,14 @@ in
 
     doCheck = false;
   };
+
+  hpos-config-is-valid = buildRustPackage rustPlatform {
+    name = "hpos-config-is-valid";
+    src = gitignoreSource ./.;
+    cargoDir = "is-valid";
+
+    buildInputs = lib.optionals stdenv.isDarwin [ Security ];
+
+    doCheck = false;
+  };
 }
