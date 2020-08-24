@@ -1,15 +1,19 @@
 /* Imports */
 
 @font-face {
-  font-family: 'Circular';
-  src: local('Circular'),
-    url(./assets/fonts/lineto-circular-book.ttf) format('truetype');
+  font-family: 'Roboto';
+  src: local('Roboto'), url(./assets/fonts/Roboto-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'MPLUS1p';
+  src: local('MPLUS1p'), url(./assets/fonts/MPLUS1p-Regular.ttf) format('truetype');
 }
 
 /* Globals */
 
 html {
-  font-family: 'Circular', 'Segoe UI', Helvetica, Arial, sans-serif,
+  font-family: 'MPLUS1p', 'Roboto', Helvetica, Arial, sans-serif,
     'Apple Color Emoji', 'Segoe UI Emoji';
   font-size: 14px;
   line-height: 1.5;
