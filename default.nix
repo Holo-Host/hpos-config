@@ -57,20 +57,6 @@ in
     doCheck = false;
   };
 
-  hpos-config-into-keystore = buildRustPackage rustPlatform {
-    name = "hpos-config-into-keystore";
-    src = gitignoreSource ./.;
-    cargoDir = "into-keystore";
-
-    RUST_SODIUM_LIB_DIR = "${libsodium}/lib";
-    RUST_SODIUM_SHARED = "1";
-
-    nativeBuildInputs = with buildPackages; [ perl ];
-    buildInputs = lib.optionals stdenv.isDarwin [ CoreServices ];
-
-    doCheck = false;
-  };
-
   hpos-config-is-valid = buildRustPackage rustPlatform {
     name = "hpos-config-is-valid";
     src = gitignoreSource ./.;
