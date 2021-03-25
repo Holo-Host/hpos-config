@@ -14,6 +14,7 @@ jobs:
             --option substituters 'https://cache.holo.host/ https://cache.nixos.org/' \
             --option trusted-public-keys \
               'cache.holo.host-1:lNXIXtJgS9Iuw4Cu6X0HINLu9sTfcjEntnrgwMQIMcE=
+               cache.holo.host-2:ZJCkX3AUYZ8soxTLfTb60g+F3MkWD7hkH9y8CgqwhDQ=
                cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=' \
             --run 'cd gen-web; npm install; npm run build; wrangler publish'
         env:
