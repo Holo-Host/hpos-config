@@ -3,7 +3,7 @@ use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
-
+use crate::public_key::holo_dht_location_bytes;
 const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
@@ -12,7 +12,7 @@ where
 {
     String::deserialize(deserializer)
         .and_then(|s| {
-            base64::decode_config(&s, base64::STANDARD_NO_PAD)
+            base64::decode_config(&s[1..], base64::URL_SAFE_NO_PAD)
                 .map_err(|err| de::Error::custom(err.to_string()))
         })
         .map(|bytes| PublicKey::from_bytes(&bytes))
@@ -38,6 +38,16 @@ where
 
 const ARGON2_ADDITIONAL_DATA: &[u8] = b"hpos-config admin ed25519 key v1";
 
+pub(crate) const AGENT_PREFIX: &[u8] = &[0x84, 0x20, 0x24]; // uhCAk [132, 32, 36]
+
+fn to_agent_pub_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
+where
+    T: AsRef<[u8]>,
+    S: Serializer,
+{
+    serializer.serialize_str(&format!("u{}", base64::encode_config(&[AGENT_PREFIX, x.as_ref(), &holo_dht_location_bytes(x.as_ref())].concat(), base64::URL_SAFE_NO_PAD)))
+}
+
 pub type Seed = [u8; SEED_SIZE];
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -45,7 +55,7 @@ pub struct Admin {
     pub email: String,
     #[serde(
         deserialize_with = "public_key_from_base64",
-        serialize_with = "to_base64"
+        serialize_with = "to_agent_pub_base64"
     )]
     pub public_key: PublicKey,
 }
