@@ -2,12 +2,13 @@ use ed25519_dalek::PublicKey;
 use failure::*;
 use url::Url;
 
-pub fn to_base36_id(public_key: &PublicKey) -> String {
-    base36::encode(&public_key.to_bytes())
-}
-
+// ? Should we encode it according to the proposed plan here:
+// ? https://github.com/holochain/hc-utils/pull/15
 pub fn to_url(public_key: &PublicKey) -> Fallible<Url> {
-    let url = format!("https://{}.holohost.net", to_base36_id(&public_key));
+    let url = format!(
+        "https://{}.holohost.net",
+        holochain_pub_key_encoding(&public_key.to_bytes())
+    );
 
     Ok(Url::parse(&url)?)
 }
@@ -32,4 +33,16 @@ pub fn holo_dht_location_bytes(data: &[u8]) -> Vec<u8> {
         out[3] ^= hash[i + 3];
     }
     out
+}
+
+pub(crate) const AGENT_PREFIX: &[u8] = &[0x84, 0x20, 0x24]; // uhCAk [132, 32, 36]
+
+pub fn holochain_pub_key_encoding(x: &[u8]) -> String {
+    format!(
+        "u{}",
+        base64::encode_config(
+            &[AGENT_PREFIX, x, &holo_dht_location_bytes(x.as_ref())].concat(),
+            base64::URL_SAFE_NO_PAD
+        )
+    )
 }
