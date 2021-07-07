@@ -1,9 +1,9 @@
+use crate::public_key::holochain_pub_key_encoding;
 use arrayref::array_ref;
 use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
-use crate::public_key::holo_dht_location_bytes;
 const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
@@ -12,7 +12,7 @@ where
 {
     String::deserialize(deserializer)
         .and_then(|s| {
-            base64::decode_config(&s[1..], base64::URL_SAFE_NO_PAD)
+            base64::decode_config(&s, base64::STANDARD_NO_PAD)
                 .map_err(|err| de::Error::custom(err.to_string()))
         })
         .map(|bytes| PublicKey::from_bytes(&bytes))
@@ -36,16 +36,27 @@ where
     serializer.serialize_str(&base64::encode_config(x.as_ref(), base64::STANDARD_NO_PAD))
 }
 
+fn public_key_from_url_safe_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    String::deserialize(deserializer)
+        .and_then(|s| {
+            base64::decode_config(&s[1..], base64::URL_SAFE_NO_PAD)
+                .map_err(|err| de::Error::custom(err.to_string()))
+        })
+        .map(|bytes| PublicKey::from_bytes(&bytes))
+        .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
+}
+
 const ARGON2_ADDITIONAL_DATA: &[u8] = b"hpos-config admin ed25519 key v1";
 
-pub(crate) const AGENT_PREFIX: &[u8] = &[0x84, 0x20, 0x24]; // uhCAk [132, 32, 36]
-
-fn to_agent_pub_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
+fn public_key_to_url_safe_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
     T: AsRef<[u8]>,
     S: Serializer,
 {
-    serializer.serialize_str(&format!("u{}", base64::encode_config(&[AGENT_PREFIX, x.as_ref(), &holo_dht_location_bytes(x.as_ref())].concat(), base64::URL_SAFE_NO_PAD)))
+    serializer.serialize_str(&holochain_pub_key_encoding(x.as_ref()))
 }
 
 pub type Seed = [u8; SEED_SIZE];
@@ -55,7 +66,17 @@ pub struct Admin {
     pub email: String,
     #[serde(
         deserialize_with = "public_key_from_base64",
-        serialize_with = "to_agent_pub_base64"
+        serialize_with = "to_base64"
+    )]
+    pub public_key: PublicKey,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct AdminV2 {
+    pub email: String,
+    #[serde(
+        deserialize_with = "public_key_from_url_safe_base64",
+        serialize_with = "public_key_to_url_safe_base64"
     )]
     pub public_key: PublicKey,
 }
@@ -66,12 +87,24 @@ pub struct Settings {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
+pub struct SettingsV2 {
+    pub admin: AdminV2,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub enum Config {
     #[serde(rename = "v1")]
     V1 {
         #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
         settings: Settings,
+    },
+    #[serde(rename = "v2")]
+    V2 {
+        #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
+        seed: Seed,
+        registration_code: String,
+        settings: SettingsV2,
     },
 }
 
@@ -104,9 +137,47 @@ impl Config {
         ))
     }
 
+    pub fn new_v2(
+        email: String,
+        password: String,
+        registration_code: String,
+        maybe_seed: Option<Seed>,
+    ) -> Result<(Self, PublicKey), Error> {
+        let seed = match maybe_seed {
+            None => OsRng::new()?.gen::<Seed>(),
+            Some(s) => s,
+        };
+        // Eventually this should be the Root bundle/ master bundle
+        // that should be returned back to the host
+        // So that they can create new keys using that bundle
+        let master_secret_key = SecretKey::from_bytes(&seed)?;
+        let master_public_key = PublicKey::from(&master_secret_key);
+
+        let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
+        let admin = AdminV2 {
+            email: email.clone(),
+            public_key: admin_keypair.public,
+        };
+
+        Ok((
+            Config::V2 {
+                seed,
+                registration_code,
+                settings: SettingsV2 { admin: admin },
+            },
+            admin_keypair.public,
+        ))
+    }
+
     pub fn admin_public_key(&self) -> PublicKey {
-        let Config::V1 { seed: _, settings } = self;
-        settings.admin.public_key
+        match self {
+            Config::V1 { seed: _, settings } => settings.admin.public_key,
+            Config::V2 {
+                seed: _,
+                registration_code: _,
+                settings,
+            } => settings.admin.public_key,
+        }
     }
 }
 
