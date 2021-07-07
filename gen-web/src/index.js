@@ -33,6 +33,7 @@
   }
 
   const inputs = {
+    registrationCode: document.querySelector('#registration-code'),
     email: document.querySelector('#email'),
     password: document.querySelector('#password'),
     passwordCheck: document.querySelector('#password-check'),
@@ -40,6 +41,8 @@
 
   const inlineVariables = {
     contentContainer: document.querySelector('#content-container'),
+    registrationCodePlaceholder: document.querySelector('#registration-code-placeholder'),
+    registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
     emailPlaceholder: document.querySelector('#email-placeholder'),
     emailInputArea: document.querySelector('#email-form-item'),
     passwordInputArea: document.querySelector('#password-form-item'),
@@ -50,6 +53,7 @@
 
   const errorMessages = {
     missingFields: 'Please complete missing fields.',
+    registrationCode: 'Invalid code',
     email: 'Email domain not recognized',
     password: 'Your password needs to be at least eight character in length',
     passwordCheck: 'Passwords do not match',
@@ -57,6 +61,7 @@
   }
 
   const user = {
+    registrationCode: '',
     email: '',
     password: ''
   }
@@ -89,6 +94,7 @@
       if (!inputValidity) return buttons.generate.disabled = true
       
       /* Set user config */
+      user.registrationCode = inputs.registrationCode.value
       user.email = inputs.email.value
       user.password = inputs.password.value
 
@@ -280,10 +286,12 @@
   buttons.forumHelp.onclick = click.forumHelp
   document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
+  inlineVariables.registrationCodeInputArea.onclick = e => { inputs.registrationCode.focus(); return click.activateInput(e) }
   inlineVariables.emailInputArea.onclick = e => { inputs.email.focus(); return click.activateInput(e) }
   inlineVariables.passwordInputArea.onclick = e => { inputs.password.focus(); return click.activateInput(e) }
   inlineVariables.passwordCheckInputArea.onclick = e => { inputs.passwordCheck.focus(); return click.activateInput(e) }
   /* Bind actions to inputs */
+  inputs.registrationCode.onfocus = click.activateInput
   inputs.email.onfocus = click.activateInput
   inputs.password.onfocus = click.activateInput
   inputs.passwordCheck.onfocus = click.activateInput
@@ -338,9 +346,18 @@
    * @param {string} email
    */
   const validateEmail = (email) => {
-    // const re = /^\S+@\S+$/
     const re = /[^@]+@[^\.]+\..+/g
     return re.test(String(email).toLowerCase())
+  }
+
+  /**
+   * Validate if string is valid size
+   * @param {string} registrationCode
+   */
+  const validateRegistrationCode = (registrationCode) => {
+    // TODO: define what the min size of the registration code will be
+    // TODO: check if the size requirement is met
+    return registrationCode !== ""
   }
 
   /**
@@ -400,7 +417,7 @@
    * @param {Object} user
   */
   const generateBlob = user => {
-    const configData = config(user.email, user.password)
+    const configData = config(user.email, user.password, user.registrationCode)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
     
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
@@ -468,12 +485,15 @@
     const inputElements = Object.values(inputs)
     resetFields(inputElements)
     if(submitPressed) {
-      if(!inputs.email.value) {
+      if(!inputs.email.value || inputs.registrationCode.value) {
         const missingFields = inputElements.filter(inputs => !inputs.value) 
         renderInputError(errorMessages.missingFields, missingFields)
       } else if (!validateEmail(inputs.email.value)) {
         renderInputError(errorMessages.email, [inputs.email])
-      } else if (!inputs.password.value || inputs.password.value.length <= 7) {
+      } else if (!validateRegistrationCode(inputs.registrationCode.value)) {
+        renderInputError(errorMessages.registrationCode, [inputs.registrationCode])
+      } 
+      else if (!inputs.password.value || inputs.password.value.length <= 7) {
         renderInputError(errorMessages.password, [inputs.password])
       } else if (inputs.password.value && inputs.password.value !== inputs.passwordCheck.value) {
         const errorInputs = [inputs.passwordCheck]
