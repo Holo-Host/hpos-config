@@ -579,7 +579,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-core"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "argon2min",
  "arrayref",
@@ -596,7 +596,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-gen-cli"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "docopt",
  "failure",
@@ -608,7 +608,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-gen-web"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "failure",
  "hpos-config-core",
@@ -620,7 +620,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-into-base36-id"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "ed25519-dalek",
  "failure",
@@ -630,7 +630,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-is-valid"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "failure",
  "hpos-config-core",
