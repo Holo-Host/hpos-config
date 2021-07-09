@@ -103,6 +103,7 @@ pub enum Config {
     V2 {
         #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
+        encrypted_key: String,
         registration_code: String,
         settings: SettingsV2,
     },
@@ -162,6 +163,7 @@ impl Config {
         Ok((
             Config::V2 {
                 seed,
+                encrypted_key: Config::encrypt_key(seed, admin.public_key),
                 registration_code,
                 settings: SettingsV2 { admin: admin },
             },
@@ -174,10 +176,22 @@ impl Config {
             Config::V1 { seed: _, settings } => settings.admin.public_key,
             Config::V2 {
                 seed: _,
+                encrypted_key: _,
                 registration_code: _,
                 settings,
             } => settings.admin.public_key,
         }
+    }
+
+    pub fn encrypt_key(seed: Seed, public_key: PublicKey) -> String {
+        // For now lair does not take in any encrypted bytes so we pass back an empty encrypted byte string
+        let mut encrypted_key = vec![
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+        encrypted_key.extend(seed.to_vec());
+        encrypted_key.extend(&public_key.to_bytes());
+        base64::encode(&encrypted_key)
     }
 }
 

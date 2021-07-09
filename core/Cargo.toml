@@ -1,6 +1,6 @@
 [package]
 name = "hpos-config-core"
-version = "0.0.0"
+version = "0.0.1"
 authors = [
   "Perry Kundert <perry@hardconsulting.com>",
   "Yegor Timoshenko <yegortimoshenko@transumption.com>"
