@@ -35,8 +35,9 @@ pub fn holo_dht_location_bytes(data: &[u8]) -> Vec<u8> {
     out
 }
 
-pub(crate) const AGENT_PREFIX: &str = "hcak"; // uhCAk [132, 32, 36]
+pub(crate) const AGENT_PREFIX: &str = "hcak";
 
+// The same encoding that is used in hc-utils
 pub fn holochain_pub_key_encoding(x: &[u8]) -> String {
     format!(
         "{}{}",

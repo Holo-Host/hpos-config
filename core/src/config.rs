@@ -36,22 +36,19 @@ where
     serializer.serialize_str(&base64::encode_config(x.as_ref(), base64::STANDARD_NO_PAD))
 }
 
-fn public_key_from_url_safe_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
+fn public_key_from_dns_safe_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
     D: Deserializer<'de>,
 {
     String::deserialize(deserializer)
-        .and_then(|s| {
-            base64::decode_config(&s[1..], base64::URL_SAFE_NO_PAD)
-                .map_err(|err| de::Error::custom(err.to_string()))
-        })
-        .map(|bytes| PublicKey::from_bytes(&bytes))
+        .and_then(|s| multibase::decode(&s[4..]).map_err(|err| de::Error::custom(err.to_string())))
+        .map(|(_, bytes)| PublicKey::from_bytes(&bytes[..32]))
         .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
 }
 
 const ARGON2_ADDITIONAL_DATA: &[u8] = b"hpos-config admin ed25519 key v1";
 
-fn public_key_to_url_safe_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
+fn public_key_to_dns_safe_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
     T: AsRef<[u8]>,
     S: Serializer,
@@ -75,8 +72,8 @@ pub struct Admin {
 pub struct AdminV2 {
     pub email: String,
     #[serde(
-        deserialize_with = "public_key_from_url_safe_base64",
-        serialize_with = "public_key_to_url_safe_base64"
+        deserialize_with = "public_key_from_dns_safe_base64",
+        serialize_with = "public_key_to_dns_safe_base64"
     )]
     pub public_key: PublicKey,
 }
