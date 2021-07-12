@@ -26,9 +26,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.41"
+version = "1.0.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15af2628f6890fe2609a3b91bef4c83450512802e59489f9c1cb1fa5df064a61"
+checksum = "595d3cfa7a60d4555cb5067b99f07142a08ea778de5cf993f7b75c7d8fabc486"
 
 [[package]]
 name = "argon2min"
@@ -377,6 +377,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "data-encoding"
+version = "2.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3ee2393c4a91429dffb4bedf19f4d6abf27d8a732c8ce4980305d782e5426d57"
+
+[[package]]
+name = "data-encoding-macro"
+version = "0.1.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "86927b7cd2fe88fa698b87404b287ab98d1a0063a34071d92e575b72d3029aca"
+dependencies = [
+ "data-encoding",
+ "data-encoding-macro-internal",
+]
+
+[[package]]
+name = "data-encoding-macro-internal"
+version = "0.1.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a5bbed42daaa95e780b60a50546aa345b8413a1e46f9a40a12907d3598f038db"
+dependencies = [
+ "data-encoding",
+ "syn",
+]
+
+[[package]]
 name = "digest"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -579,7 +605,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-core"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "argon2min",
  "arrayref",
@@ -589,6 +615,7 @@ dependencies = [
  "ed25519-dalek",
  "failure",
  "lazy_static",
+ "multibase",
  "rand 0.6.5",
  "serde",
  "url",
@@ -596,7 +623,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-gen-cli"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "docopt",
  "failure",
@@ -608,7 +635,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-gen-web"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "failure",
  "hpos-config-core",
@@ -620,7 +647,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-into-base36-id"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "ed25519-dalek",
  "failure",
@@ -630,7 +657,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-is-valid"
-version = "0.0.0"
+version = "0.0.1"
 dependencies = [
  "failure",
  "hpos-config-core",
@@ -759,6 +786,17 @@ checksum = "a92518e98c078586bc6c934028adcca4c92a53d6a958196de835170a01d84e4b"
 dependencies = [
  "adler",
  "autocfg 1.0.1",
+]
+
+[[package]]
+name = "multibase"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9b3539ec3c1f04ac9748a260728e855f261b4977f5c3406612c884564f329404"
+dependencies = [
+ "base-x",
+ "data-encoding",
+ "data-encoding-macro",
 ]
 
 [[package]]
@@ -1410,9 +1448,9 @@ dependencies = [
 
 [[package]]
 name = "synstructure"
-version = "0.12.4"
+version = "0.12.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b834f2d66f734cb897113e34aaff2f1ab4719ca946f9a7358dba8f8064148701"
+checksum = "474aaa926faa1603c40b7885a9eaea29b444d1cb2850cb7c0e37bb1a4182f4fa"
 dependencies = [
  "proc-macro2",
  "quote",

@@ -50,7 +50,7 @@ fn main() -> Result<(), Error> {
         args.flag_registration_code,
         maybe_seed,
     )?;
-    println!("{}", public_key::to_url(&public_key)?);
+    eprintln!("{}", public_key::to_url(&public_key)?);
     println!("{}", serde_json::to_string_pretty(&config)?);
     Ok(())
 }

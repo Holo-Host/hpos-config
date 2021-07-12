@@ -36,22 +36,19 @@ where
     serializer.serialize_str(&base64::encode_config(x.as_ref(), base64::STANDARD_NO_PAD))
 }
 
-fn public_key_from_url_safe_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
+fn public_key_from_dns_safe_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
     D: Deserializer<'de>,
 {
     String::deserialize(deserializer)
-        .and_then(|s| {
-            base64::decode_config(&s[1..], base64::URL_SAFE_NO_PAD)
-                .map_err(|err| de::Error::custom(err.to_string()))
-        })
-        .map(|bytes| PublicKey::from_bytes(&bytes))
+        .and_then(|s| multibase::decode(&s[4..]).map_err(|err| de::Error::custom(err.to_string())))
+        .map(|(_, bytes)| PublicKey::from_bytes(&bytes[..32]))
         .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
 }
 
 const ARGON2_ADDITIONAL_DATA: &[u8] = b"hpos-config admin ed25519 key v1";
 
-fn public_key_to_url_safe_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
+fn public_key_to_dns_safe_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
 where
     T: AsRef<[u8]>,
     S: Serializer,
@@ -75,8 +72,8 @@ pub struct Admin {
 pub struct AdminV2 {
     pub email: String,
     #[serde(
-        deserialize_with = "public_key_from_url_safe_base64",
-        serialize_with = "public_key_to_url_safe_base64"
+        deserialize_with = "public_key_from_dns_safe_base64",
+        serialize_with = "public_key_to_dns_safe_base64"
     )]
     pub public_key: PublicKey,
 }
@@ -103,6 +100,7 @@ pub enum Config {
     V2 {
         #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
+        encrypted_key: String,
         registration_code: String,
         settings: SettingsV2,
     },
@@ -162,6 +160,7 @@ impl Config {
         Ok((
             Config::V2 {
                 seed,
+                encrypted_key: Config::encrypt_key(seed, admin.public_key),
                 registration_code,
                 settings: SettingsV2 { admin: admin },
             },
@@ -174,10 +173,22 @@ impl Config {
             Config::V1 { seed: _, settings } => settings.admin.public_key,
             Config::V2 {
                 seed: _,
+                encrypted_key: _,
                 registration_code: _,
                 settings,
             } => settings.admin.public_key,
         }
+    }
+
+    pub fn encrypt_key(seed: Seed, public_key: PublicKey) -> String {
+        // For now lair does not take in any encrypted bytes so we pass back an empty encrypted byte string
+        let mut encrypted_key = vec![
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+        encrypted_key.extend(seed.to_vec());
+        encrypted_key.extend(&public_key.to_bytes());
+        base64::encode(&encrypted_key)
     }
 }
 

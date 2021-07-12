@@ -35,14 +35,16 @@ pub fn holo_dht_location_bytes(data: &[u8]) -> Vec<u8> {
     out
 }
 
-pub(crate) const AGENT_PREFIX: &[u8] = &[0x84, 0x20, 0x24]; // uhCAk [132, 32, 36]
+pub(crate) const AGENT_PREFIX: &str = "hcak";
 
+// The same encoding that is used in hc-utils
 pub fn holochain_pub_key_encoding(x: &[u8]) -> String {
     format!(
-        "u{}",
-        base64::encode_config(
-            &[AGENT_PREFIX, x, &holo_dht_location_bytes(x.as_ref())].concat(),
-            base64::URL_SAFE_NO_PAD
+        "{}{}",
+        AGENT_PREFIX,
+        multibase::encode(
+            multibase::Base::Base32Lower,
+            &[x, &holo_dht_location_bytes(x.as_ref())].concat(),
         )
     )
 }
