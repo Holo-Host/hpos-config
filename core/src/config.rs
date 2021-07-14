@@ -78,17 +78,10 @@ impl Config {
         password: String,
         maybe_seed: Option<Seed>,
     ) -> Result<(Self, PublicKey), Error> {
-        let seed = match maybe_seed {
-            None => OsRng::new()?.gen::<Seed>(),
-            Some(s) => s,
-        };
-
-        let holochain_secret_key = SecretKey::from_bytes(&seed)?;
-        let holochain_public_key = PublicKey::from(&holochain_secret_key);
-
-        let admin_keypair = admin_keypair_from(holochain_public_key, &email, &password)?;
+        let (seed, admin_keypair, holochain_public_key) =
+            generate_keypair(email.clone(), password, maybe_seed)?;
         let admin = Admin {
-            email: email.clone(),
+            email: email,
             public_key: admin_keypair.public,
         };
 
@@ -107,22 +100,14 @@ impl Config {
         registration_code: String,
         maybe_seed: Option<Seed>,
     ) -> Result<(Self, PublicKey), Error> {
-        let seed = match maybe_seed {
-            None => OsRng::new()?.gen::<Seed>(),
-            Some(s) => s,
-        };
         // Eventually this should be the Root bundle/ master bundle
         // that should be returned back to the host
         // So that they can create new keys using that bundle
-        let master_secret_key = SecretKey::from_bytes(&seed)?;
-        let master_public_key = PublicKey::from(&master_secret_key);
-
-        let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
+        let (seed, admin_keypair, _) = generate_keypair(email.clone(), password, maybe_seed)?;
         let admin = Admin {
-            email: email.clone(),
+            email: email,
             public_key: admin_keypair.public,
         };
-
         Ok((
             Config::V2 {
                 seed,
@@ -156,6 +141,22 @@ impl Config {
         encrypted_key.extend(&public_key.to_bytes());
         base64::encode(&encrypted_key)
     }
+}
+
+fn generate_keypair(
+    email: String,
+    password: String,
+    maybe_seed: Option<Seed>,
+) -> Result<(Seed, Keypair, PublicKey), Error> {
+    let seed = match maybe_seed {
+        None => OsRng::new()?.gen::<Seed>(),
+        Some(s) => s,
+    };
+    let master_secret_key = SecretKey::from_bytes(&seed)?;
+    let master_public_key = PublicKey::from(&master_secret_key);
+
+    let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
+    Ok((seed, admin_keypair, master_public_key))
 }
 
 pub fn admin_keypair_from(
