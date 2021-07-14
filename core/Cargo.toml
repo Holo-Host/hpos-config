@@ -11,14 +11,12 @@ repository = "https://github.com/Holo-Host/hpos-config"
 [dependencies]
 arrayref = "0.3.5"
 base64 = "0.10.1"
-blake2b_simd = {version = "0.5.10"}
 ed25519-dalek = { version = "1.0.1", features = ["serde"] }
 failure = "0.1.5"
 lazy_static = "1.2"
 rand = "0.6.5"
 serde = { version = "1.0.123", features = ["derive"] }
 url = "2.1.0"
-multibase = "0.9"
 
 [dependencies.argon2min]
 git = "https://github.com/Holo-Host/argon2min"
