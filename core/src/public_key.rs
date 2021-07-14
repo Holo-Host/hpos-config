@@ -8,6 +8,5 @@ pub fn to_base36_id(public_key: &PublicKey) -> String {
 
 pub fn to_url(public_key: &PublicKey) -> Fallible<Url> {
     let url = format!("https://{}.holohost.net", to_base36_id(&public_key));
-
     Ok(Url::parse(&url)?)
 }

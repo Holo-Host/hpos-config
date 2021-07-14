@@ -3,6 +3,8 @@ use hpos_config_core::*;
 use std::io::stdin;
 
 fn main() -> Fallible<()> {
-    let Config::V1 { .. } = serde_json::from_reader(stdin())?;
-    Ok(())
+    match serde_json::from_reader(stdin())? {
+        Config::V1 { .. } => Ok(()),
+        Config::V2 { .. } => Ok(()),
+    }
 }
