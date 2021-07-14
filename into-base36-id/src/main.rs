@@ -9,18 +9,12 @@ fn main() -> Fallible<()> {
         Config::V1 { seed, .. } => {
             let secret_key = SecretKey::from_bytes(&seed)?;
             let public_key = PublicKey::from(&secret_key);
-            println!(
-                "{}",
-                public_key::holochain_pub_key_encoding(&public_key.to_bytes())
-            );
+            println!("{}", public_key::to_base36_id(&public_key));
         }
         Config::V2 { seed, .. } => {
             let secret_key = SecretKey::from_bytes(&seed)?;
             let public_key = PublicKey::from(&secret_key);
-            println!(
-                "{}",
-                public_key::holochain_pub_key_encoding(&public_key.to_bytes())
-            );
+            println!("{}", public_key::to_base36_id(&public_key));
         }
     }
 
