@@ -417,7 +417,7 @@
    * @param {Object} user
   */
   const generateBlob = user => {
-    const configData = config(user.email, user.password, user.registrationCode)
+    const configData = config(user.email, user.password, user.registrationCode.trim())
     const configBlob = new Blob([configData.config], { type: 'application/json' })
     
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
@@ -485,7 +485,7 @@
     const inputElements = Object.values(inputs)
     resetFields(inputElements)
     if(submitPressed) {
-      if(!inputs.email.value || inputs.registrationCode.value) {
+      if(!inputs.email.value || !inputs.registrationCode.value) {
         const missingFields = inputElements.filter(inputs => !inputs.value) 
         renderInputError(errorMessages.missingFields, missingFields)
       } else if (!validateEmail(inputs.email.value)) {

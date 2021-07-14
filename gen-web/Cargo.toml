@@ -4,7 +4,8 @@ version = "0.0.1"
 authors = [
   "Lisa Jetton <ldjetton21@gmail.com>",
   "PJ Klimek <pj@imagine-nyc.com>",
-  "Yegor Timoshenko <yegortimoshenko@transumption.com>"
+  "Yegor Timoshenko <yegortimoshenko@transumption.com>",
+  "zo-el <joelulahanna@gmail.com>"
 ]
 edition = "2018"
 repository = "https://github.com/Holo-Host/hpos-config"
