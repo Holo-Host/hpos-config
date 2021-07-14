@@ -103,19 +103,23 @@ impl Config {
         // Eventually this should be the Root bundle/ master bundle
         // that should be returned back to the host
         // So that they can create new keys using that bundle
-        let (seed, admin_keypair, _) = generate_keypair(email.clone(), password, maybe_seed)?;
+        let (master_seed, admin_keypair, hp_id_pub_key) =
+            generate_keypair(email.clone(), password, maybe_seed)?;
         let admin = Admin {
             email: email,
             public_key: admin_keypair.public,
         };
         Ok((
             Config::V2 {
-                seed,
-                encrypted_key: Config::encrypt_key(seed, admin.public_key),
+                seed: master_seed,
+                encrypted_key: Config::encrypt_key(
+                    admin_keypair.secret.to_bytes(),
+                    admin_keypair.public,
+                ),
                 registration_code,
                 settings: Settings { admin: admin },
             },
-            admin_keypair.public,
+            hp_id_pub_key,
         ))
     }
 
@@ -148,15 +152,15 @@ fn generate_keypair(
     password: String,
     maybe_seed: Option<Seed>,
 ) -> Result<(Seed, Keypair, PublicKey), Error> {
-    let seed = match maybe_seed {
+    let master_seed = match maybe_seed {
         None => OsRng::new()?.gen::<Seed>(),
         Some(s) => s,
     };
-    let master_secret_key = SecretKey::from_bytes(&seed)?;
+    let master_secret_key = SecretKey::from_bytes(&master_seed)?;
     let master_public_key = PublicKey::from(&master_secret_key);
 
     let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
-    Ok((seed, admin_keypair, master_public_key))
+    Ok((master_seed, admin_keypair, master_public_key))
 }
 
 pub fn admin_keypair_from(
