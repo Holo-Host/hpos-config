@@ -41,7 +41,6 @@
 
   const inlineVariables = {
     contentContainer: document.querySelector('#content-container'),
-    registrationCodePlaceholder: document.querySelector('#registration-code-placeholder'),
     registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
     emailPlaceholder: document.querySelector('#email-placeholder'),
     emailInputArea: document.querySelector('#email-form-item'),
