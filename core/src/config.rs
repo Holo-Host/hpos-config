@@ -3,7 +3,6 @@ use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
-
 const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
@@ -63,6 +62,14 @@ pub enum Config {
         seed: Seed,
         settings: Settings,
     },
+    #[serde(rename = "v2")]
+    V2 {
+        #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
+        seed: Seed,
+        encrypted_key: String,
+        registration_code: String,
+        settings: Settings,
+    },
 }
 
 impl Config {
@@ -71,17 +78,10 @@ impl Config {
         password: String,
         maybe_seed: Option<Seed>,
     ) -> Result<(Self, PublicKey), Error> {
-        let seed = match maybe_seed {
-            None => OsRng::new()?.gen::<Seed>(),
-            Some(s) => s,
-        };
-
-        let holochain_secret_key = SecretKey::from_bytes(&seed)?;
-        let holochain_public_key = PublicKey::from(&holochain_secret_key);
-
-        let admin_keypair = admin_keypair_from(holochain_public_key, &email, &password)?;
+        let (seed, admin_keypair, holochain_public_key) =
+            generate_keypair(email.clone(), password, maybe_seed)?;
         let admin = Admin {
-            email: email.clone(),
+            email: email,
             public_key: admin_keypair.public,
         };
 
@@ -94,10 +94,73 @@ impl Config {
         ))
     }
 
-    pub fn admin_public_key(&self) -> PublicKey {
-        let Config::V1 { seed: _, settings } = self;
-        settings.admin.public_key
+    pub fn new_v2(
+        email: String,
+        password: String,
+        registration_code: String,
+        maybe_seed: Option<Seed>,
+    ) -> Result<(Self, PublicKey), Error> {
+        // Eventually this should be the Root bundle/ master bundle
+        // that should be returned back to the host
+        // So that they can create new keys using that bundle
+        let (master_seed, admin_keypair, hp_id_pub_key) =
+            generate_keypair(email.clone(), password, maybe_seed)?;
+        let admin = Admin {
+            email: email,
+            public_key: admin_keypair.public,
+        };
+        Ok((
+            Config::V2 {
+                seed: master_seed,
+                encrypted_key: Config::encrypt_key(
+                    admin_keypair.secret.to_bytes(),
+                    admin_keypair.public,
+                ),
+                registration_code,
+                settings: Settings { admin: admin },
+            },
+            hp_id_pub_key,
+        ))
     }
+
+    pub fn admin_public_key(&self) -> PublicKey {
+        match self {
+            Config::V1 { seed: _, settings } => settings.admin.public_key,
+            Config::V2 {
+                seed: _,
+                encrypted_key: _,
+                registration_code: _,
+                settings,
+            } => settings.admin.public_key,
+        }
+    }
+
+    pub fn encrypt_key(seed: Seed, public_key: PublicKey) -> String {
+        // For now lair does not take in any encrypted bytes so we pass back an empty encrypted byte string
+        let mut encrypted_key = vec![
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+        encrypted_key.extend(seed.to_vec());
+        encrypted_key.extend(&public_key.to_bytes());
+        base64::encode(&encrypted_key)
+    }
+}
+
+fn generate_keypair(
+    email: String,
+    password: String,
+    maybe_seed: Option<Seed>,
+) -> Result<(Seed, Keypair, PublicKey), Error> {
+    let master_seed = match maybe_seed {
+        None => OsRng::new()?.gen::<Seed>(),
+        Some(s) => s,
+    };
+    let master_secret_key = SecretKey::from_bytes(&master_seed)?;
+    let master_public_key = PublicKey::from(&master_secret_key);
+
+    let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
+    Ok((master_seed, admin_keypair, master_public_key))
 }
 
 pub fn admin_keypair_from(
