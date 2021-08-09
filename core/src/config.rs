@@ -64,10 +64,10 @@ pub enum Config {
     },
     #[serde(rename = "v2")]
     V2 {
-        #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
-        seed: Seed,
+        /// The encrypted key will be the key that is used as the holochain key and as the holoport ID
         encrypted_key: String,
         registration_code: String,
+        /// The pub-key in settings is the holoport key that is used for log-in
         settings: Settings,
     },
 }
@@ -111,11 +111,7 @@ impl Config {
         };
         Ok((
             Config::V2 {
-                seed: master_seed,
-                encrypted_key: Config::encrypt_key(
-                    admin_keypair.secret.to_bytes(),
-                    admin_keypair.public,
-                ),
+                encrypted_key: Config::encrypt_key(master_seed, hp_id_pub_key),
                 registration_code,
                 settings: Settings { admin: admin },
             },
@@ -127,11 +123,24 @@ impl Config {
         match self {
             Config::V1 { seed: _, settings } => settings.admin.public_key,
             Config::V2 {
-                seed: _,
                 encrypted_key: _,
                 registration_code: _,
                 settings,
             } => settings.admin.public_key,
+        }
+    }
+
+    pub fn holoport_public_key(&self) -> Result<PublicKey, Error> {
+        match self {
+            Config::V1 { seed, settings: _ } => {
+                let secret_key = SecretKey::from_bytes(seed)?;
+                Ok(PublicKey::from(&secret_key))
+            }
+            Config::V2 {
+                encrypted_key,
+                registration_code: _,
+                settings: _,
+            } => Ok(Config::decode_key(encrypted_key)?.public),
         }
     }
 
@@ -141,9 +150,17 @@ impl Config {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0,
         ];
-        encrypted_key.extend(seed.to_vec());
         encrypted_key.extend(&public_key.to_bytes());
+        encrypted_key.extend(seed.to_vec());
         base64::encode(&encrypted_key)
+    }
+
+    pub fn decode_key(blob: &String) -> Result<Keypair, Error> {
+        let decoded_key = base64::decode(blob)?;
+        Ok(Keypair {
+            public: PublicKey::from_bytes(&decoded_key[32..64].to_vec())?,
+            secret: SecretKey::from_bytes(&decoded_key[64..].to_vec())?,
+        })
     }
 }
 

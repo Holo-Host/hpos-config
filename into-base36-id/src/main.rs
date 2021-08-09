@@ -11,10 +11,9 @@ fn main() -> Fallible<()> {
             let public_key = PublicKey::from(&secret_key);
             println!("{}", public_key::to_base36_id(&public_key));
         }
-        Config::V2 { seed, .. } => {
-            let secret_key = SecretKey::from_bytes(&seed)?;
-            let public_key = PublicKey::from(&secret_key);
-            println!("{}", public_key::to_base36_id(&public_key));
+        Config::V2 { encrypted_key, .. } => {
+            let key = Config::decode_key(&encrypted_key)?;
+            println!("{}", public_key::to_base36_id(&key.public));
         }
     }
 
