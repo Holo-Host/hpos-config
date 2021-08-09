@@ -111,10 +111,7 @@ impl Config {
         };
         Ok((
             Config::V2 {
-                encrypted_key: Config::encrypt_key(
-                    master_seed,
-                    hp_id_pub_key,
-                ),
+                encrypted_key: Config::encrypt_key(master_seed, hp_id_pub_key),
                 registration_code,
                 settings: Settings { admin: admin },
             },
@@ -138,14 +135,12 @@ impl Config {
             Config::V1 { seed, settings: _ } => {
                 let secret_key = SecretKey::from_bytes(seed)?;
                 Ok(PublicKey::from(&secret_key))
-            },
+            }
             Config::V2 {
                 encrypted_key,
                 registration_code: _,
                 settings: _,
-            } => {
-                Ok(Config::decode_key(encrypted_key)?.public)
-            },
+            } => Ok(Config::decode_key(encrypted_key)?.public),
         }
     }
 
@@ -155,8 +150,8 @@ impl Config {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0,
         ];
-        encrypted_key.extend(seed.to_vec());
         encrypted_key.extend(&public_key.to_bytes());
+        encrypted_key.extend(seed.to_vec());
         base64::encode(&encrypted_key)
     }
 
@@ -164,7 +159,7 @@ impl Config {
         let decoded_key = base64::decode(blob)?;
         Ok(Keypair {
             public: PublicKey::from_bytes(&decoded_key[32..64].to_vec())?,
-            secret: SecretKey::from_bytes(&decoded_key[64..].to_vec())?
+            secret: SecretKey::from_bytes(&decoded_key[64..].to_vec())?,
         })
     }
 }
