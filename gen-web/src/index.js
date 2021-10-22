@@ -2,7 +2,7 @@
 (async () => {
   const filesaver = require('file-saver');
   const { config } = await import('../pkg')
-
+  const hcSeedBundle = await import('@holochain/hc-seed-bundle')
   const DOWNLOAD_FILE_NAME = 'hpos-config.json'
 
   let stepTracker
@@ -104,7 +104,23 @@
       buttons.generate.disabled = true
       downloadTracker = false
       click.openLoader()
+      // // get passphrase
+      // await hcSeedBundle.seedBundleReady
+      // // generate a new pure entropy master seed
+      // const master = hcSeedBundle.UnlockedSeedBundle.newRandom({
+      //   bundleType: 'master'
+      // })
 
+      // // we need the passphrase as a Uint8Array
+      // const pw = (new TextEncoder()).encode('test-passphrase')
+      // const encodedBytes = master.lock([
+      //   new hcSeedBundle.SeedCipherPwHash(
+      //     hcSeedBundle.parseSecret(pw), 'interactive')
+      // ])
+      // console.log(">>>>>>>>>>", encodedBytes);
+      // // clear our secrets
+      // master.zero()
+      // // call hc-seed-bundle 
       setTimeout(() => {
         // Generate hpos-config.json and create download blob attached to url
         try {

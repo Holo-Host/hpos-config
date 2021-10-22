@@ -19,7 +19,7 @@ fn config_raw(
 
     let config_data = ConfigData {
         config: serde_json::to_string_pretty(&config)?,
-        url: public_key::to_url(&public_key)?.into_string(),
+        url: public_key::to_url(&public_key)?.to_string(),
     };
 
     Ok(JsValue::from_serde(&config_data)?)

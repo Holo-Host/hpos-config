@@ -11,6 +11,7 @@
     "webpack-dev-server": "^3.1.0"
   },
   "dependencies": {
+    "@holochain/hc-seed-bundle": "^0.0.1",
     "file-saver": "^2.0.2"
   }
 }

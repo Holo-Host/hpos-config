@@ -12,5 +12,20 @@ module.exports = {
     new WasmPackPlugin({
       crateDirectory: path.resolve(__dirname, '.')
     })
-  ]
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|html-entities)/,
+        // include: /(node_modules|@holochain)/,
+        use: ["remove-hashbag-loader"]
+      }
+    ]
+  },
+  resolveLoader: {
+    alias: {
+      "remove-hashbag-loader": path.join(__dirname, "./res/loaders/remove-hashbag-loader.js")
+    }
+  }
 }
