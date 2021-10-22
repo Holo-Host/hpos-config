@@ -64,7 +64,9 @@ pub enum Config {
     },
     #[serde(rename = "v2")]
     V2 {
+        device_seed: Seed,
         /// The encrypted key will be the key that is used as the holochain key and as the holoport ID
+        /// This will get depricated when we can load the entire bundle into the keystore
         encrypted_key: String,
         registration_code: String,
         /// The pub-key in settings is the holoport key that is used for log-in
@@ -98,20 +100,21 @@ impl Config {
         email: String,
         password: String,
         registration_code: String,
-        maybe_seed: Option<Seed>,
+        device_seed: Option<Seed>,
     ) -> Result<(Self, PublicKey), Error> {
         // Eventually this should be the Root bundle/ master bundle
         // that should be returned back to the host
         // So that they can create new keys using that bundle
-        let (master_seed, admin_keypair, hp_id_pub_key) =
-            generate_keypair(email.clone(), password, maybe_seed)?;
+        let (device_master_seed, admin_keypair, hp_id_pub_key) =
+            generate_keypair(email.clone(), password, device_seed)?;
         let admin = Admin {
             email: email,
             public_key: admin_keypair.public,
         };
         Ok((
             Config::V2 {
-                encrypted_key: Config::encrypt_key(master_seed, hp_id_pub_key),
+                device_seed: device_master_seed,
+                encrypted_key: Config::encrypt_key(device_master_seed, hp_id_pub_key),
                 registration_code,
                 settings: Settings { admin: admin },
             },
@@ -121,12 +124,8 @@ impl Config {
 
     pub fn admin_public_key(&self) -> PublicKey {
         match self {
-            Config::V1 { seed: _, settings } => settings.admin.public_key,
-            Config::V2 {
-                encrypted_key: _,
-                registration_code: _,
-                settings,
-            } => settings.admin.public_key,
+            Config::V1 { settings, .. } => settings.admin.public_key,
+            Config::V2 { settings, .. } => settings.admin.public_key,
         }
     }
 
@@ -136,11 +135,7 @@ impl Config {
                 let secret_key = SecretKey::from_bytes(seed)?;
                 Ok(PublicKey::from(&secret_key))
             }
-            Config::V2 {
-                encrypted_key,
-                registration_code: _,
-                settings: _,
-            } => Ok(Config::decode_key(encrypted_key)?.public),
+            Config::V2 { encrypted_key, .. } => Ok(Config::decode_key(encrypted_key)?.public),
         }
     }
 
