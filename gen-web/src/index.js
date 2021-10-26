@@ -2,38 +2,52 @@
 (async () => {
   const filesaver = require('file-saver');
   const { config } = await import('../pkg')
+  const { 
+    validateRegistrationCode,
+    validateScreenSize,
+    detectMobileUserAgent,
+    validateEmail,
+    validatePassphrae } = await import('./validation')
   const hcSeedBundle = await import('@holochain/hc-seed-bundle')
   const DOWNLOAD_FILE_NAME = 'hpos-config.json'
+  const SEED_FILE_NAME = 'master-seed'
 
   let stepTracker
   let signalKeyGen = false
   let resetUserConfig = false
-  let downloadTracker = {}
+  let downloadConfigTracker = {}
+  let downloadSeedTracker = {}
   let configFileBlob = ''
+  let registrationCode
 
   /* Parse HTML elements */
   const buttons = {
     startPrep: document.querySelector('#start-prep-button'),
     start: document.querySelector('#start-button'),
+    registrationCode: document.querySelector('#registration-code-button'),
+    genSeed: document.querySelector('#gen-seed-button'),
+    postGenSeed: document.querySelector('#post-gen-seed-button'),
     generate: document.querySelector('#generate-button'),
-    plugInDrive: document.querySelector('#drive-plugin-button'),
-    termsAndConditions: document.querySelector('#terms-and-conditions'),
     download: document.querySelector('#download-button'),
     postDownload: document.querySelector('#post-download-button'),
-    copied: document.querySelector('#copied-button'),
+    plugInDrive: document.querySelector('#drive-plugin-button'),
     closeNotice: document.querySelector('#close-notice'),
     back0b: document.querySelector('#back-button0b'),
     back1: document.querySelector('#back-button1'),
     back2: document.querySelector('#back-button2'),
-    back2Confirmation: document.querySelector('#back-button2-confirmation'),
     back3: document.querySelector('#back-button3'),
+    back3Confirmation: document.querySelector('#back-button3-confirmation'),
     back4: document.querySelector('#back-button4'),
     back5: document.querySelector('#back-button5'),
-    forumHelp: document.querySelector('#forum-help')
+    exit: document.querySelector('#exit-button'),
+    loop: document.querySelector('#loop-button'),
+    termsAndConditions: document.querySelector('#terms-and-conditions'),
+    // forumHelp: document.querySelector('#forum-help')
   }
 
   const inputs = {
     registrationCode: document.querySelector('#registration-code'),
+    seedPassphrase: document.querySelector('#seed-passphrase'),
     email: document.querySelector('#email'),
     password: document.querySelector('#password'),
     passwordCheck: document.querySelector('#password-check'),
@@ -42,6 +56,7 @@
   const inlineVariables = {
     contentContainer: document.querySelector('#content-container'),
     registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
+    seedPassphraseInputArea: document.querySelector('#seed-passphrase-form-item'),
     emailPlaceholder: document.querySelector('#email-placeholder'),
     emailInputArea: document.querySelector('#email-form-item'),
     passwordInputArea: document.querySelector('#password-form-item'),
@@ -52,11 +67,12 @@
 
   const errorMessages = {
     missingFields: 'Please complete missing fields.',
+    seedPassphrase: 'Your passphrase needs to be at least 20 character in length',
     registrationCode: 'Invalid code',
     email: 'Email domain not recognized',
     password: 'Your password needs to be at least eight character in length',
     passwordCheck: 'Passwords do not match',
-    generateConfig: 'An error occured when configuring your user file. Please update your information and try again.'
+    generateConfig: 'An error occurred when configuring your user file. Please update your information and try again.'
   }
 
   const user = {
@@ -77,16 +93,74 @@
         else return null
       } else {
         // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
-        updateUiStep(0.5)
+        // updateUiStep(0.5)
   
         // DEV MODE HACK TO SWITCH THROUGH PAGES
-        // updateUiStep(4)
+        updateUiStep(5)
       }
     },
     start: () => {
       updateUiStep(1)
       inputs.email.click()
-    },  
+    },
+    storeRegistrationCode: async () => {
+      const inputValidity = await verifyInputData()
+      if (!inputValidity) return buttons.registrationCode.disabled = true
+      // Load registration Code for use in later steps
+      registrationCode = inputs.registrationCode.value
+      updateUiStep(2)
+      updateProgressBar(1)
+    },
+    genSeed: async () => {
+      const inputValidity = await verifyInputData()
+      if (!inputValidity) return buttons.genSeed.disabled = true
+      // Load registration Code for use in later steps
+      let seedPassphrase = inputs.seedPassphrase.value
+      /* Communicate visually that something is happening in the bkgd */
+      buttons.genSeed.classList.add('disabled')
+      buttons.genSeed.disabled = true
+      buttons.genSeed.innerHTML = 'Saving Master Seed...'
+
+      setTimeout(() => {
+        try {
+          // TODO generateSeed()
+                // // get passphrase
+          // await hcSeedBundle.seedBundleReady
+          // // generate a new pure entropy master seed
+          // const master = hcSeedBundle.UnlockedSeedBundle.newRandom({
+          //   bundleType: 'master'
+          // })
+
+          // // we need the passphrase as a Uint8Array
+          // const pw = (new TextEncoder()).encode('test-passphrase')
+          // const encodedBytes = master.lock([
+          //   new hcSeedBundle.SeedCipherPwHash(
+          //     hcSeedBundle.parseSecret(pw), 'interactive')
+          // ])
+          // console.log(">>>>>>>>>>", encodedBytes);
+          // // clear our secrets
+          // master.zero()
+          // call hc-seed-bundle 
+          console.log("Trying to save...");
+          const seedBlob = new Blob([seedPassphrase], { type: 'text/plain' })
+          filesaver.saveAs(seedBlob, SEED_FILE_NAME)
+        } catch (e) {
+          console.log("E: ", e);
+          throw new Error(`Error saving config. Error: ${e}`)
+        }
+
+        /* Clean State */
+        downloadSeedTracker = true
+        buttons.genSeed.classList.remove('disabled')
+        buttons.genSeed.disabled = false
+        buttons.genSeed.innerHTML = 'Save Master Seed Again'
+        verifySeedDownloadComplete(downloadSeedTracker)
+      }, 1000)
+    },
+    postGenSeed: () => {
+      updateUiStep(3)
+      updateProgressBar(2)
+    },
     generate: async () => {
       signalKeyGen = true
       const inputValidity = await verifyInputData()
@@ -102,25 +176,8 @@
       
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
-      downloadTracker = false
+      downloadConfigTracker = false
       click.openLoader()
-      // // get passphrase
-      // await hcSeedBundle.seedBundleReady
-      // // generate a new pure entropy master seed
-      // const master = hcSeedBundle.UnlockedSeedBundle.newRandom({
-      //   bundleType: 'master'
-      // })
-
-      // // we need the passphrase as a Uint8Array
-      // const pw = (new TextEncoder()).encode('test-passphrase')
-      // const encodedBytes = master.lock([
-      //   new hcSeedBundle.SeedCipherPwHash(
-      //     hcSeedBundle.parseSecret(pw), 'interactive')
-      // ])
-      // console.log(">>>>>>>>>>", encodedBytes);
-      // // clear our secrets
-      // master.zero()
-      // // call hc-seed-bundle 
       setTimeout(() => {
         // Generate hpos-config.json and create download blob attached to url
         try {
@@ -130,12 +187,11 @@
           inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
           throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
         }
-
         /* Clean State */
         buttons.generate.disabled = false
         click.closeLoader()
-        updateUiStep(2)
-        updateProgressBar(1)
+        updateUiStep(4)
+        updateProgressBar(3)
 
         /* Reset Password inputs */
         inputs.password.value = ''
@@ -143,8 +199,8 @@
       }, 1500)
     },
     plugInDrive: () => {
-      updateUiStep(3)
-      updateProgressBar(2)
+      updateUiStep(6)
+      updateProgressBar(5)
     },
     termsAndConditions: e => {
       e.preventDefault()
@@ -167,16 +223,16 @@
           }
 
           /* Clean State */
-          downloadTracker = true
+          downloadConfigTracker = true
           buttons.download.classList.remove('disabled')
           buttons.download.disabled = false
           buttons.download.innerHTML = 'Save Configuration File Again'
-          verifyDownloadComplete(downloadTracker)
+          verifyDownloadComplete(downloadConfigTracker)
         }, 1000)
     },
     postDownload: () => {  
-      updateUiStep(4)
-      updateProgressBar(3)
+      updateUiStep(5)
+      updateProgressBar(4)
     },
     copied: () => {
       updateUiStep(5)
@@ -205,19 +261,20 @@
       updateUiStep(0.5)
     },
     back2: () => {
-      click.openNotice()
-    },
-    back2Confirmation: () => {
-      click.closeNotice()
-      resetUserConfig = true
       const rewind = true
       updateProgressBar(2, rewind)
       updateUiStep(1)
     },
     back3: () => {
+      click.openNotice()
+    },
+    back3Confirmation: () => {
+      click.closeNotice()
+      resetUserConfig = true
       const rewind = true
       updateProgressBar(3, rewind)
-      updateUiStep(2)
+      updateProgressBar(2, rewind)
+      updateUiStep(1)
     },
     back4: () => {
       const rewind = true
@@ -228,6 +285,16 @@
       const rewind = true
       updateProgressBar(5, rewind)
       updateUiStep(4)
+    },
+    exit: () => {
+      updateUiStep(-1)
+    },
+    loop: () => {
+      // TODO update loop counter
+      updateProgressBar(6, true)
+      updateProgressBar(5, true)
+      updateProgressBar(4, true)
+      updateUiStep(3)
     },
     forumHelp: e => {
       e.preventDefault()
@@ -279,34 +346,43 @@
 
   /* Set intial 'disable' state for all config actions buttons */
   buttons.generate.disabled = false
+  buttons.registrationCode.disabled = false
+  buttons.genSeed.disabled = true
+  buttons.postGenSeed.disabled = true
   buttons.postDownload.disabled = true
 
   /* Bind actions to buttons */
   buttons.startPrep.onclick = click.startPrep
   buttons.start.onclick = click.start
+  buttons.registrationCode.onclick = click.storeRegistrationCode
+  buttons.genSeed.onclick = click.genSeed
+  buttons.postGenSeed.onclick = click.postGenSeed
   buttons.generate.onclick = click.generate
   buttons.termsAndConditions.onclick = click.termsAndConditions
   buttons.download.onclick = click.download
   buttons.postDownload.onclick = click.postDownload
-  buttons.copied.onclick = click.copied
   buttons.plugInDrive.onclick = click.plugInDrive
   buttons.closeNotice.onclick = click.closeNotice
   buttons.back0b.onclick = click.back0b
   buttons.back1.onclick = click.back1
   buttons.back2.onclick = click.back2
-  buttons.back2Confirmation.onclick = click.back2Confirmation
   buttons.back3.onclick = click.back3
+  buttons.back3Confirmation.onclick = click.back3Confirmation
   buttons.back4.onclick = click.back4
   buttons.back5.onclick = click.back5
-  buttons.forumHelp.onclick = click.forumHelp
+  buttons.exit.onclick = click.exit
+  buttons.loop.onclick = click.loop
+  // buttons.forumHelp.onclick = click.forumHelp
   document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
   inlineVariables.registrationCodeInputArea.onclick = e => { inputs.registrationCode.focus(); return click.activateInput(e) }
+  inlineVariables.seedPassphraseInputArea.onclick = e => { inputs.seedPassphrase.focus(); return click.activateInput(e) }
   inlineVariables.emailInputArea.onclick = e => { inputs.email.focus(); return click.activateInput(e) }
   inlineVariables.passwordInputArea.onclick = e => { inputs.password.focus(); return click.activateInput(e) }
   inlineVariables.passwordCheckInputArea.onclick = e => { inputs.passwordCheck.focus(); return click.activateInput(e) }
   /* Bind actions to inputs */
   inputs.registrationCode.onfocus = click.activateInput
+  inputs.seedPassphrase.onfocus = click.activateInput
   inputs.email.onfocus = click.activateInput
   inputs.password.onfocus = click.activateInput
   inputs.passwordCheck.onfocus = click.activateInput
@@ -318,9 +394,9 @@
   * =============================
   * 
   */
-  const validation = { 0.5: !0, 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0 }
+  const validation = { 0.5: !0, 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0, 6: !0, '-1': !0 }
 
-  const buttonBystep = { 0: buttons.startPrep, 0.5: buttons.start, 1: buttons.generate, 2: buttons.plugInDrive, 3: buttons.postDownload, 4: buttons.copied }
+  const buttonBystep = { 0: buttons.startPrep, 0.5: buttons.start, 1: buttons.registrationCode, 2: buttons.postGenSeed, 3: buttons.generate, 4: buttons.postDownload, 5: buttons.plugInDrive }
 
   /** 
   * Step Listener to initiate step specific actions
@@ -331,49 +407,18 @@
       inlineVariables.contentContainer.onclick =  verifyInputData
     } else if (stepTracker === 2) {
       inlineVariables.downloadFileName.innerHTML = DOWNLOAD_FILE_NAME
+      verifyDownloadComplete()
     } else if (stepTracker === 3) {
       /* Check for download*/
       verifyDownloadComplete()
+    } else if (stepTracker === 4) {
+      inlineVariables.downloadFileName.innerHTML = DOWNLOAD_FILE_NAME
     } else if (stepTracker === 4) {
       /* Display back User Email on Page 4 for visual email verification */
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
     } 
   }
 
-  /**	
-   * Validate device by size of screen	
-   */	
-  const validateScreenSize = () => {	
-    /* Detect whether on laptop or desktop */	
-    return (window.screen.availWidth >= 768)
-  }
-
-  /**	
-   * Validate device by confirming non-mobile user agent	
-   */	
-  const detectMobileUserAgent = () => {	
-    /* Detect whether on mobile browser */	
-    return (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(navigator.userAgent))
-  }
-
-  /**
-   * Validate if string is email (super simple because actual validation is via sent email)
-   * @param {string} email
-   */
-  const validateEmail = (email) => {
-    const re = /[^@]+@[^\.]+\..+/g
-    return re.test(String(email).toLowerCase())
-  }
-
-  /**
-   * Validate if string is valid size
-   * @param {string} registrationCode
-   */
-  const validateRegistrationCode = (registrationCode) => {
-    // TODO: define what the min size of the registration code will be
-    // TODO: check if the size requirement is met
-    return registrationCode !== ""
-  }
 
   /**
    * Update UI to the `step` step
@@ -386,11 +431,11 @@
       return null
     }
     stepTracker = step
-    
     constantCheck()
     if(step === 0) {
       return document.body.className = 'step-monitor'
     } else if (step === 0.5) return document.body.className = 'step0b'
+    else if (step === -1) return document.body.className = 'step-exit'
     return document.body.className = 'step' + step
   }
 
@@ -431,7 +476,7 @@
    *
    * @param {Object} user
   */
-  const generateBlob = user => {
+  const generateBlob = user => {   
     const configData = config(user.email, user.password, user.registrationCode.trim())
     const configBlob = new Blob([configData.config], { type: 'application/json' })
     
@@ -442,17 +487,35 @@
    
     return configFileBlob
   }
+
+   /**
+   * Verify config was saved before allowing progression to next page
+   *
+   * @param {Boolean} downloadSeedComplete
+  */
+    const verifySeedDownloadComplete = (downloadSeedComplete = downloadSeedTracker, newConfig = resetUserConfig) => {     
+      if (downloadSeedComplete) {
+        buttons.postGenSeed.disabled = false
+      }
+      else if (!downloadSeedComplete && newConfig ) {
+        buttons.postGenSeed.disabled = true
+        resetUserConfig = false
+        buttons.download.innerHTML = 'Generate & Save Master Seed'
+      }
+      else return buttons.postGenSeed.disabled = true
+    }
   
   /**
    * Verify config was saved before allowing progression to next page
    *
-   * @param {Boolean} downloadComplete
+   * @param {Boolean} downloadConfigComplete
   */
-  const verifyDownloadComplete = (downloadComplete = downloadTracker, newConfig = resetUserConfig) => {    
-    if (downloadComplete) {
+  const verifyDownloadComplete = (downloadConfigComplete = downloadConfigTracker, newConfig = resetUserConfig) => {    
+   
+    if (downloadConfigComplete) {
       buttons.postDownload.disabled = false
     }
-    else if (!downloadComplete && newConfig ) {
+    else if (!downloadConfigComplete && newConfig ) {
       buttons.postDownload.disabled = true
       resetUserConfig = false
       buttons.download.innerHTML = 'Save New Configuration File'
@@ -468,7 +531,9 @@
   const resetFields = (inputElements) => {    
     for (let inputElement of inputElements) {
       document.querySelector(`#${inputElement.id}-form-item`).classList.remove('error-red')
-      inputElement.parentElement.querySelector('.input-item-label').classList.remove('error-red')
+      try {
+        inputElement.parentElement.querySelector('.input-item-label').classList.remove('error-red')
+      } catch(e){/* label does not exist */}
       inlineVariables.formErrorMessage.innerHTML = ''
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
     }
@@ -483,14 +548,35 @@
   const renderInputError = (errorMessage, errorFieldsArray) => {
     for (let errorField of errorFieldsArray) {    
       document.querySelector(`#${errorField.id}-form-item`).classList.add('error-red')
-      errorField.parentElement.querySelector('.input-item-label').classList.add('error-red')
-
+      try{
+        errorField.parentElement.querySelector('.input-item-label').classList.add('error-red')
+      } catch(e){/* label does not exist */}
       if (errorMessage === errorMessages.missingFields) inlineVariables.formErrorMessage.innerHTML = errorMessage
       else document.querySelector(`#${errorField.id}-error-message`).innerHTML = errorMessage
     }
     return errorMessage
   }
 
+  /**
+   * Verify all form input before allowing progression to next page
+  */
+  const verifyInputData = (step = stepTracker) => {
+  let inputValidity = false;
+    if (step == 1) {
+      inputValidity = confirmValidCode()
+      if (inputValidity) buttons.registrationCode.disabled = false
+      else buttons.registrationCode.disabled = true
+    } if (step == 2) {
+      inputValidity = confirmValidPassPhrase()
+      if (inputValidity) buttons.genSeed.disabled = false
+      else buttons.genSeed.disabled = true
+    } else if (step == 3) {
+      inputValidity = confirmValidInput()
+      if (inputValidity) buttons.generate.disabled = false
+      else buttons.generate.disabled = true
+    }
+    return inputValidity
+  }
   
   /**
    * Input form error check
@@ -500,15 +586,12 @@
     const inputElements = Object.values(inputs)
     resetFields(inputElements)
     if(submitPressed) {
-      if(!inputs.email.value || !inputs.registrationCode.value) {
+      if(!inputs.email.value) {
         const missingFields = inputElements.filter(inputs => !inputs.value) 
         renderInputError(errorMessages.missingFields, missingFields)
       } else if (!validateEmail(inputs.email.value)) {
         renderInputError(errorMessages.email, [inputs.email])
-      } else if (!validateRegistrationCode(inputs.registrationCode.value)) {
-        renderInputError(errorMessages.registrationCode, [inputs.registrationCode])
-      } 
-      else if (!inputs.password.value || inputs.password.value.length <= 7) {
+      } else if (!inputs.password.value || inputs.password.value.length <= 7) {
         renderInputError(errorMessages.password, [inputs.password])
       } else if (inputs.password.value && inputs.password.value !== inputs.passwordCheck.value) {
         const errorInputs = [inputs.passwordCheck]
@@ -523,14 +606,25 @@
 
     return false
   }
-
-  /**
-   * Verify all form input before allowing progression to next page
-  */
-  const verifyInputData = () => {
-    let inputValidity = confirmValidInput()
-    if (inputValidity) buttons.generate.disabled = false
-    else buttons.generate.disabled = true
-    return inputValidity
+  const confirmValidCode = () => {
+    const inputElements = Object.values({registrationCode: inputs.registrationCode})
+    resetFields(inputElements)
+    if(!inputs.registrationCode.value) {
+      const missingFields = inputElements.filter(inputs => !inputs.value) 
+      renderInputError(errorMessages.missingFields, missingFields)
+    } else if (!validateRegistrationCode(inputs.registrationCode.value)) {
+      renderInputError(errorMessages.registrationCode, [inputs.registrationCode])
+    } else return true
   }
+  const confirmValidPassPhrase = () => {
+    const inputElements = Object.values({seedPassphrase: inputs.seedPassphrase})
+    resetFields(inputElements)
+    if(!inputs.seedPassphrase.value) {
+      const missingFields = inputElements.filter(inputs => !inputs.value) 
+      renderInputError(errorMessages.missingFields, missingFields)
+    } else if (!validatePassphrae(inputs.seedPassphrase.value)) {
+      renderInputError(errorMessages.seedPassphrase, [inputs.seedPassphrase])
+    } else return true
+  }
+
 })()
