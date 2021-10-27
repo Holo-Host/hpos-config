@@ -1,5 +1,9 @@
+use arrayref::array_ref;
 use failure::Error;
-use hpos_config_core::{public_key, Config};
+use hpos_config_core::{
+    config::{Seed, SEED_SIZE},
+    public_key, Config,
+};
 use serde::*;
 use wasm_bindgen::prelude::*;
 
@@ -14,8 +18,18 @@ fn config_raw(
     email: String,
     password: String,
     registration_code: String,
+    derivation_path: String,
+    seed: String,
 ) -> Result<JsValue, Error> {
-    let (config, public_key) = Config::new_v2(email, password, registration_code, None)?;
+    // deserialize seed
+    let seed: Seed = base64::decode(&seed).map(|bytes| array_ref!(bytes, 0, SEED_SIZE).clone())?;
+    let (config, public_key) = Config::new_v2(
+        email,
+        password,
+        registration_code,
+        derivation_path,
+        Some(seed),
+    )?;
 
     let config_data = ConfigData {
         config: serde_json::to_string_pretty(&config)?,
@@ -30,8 +44,10 @@ pub fn config(
     email: String,
     password: String,
     registration_code: String,
+    derivation_path: String,
+    seed: String,
 ) -> Result<JsValue, JsValue> {
-    match config_raw(email, password, registration_code) {
+    match config_raw(email, password, registration_code, derivation_path, seed) {
         Ok(js_val) => Ok(js_val),
         Err(e) => Err(e.to_string().into()),
     }

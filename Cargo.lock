@@ -612,6 +612,8 @@ dependencies = [
 name = "hpos-config-gen-web"
 version = "0.0.1"
 dependencies = [
+ "arrayref",
+ "base64 0.10.1",
  "failure",
  "hpos-config-core",
  "serde",

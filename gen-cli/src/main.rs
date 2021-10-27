@@ -16,6 +16,7 @@ Options:
   --email EMAIL                 HoloPort admin email address
   --password STRING             HoloPort admin password
   --registration-code CODE    HoloPort admin password
+  --derivation-path STRING    Derivation path of the seed
   --seed-from PATH              Use SHA-512 hash of given file truncated to 256 bits as seed
 ";
 
@@ -24,6 +25,7 @@ struct Args {
     flag_email: String,
     flag_password: String,
     flag_registration_code: String,
+    flag_derivation_path: String,
     flag_seed_from: Option<PathBuf>,
 }
 
@@ -48,6 +50,7 @@ fn main() -> Result<(), Error> {
         args.flag_email,
         args.flag_password,
         args.flag_registration_code,
+        args.flag_derivation_path,
         maybe_seed,
     )?;
     eprintln!("{}", public_key::to_url(&public_key)?);

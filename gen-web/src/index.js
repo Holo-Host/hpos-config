@@ -19,6 +19,7 @@
   let downloadSeedTracker = {}
   let configFileBlob = ''
   let registrationCode
+  let master
 
   /* Parse HTML elements */
   const buttons = {
@@ -96,7 +97,7 @@
         // updateUiStep(0.5)
   
         // DEV MODE HACK TO SWITCH THROUGH PAGES
-        updateUiStep(5)
+        updateUiStep(1)
       }
     },
     start: () => {
@@ -121,28 +122,22 @@
       buttons.genSeed.disabled = true
       buttons.genSeed.innerHTML = 'Saving Master Seed...'
 
-      setTimeout(() => {
+      setTimeout(async () => {
         try {
-          // TODO generateSeed()
-                // // get passphrase
-          // await hcSeedBundle.seedBundleReady
-          // // generate a new pure entropy master seed
-          // const master = hcSeedBundle.UnlockedSeedBundle.newRandom({
-          //   bundleType: 'master'
-          // })
-
-          // // we need the passphrase as a Uint8Array
-          // const pw = (new TextEncoder()).encode('test-passphrase')
-          // const encodedBytes = master.lock([
-          //   new hcSeedBundle.SeedCipherPwHash(
-          //     hcSeedBundle.parseSecret(pw), 'interactive')
-          // ])
-          // console.log(">>>>>>>>>>", encodedBytes);
-          // // clear our secrets
-          // master.zero()
-          // call hc-seed-bundle 
-          console.log("Trying to save...");
-          const seedBlob = new Blob([seedPassphrase], { type: 'text/plain' })
+          await hcSeedBundle.seedBundleReady
+          // generate a new pure entropy master seed
+          // Note: we will clear the secret at exit of this app
+          master = hcSeedBundle.UnlockedSeedBundle.newRandom({
+            bundleType: 'master'
+          })
+          // we need the passphrase as a Uint8Array
+          const pw = (new TextEncoder()).encode(seedPassphrase)
+          const encodedBytes = master.lock([
+            new hcSeedBundle.SeedCipherPwHash(
+              hcSeedBundle.parseSecret(pw), 'interactive')
+          ])
+          console.log("Created master seed: ", encodedBytes);
+          const seedBlob = new Blob([encodedBytes], { type: 'text/plain' })
           filesaver.saveAs(seedBlob, SEED_FILE_NAME)
         } catch (e) {
           console.log("E: ", e);
@@ -151,9 +146,8 @@
 
         /* Clean State */
         downloadSeedTracker = true
-        buttons.genSeed.classList.remove('disabled')
-        buttons.genSeed.disabled = false
-        buttons.genSeed.innerHTML = 'Save Master Seed Again'
+        buttons.genSeed.disabled = true
+        buttons.genSeed.innerHTML = 'Saved Master Seed*'
         verifySeedDownloadComplete(downloadSeedTracker)
       }, 1000)
     },
@@ -287,6 +281,8 @@
       updateUiStep(4)
     },
     exit: () => {
+      // clear our secrets
+      master.zero()
       updateUiStep(-1)
     },
     loop: () => {
@@ -445,7 +441,7 @@
    * @param {int} currentTransition
    * @param {bool} rewind
   */
- const updateProgressBar = (currentTransition, rewind = false) => {  
+ const updateProgressBar = (currentTransition, rewind = false) => {
   if (!validation[currentTransition] || currentTransition < 1) {
     console.log(`Wrong parameter ${currentTransition} in updateProgressBar()`)
     return null
@@ -477,7 +473,8 @@
    * @param {Object} user
   */
   const generateBlob = user => {   
-    const configData = config(user.email, user.password, user.registrationCode.trim())
+    // TODO: temp hard code with pub key: DykyURK2+lh2fZ2NuQvBWd0zTiD0ieBM24sguTon96Y
+    const configData = config(user.email, user.password, user.registrationCode.trim(), "1", "OeRnOPYhIsY0F5ILtSVp7BGBIrb+BFDaEeab7fCbPq4")
     const configBlob = new Blob([configData.config], { type: 'application/json' })
     
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
@@ -496,11 +493,12 @@
     const verifySeedDownloadComplete = (downloadSeedComplete = downloadSeedTracker, newConfig = resetUserConfig) => {     
       if (downloadSeedComplete) {
         buttons.postGenSeed.disabled = false
+        buttons.genSeed.disabled = true
       }
       else if (!downloadSeedComplete && newConfig ) {
         buttons.postGenSeed.disabled = true
         resetUserConfig = false
-        buttons.download.innerHTML = 'Generate & Save Master Seed'
+        buttons.download.innerHTML = 'Generate & Save Master Seed*'
       }
       else return buttons.postGenSeed.disabled = true
     }

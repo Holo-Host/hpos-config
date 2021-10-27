@@ -3,7 +3,7 @@ use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
-const SEED_SIZE: usize = 32;
+pub const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
@@ -18,7 +18,7 @@ where
         .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
 }
 
-fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
+pub fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -64,9 +64,12 @@ pub enum Config {
     },
     #[serde(rename = "v2")]
     V2 {
-        // This is the Device Seed Bundle from lair v0.0.8
+        // This is the Device Seed Bundle which is compatible with lair-keystore >=v0.0.8
         #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
         seed: Seed,
+        /// Derivation path of the seed in this config that was generated for a Master Seed
+        derivation_path: String,
+        /// Holo registration code is used to identify and authenticate its users
         registration_code: String,
         /// The pub-key in settings is the holoport key that is used for verifying login signatures
         settings: Settings,
@@ -99,6 +102,7 @@ impl Config {
         email: String,
         password: String,
         registration_code: String,
+        derivation_path: String,
         device_seed: Option<Seed>,
     ) -> Result<(Self, PublicKey), Error> {
         let (device_master_seed, admin_keypair, hp_id_pub_key) =
@@ -110,6 +114,7 @@ impl Config {
         Ok((
             Config::V2 {
                 seed: device_master_seed,
+                derivation_path,
                 registration_code,
                 settings: Settings { admin: admin },
             },
