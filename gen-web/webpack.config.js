@@ -18,7 +18,7 @@ module.exports = {
    })
   ],
   experiments: {
-    asyncWebAssembly: true
+    syncWebAssembly: true
   },
   entry: './src/index.js',
   output: {
