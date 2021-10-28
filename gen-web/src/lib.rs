@@ -1,9 +1,6 @@
-use arrayref::array_ref;
+use ed25519_dalek::PublicKey;
 use failure::Error;
-use hpos_config_core::{
-    config::{Seed, SEED_SIZE},
-    public_key, Config,
-};
+use hpos_config_core::{public_key, Config};
 use serde::*;
 use wasm_bindgen::prelude::*;
 
@@ -19,16 +16,19 @@ fn config_raw(
     password: String,
     registration_code: String,
     derivation_path: String,
-    seed: String,
+    device_bundle: String,
+    device_pub_key: String,
 ) -> Result<JsValue, Error> {
     // deserialize seed
-    let seed: Seed = base64::decode(&seed).map(|bytes| array_ref!(bytes, 0, SEED_SIZE).clone())?;
+    let device_pub_key: PublicKey =
+        base64::decode(&device_pub_key).map(|bytes| PublicKey::from_bytes(&bytes))??;
     let (config, public_key) = Config::new_v2(
         email,
         password,
         registration_code,
         derivation_path,
-        Some(seed),
+        device_bundle,
+        device_pub_key,
     )?;
 
     let config_data = ConfigData {
@@ -45,9 +45,17 @@ pub fn config(
     password: String,
     registration_code: String,
     derivation_path: String,
-    seed: String,
+    device_bundle: String,
+    device_pub_key: String,
 ) -> Result<JsValue, JsValue> {
-    match config_raw(email, password, registration_code, derivation_path, seed) {
+    match config_raw(
+        email,
+        password,
+        registration_code,
+        derivation_path,
+        device_bundle,
+        device_pub_key,
+    ) {
         Ok(js_val) => Ok(js_val),
         Err(e) => Err(e.to_string().into()),
     }

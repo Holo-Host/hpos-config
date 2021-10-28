@@ -64,9 +64,14 @@ pub enum Config {
     },
     #[serde(rename = "v2")]
     V2 {
-        // This is the Device Seed Bundle which is compatible with lair-keystore >=v0.0.8
-        #[serde(deserialize_with = "seed_from_base64", serialize_with = "to_base64")]
-        seed: Seed,
+        #[serde(
+            deserialize_with = "public_key_from_base64",
+            serialize_with = "to_base64"
+        )]
+        /// Public key of the device_bundle
+        holoport_id: PublicKey,
+        /// This is the Device Seed Bundle which is compatible with lair-keystore >=v0.0.8
+        device_bundle: String,
         /// Derivation path of the seed in this config that was generated for a Master Seed
         derivation_path: String,
         /// Holo registration code is used to identify and authenticate its users
@@ -103,22 +108,23 @@ impl Config {
         password: String,
         registration_code: String,
         derivation_path: String,
-        device_seed: Option<Seed>,
+        device_bundle: String,
+        device_pub_key: PublicKey,
     ) -> Result<(Self, PublicKey), Error> {
-        let (device_master_seed, admin_keypair, hp_id_pub_key) =
-            generate_keypair(email.clone(), password, device_seed)?;
+        let admin_keypair = admin_keypair_from(device_pub_key, &email, &password)?;
         let admin = Admin {
             email: email,
             public_key: admin_keypair.public,
         };
         Ok((
             Config::V2 {
-                seed: device_master_seed,
+                holoport_id: device_pub_key,
+                device_bundle,
                 derivation_path,
                 registration_code,
                 settings: Settings { admin: admin },
             },
-            hp_id_pub_key,
+            device_pub_key,
         ))
     }
 
@@ -126,43 +132,6 @@ impl Config {
         match self {
             Config::V1 { settings, .. } | Config::V2 { settings, .. } => settings.admin.public_key,
         }
-    }
-
-    pub fn holoport_public_key(&self) -> Result<PublicKey, Error> {
-        match self {
-            Config::V1 { seed, .. } | Config::V2 { seed, .. } => {
-                let secret_key = SecretKey::from_bytes(seed)?;
-                Ok(PublicKey::from(&secret_key))
-            }
-        }
-    }
-
-    pub fn encoded_ed25519_keypair(&self) -> Result<String, Error> {
-        match self {
-            Config::V1 { seed, .. } | Config::V2 { seed, .. } => {
-                let secret_key = SecretKey::from_bytes(seed)?;
-                Ok(Config::encrypt_key(seed, PublicKey::from(&secret_key)))
-            }
-        }
-    }
-
-    pub fn decoded_to_ed25519_keypair(blob: &String) -> Result<Keypair, Error> {
-        let decoded_key = base64::decode(blob)?;
-        Ok(Keypair {
-            public: PublicKey::from_bytes(&decoded_key[32..64].to_vec())?,
-            secret: SecretKey::from_bytes(&decoded_key[64..].to_vec())?,
-        })
-    }
-
-    pub fn encrypt_key(seed: &Seed, public_key: PublicKey) -> String {
-        // For now lair does not take in any encrypted bytes so we pass back an empty encrypted byte string
-        let mut encrypted_key = vec![
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0,
-        ];
-        encrypted_key.extend(&public_key.to_bytes());
-        encrypted_key.extend(seed.to_vec());
-        base64::encode(&encrypted_key)
     }
 }
 
