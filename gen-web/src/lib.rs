@@ -7,6 +7,7 @@ use wasm_bindgen::prelude::*;
 #[derive(Serialize)]
 pub struct ConfigData {
     config: String,
+    id: String,
     url: String,
 }
 
@@ -19,9 +20,8 @@ fn config_raw(
     device_bundle: String,
     device_pub_key: String,
 ) -> Result<JsValue, Error> {
-    // deserialize seed
-    let device_pub_key: PublicKey =
-        base64::decode(&device_pub_key).map(|bytes| PublicKey::from_bytes(&bytes))??;
+    let device_pub_key: PublicKey = base64::decode_config(&device_pub_key, base64::URL_SAFE_NO_PAD)
+        .map(|bytes| PublicKey::from_bytes(&bytes))??;
     let (config, public_key) = Config::new_v2(
         email,
         password,
@@ -33,6 +33,7 @@ fn config_raw(
 
     let config_data = ConfigData {
         config: serde_json::to_string_pretty(&config)?,
+        id: public_key::to_base36_id(&public_key),
         url: public_key::to_url(&public_key)?.to_string(),
     };
 

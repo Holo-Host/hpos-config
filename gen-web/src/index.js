@@ -7,7 +7,8 @@
     validateScreenSize,
     detectMobileUserAgent,
     validateEmail,
-    validatePassphrae } = await import('./validation')
+    validatePassphrae,
+    genConfigFileName } = await import('./validation')
   const hcSeedBundle = await import('@holochain/hc-seed-bundle')
   const DOWNLOAD_FILE_NAME = 'hpos-config.json'
   const SEED_FILE_NAME = 'master-seed'
@@ -19,6 +20,8 @@
   let configFileBlob = ''
   let registrationCode
   let master
+  let deviceNumber = 0
+  let deviceID
 
   /* Parse HTML elements */
   const buttons = {
@@ -178,15 +181,13 @@
       setTimeout(() => {
         try {
           inlineVariables.formErrorMessage.innerHTML = ''
-          // TODO: dynamically update derivation Path
-          const derivationPath = 0;
           // generate device bundle
           // derive a device root seed from the master
-          const deviceRoot = master.derive(derivationPath, {
+          const deviceRoot = master.derive(deviceNumber, {
             bundleType: 'deviceRoot'
           })
           // encrypte it with password: pass
-          const pubKey = deviceRoot.signPubKey
+          let pubKey = deviceRoot.signPubKey
           const pw = (new TextEncoder()).encode('pass')
           const encodedBytes = deviceRoot.lock([
             new hcSeedBundle.SeedCipherPwHash(
@@ -194,12 +195,12 @@
             ])
             
           // DEV MODE - check pub key for devices:
-          console.log(`Device ${derivationPath}: ${btoa(encodedBytes)}`)
+          console.log(`Device ${deviceNumber}: ${btoa(encodedBytes)}`)
           console.log(`Device signPubkey: ${pubKey}`)
           
           // pass seed into the blob
           let seed = {
-            derivationPath,
+            derivationPath: deviceNumber,
             // base64 encode it 
             deviceRoot: btoa(encodedBytes),
             pubKey
@@ -242,7 +243,7 @@
 
         setTimeout(() => {
           try {
-            filesaver.saveAs(configFileBlob, DOWNLOAD_FILE_NAME)
+            filesaver.saveAs(configFileBlob, genConfigFileName(deviceNumber, deviceID))
           } catch (e) {
             throw new Error(`Error saving config. Error: ${e}`)
           }
@@ -317,7 +318,7 @@
       updateUiStep(-1)
     },
     loop: () => {
-      // TODO update loop counter
+      deviceNumber++
       updateProgressBar(6, true)
       updateProgressBar(5, true)
       updateProgressBar(4, true)
@@ -433,13 +434,13 @@
       /* Add click listener to page container on Page 2 form intake */
       inlineVariables.contentContainer.onclick =  verifyInputData
     } else if (stepTracker === 2) {
-      inlineVariables.downloadFileName.innerHTML = DOWNLOAD_FILE_NAME
+      inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
       verifyDownloadComplete()
     } else if (stepTracker === 3) {
       /* Check for download*/
       verifyDownloadComplete()
     } else if (stepTracker === 4) {
-      inlineVariables.downloadFileName.innerHTML = DOWNLOAD_FILE_NAME
+      inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
     } else if (stepTracker === 4) {
       /* Display back User Email on Page 4 for visual email verification */
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
@@ -505,12 +506,12 @@
    * @param {Object} seed {derivationPath, deviceRoot, pubKey}
   */
   const generateBlob = (user, seed) => {
-      const configData = config(user.email, user.password, user.registrationCode.trim(), seed.derivationPath.toString(), seed.deviceRoot, seed.pubKeyf)
+      const configData = config(user.email, user.password, user.registrationCode.trim(), seed.derivationPath.toString(), seed.deviceRoot, seed.pubKey)
       const configBlob = new Blob([configData.config], { type: 'application/json' })
      
       /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
       // console.log('Optional HoloPort url : ', configData.url)
-     
+      deviceID = configData.id
       configFileBlob = configBlob
      
       return configFileBlob

@@ -40,3 +40,19 @@ export const validateEmail = (email) => {
 const re = /[^@]+@[^\.]+\..+/g
 return re.test(String(email).toLowerCase())
 }
+
+const FILE_PREFIX = "hpos-config"
+const FILE_TYPE = ".json"
+
+/**	
+ * generate file name based on the device number
+ * @param {number} deviceNumber
+ * @param {string} pubKey	
+ */	
+export const genConfigFileName = (deviceNumber, pubKey) => {
+    if (deviceNumber == 0) {
+        return `${FILE_PREFIX}-primary${FILE_TYPE}`
+    } else {
+        return `${FILE_PREFIX}-secondary-${pubKey.substring(0, 5)}${FILE_TYPE}`    
+    }
+}
