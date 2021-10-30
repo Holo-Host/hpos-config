@@ -11,7 +11,6 @@
   const hcSeedBundle = await import('@holochain/hc-seed-bundle')
   const DOWNLOAD_FILE_NAME = 'hpos-config.json'
   const SEED_FILE_NAME = 'master-seed'
-
   let stepTracker
   let signalKeyGen = false
   let resetUserConfig = false
@@ -124,6 +123,7 @@
 
       setTimeout(async () => {
         try {
+          // setup bundler
           await hcSeedBundle.seedBundleReady
           // generate a new pure entropy master seed
           // Note: we will clear the secret at exit of this app
@@ -136,9 +136,12 @@
             new hcSeedBundle.SeedCipherPwHash(
               hcSeedBundle.parseSecret(pw), 'interactive')
           ])
-          console.log("Created master seed: ", encodedBytes);
-          const seedBlob = new Blob([encodedBytes], { type: 'text/plain' })
+          // DEV MODE - check pub key for devices:
+          console.log("Created master seed: ", master.signPubKey);
+          
+          const seedBlob = new Blob([btoa(encodedBytes)], { type: 'text/plain' })
           filesaver.saveAs(seedBlob, SEED_FILE_NAME)
+        
         } catch (e) {
           console.log("E: ", e);
           throw new Error(`Error saving config. Error: ${e}`)
@@ -173,10 +176,38 @@
       downloadConfigTracker = false
       click.openLoader()
       setTimeout(() => {
-        // Generate hpos-config.json and create download blob attached to url
         try {
           inlineVariables.formErrorMessage.innerHTML = ''
-          generateBlob(user, buttons.download)
+          // TODO: dynamically update derivation Path
+          const derivationPath = 0;
+          // generate device bundle
+          // derive a device root seed from the master
+          const deviceRoot = master.derive(derivationPath, {
+            bundleType: 'deviceRoot'
+          })
+          // encrypte it with password: pass
+          const pubKey = deviceRoot.signPubKey
+          const pw = (new TextEncoder()).encode('pass')
+          const encodedBytes = deviceRoot.lock([
+            new hcSeedBundle.SeedCipherPwHash(
+              hcSeedBundle.parseSecret(pw), 'moderate')
+            ])
+            
+          // DEV MODE - check pub key for devices:
+          console.log(`Device ${derivationPath}: ${btoa(encodedBytes)}`)
+          console.log(`Device signPubkey: ${pubKey}`)
+          
+          // pass seed into the blob
+          let seed = {
+            derivationPath,
+            // base64 encode it 
+            deviceRoot: btoa(encodedBytes),
+            pubKey
+          }
+          // Generate hpos-config.json and create download blob attached to url
+          generateBlob(user, seed)
+          // clear our secrets
+          deviceRoot.zero()
         } catch (e) {
           inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
           throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
@@ -471,18 +502,18 @@
    * Generate save link of hpos-config.json and attach to `button` domElement
    *
    * @param {Object} user
+   * @param {Object} seed {derivationPath, deviceRoot, pubKey}
   */
-  const generateBlob = user => {   
-    // TODO: temp hard code with pub key: DykyURK2+lh2fZ2NuQvBWd0zTiD0ieBM24sguTon96Y
-    const configData = config(user.email, user.password, user.registrationCode.trim(), "1", "OeRnOPYhIsY0F5ILtSVp7BGBIrb+BFDaEeab7fCbPq4")
-    const configBlob = new Blob([configData.config], { type: 'application/json' })
-    
-    /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
-    // console.log('Optional HoloPort url : ', configData.url)
-   
-    configFileBlob = configBlob
-   
-    return configFileBlob
+  const generateBlob = (user, seed) => {
+      const configData = config(user.email, user.password, user.registrationCode.trim(), seed.derivationPath.toString(), seed.deviceRoot, seed.pubKeyf)
+      const configBlob = new Blob([configData.config], { type: 'application/json' })
+     
+      /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
+      // console.log('Optional HoloPort url : ', configData.url)
+     
+      configFileBlob = configBlob
+     
+      return configFileBlob
   }
 
    /**
