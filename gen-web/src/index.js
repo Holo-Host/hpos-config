@@ -7,8 +7,8 @@
     validateScreenSize,
     detectMobileUserAgent,
     validateEmail,
-    validatePassphrae,
-    genConfigFileName } = await import('./validation')
+    validatePassphrae } = await import('./validation')
+  const { genConfigFileName, toBase64 } = await import('./utils')
   const hcSeedBundle = await import('@holochain/hc-seed-bundle')
   const DOWNLOAD_FILE_NAME = 'hpos-config.json'
   const SEED_FILE_NAME = 'master-seed'
@@ -133,20 +133,23 @@
           master = hcSeedBundle.UnlockedSeedBundle.newRandom({
             bundleType: 'master'
           })
+          master.setAppData({
+            generate_by: "quickstart-v2.0"
+          })
           // we need the passphrase as a Uint8Array
           const pw = (new TextEncoder()).encode(seedPassphrase)
           const encodedBytes = master.lock([
             new hcSeedBundle.SeedCipherPwHash(
-              hcSeedBundle.parseSecret(pw), 'interactive')
+              hcSeedBundle.parseSecret(pw), 'minimum')
           ])
+
           // DEV MODE - check pub key for devices:
           console.log("Created master seed: ", master.signPubKey);
           
-          const seedBlob = new Blob([btoa(encodedBytes)], { type: 'text/plain' })
+          const seedBlob = new Blob([toBase64(encodedBytes)], { type: 'text/plain' })
           filesaver.saveAs(seedBlob, SEED_FILE_NAME)
         
         } catch (e) {
-          console.log("E: ", e);
           throw new Error(`Error saving config. Error: ${e}`)
         }
 
@@ -186,23 +189,28 @@
           const deviceRoot = master.derive(deviceNumber, {
             bundleType: 'deviceRoot'
           })
-          // encrypte it with password: pass
+          deviceRoot.setAppData({
+            // TODO:   
+            device_number: deviceNumber,
+            generate_by: "quickstart-v2.0"
+          })
+          // encrypts it with password: pass
           let pubKey = deviceRoot.signPubKey
           const pw = (new TextEncoder()).encode('pass')
           const encodedBytes = deviceRoot.lock([
             new hcSeedBundle.SeedCipherPwHash(
-              hcSeedBundle.parseSecret(pw), 'moderate')
+              hcSeedBundle.parseSecret(pw), 'minimum')
             ])
             
           // DEV MODE - check pub key for devices:
-          console.log(`Device ${deviceNumber}: ${btoa(encodedBytes)}`)
+          console.log(`Device ${deviceNumber}: ${toBase64(encodedBytes)}`)
           console.log(`Device signPubkey: ${pubKey}`)
           
           // pass seed into the blob
           let seed = {
             derivationPath: deviceNumber,
-            // base64 encode it 
-            deviceRoot: btoa(encodedBytes),
+            // base64 encode it URLSAFE_NO_PADDING
+            deviceRoot: toBase64(encodedBytes),
             pubKey
           }
           // Generate hpos-config.json and create download blob attached to url

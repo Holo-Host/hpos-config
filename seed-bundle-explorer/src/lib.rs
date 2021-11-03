@@ -1,10 +1,13 @@
 use ed25519_dalek::{Keypair, PublicKey, SecretKey};
 use failure::*;
-use hc_seed_bundle::{LockedSeedCipher, UnlockedSeedBundle};
+use hc_seed_bundle::*;
 use hpos_config_core::Config;
 
 /// get pub key for the device bundle in the config
-pub async fn holoport_public_key(config: Config, passphrase: String) -> Result<PublicKey, Error> {
+pub async fn holoport_public_key(
+    config: Config,
+    passphrase: Option<String>,
+) -> Result<PublicKey, Error> {
     match config {
         Config::V1 { seed, .. } => {
             let secret_key = SecretKey::from_bytes(&seed)?;
@@ -23,7 +26,10 @@ pub async fn holoport_public_key(config: Config, passphrase: String) -> Result<P
 }
 
 /// encode the ed25519 keypair making it compatible with lair (<v0.0.6)
-pub async fn encoded_ed25519_keypair(config: Config, passphrase: String) -> Result<String, Error> {
+pub async fn encoded_ed25519_keypair(
+    config: Config,
+    passphrase: Option<String>,
+) -> Result<String, Error> {
     match config {
         Config::V1 { seed, .. } => {
             let secret_key = SecretKey::from_bytes(&seed)?;
@@ -65,22 +71,23 @@ fn encrypt_key(seed: &SecretKey, public_key: &PublicKey) -> String {
 /// unlock seed_bundles to access the pub-key and seed
 async fn unlock(
     device_bundle: String,
-    passphrase: String,
+    passphrase: Option<String>,
 ) -> Result<(SecretKey, PublicKey), String> {
-    let cipher = base64::decode(&device_bundle).unwrap();
+    let cipher = base64::decode_config(&device_bundle.as_bytes(), base64::URL_SAFE_NO_PAD).unwrap();
     match UnlockedSeedBundle::from_locked(&cipher)
         .await
         .unwrap()
         .remove(0)
     {
         LockedSeedCipher::PwHash(cipher) => {
+            let passphrase = passphrase.as_ref().unwrap();
             let passphrase = sodoken::BufRead::from(passphrase.as_bytes().to_vec());
             let seed = cipher.unlock(passphrase).await.unwrap();
-            return Ok((
+            Ok((
                 SecretKey::from_bytes(&*seed.get_seed().read_lock()).unwrap(),
                 PublicKey::from_bytes(&*seed.get_sign_pub_key().read_lock()).unwrap(),
-            ));
+            ))
         }
-        _ => return Err("unsupported cipher".to_string()),
+        _ => Err("unsupported cipher".to_string()),
     }
 }
