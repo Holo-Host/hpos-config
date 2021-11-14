@@ -1,8 +1,9 @@
 [package]
 name = "hpos-config-into-base36-id"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
-  "Yegor Timoshenko <yegortimoshenko@transumption.com>"
+  "Yegor Timoshenko <yegortimoshenko@transumption.com>",
+  "Joel U <joelulahanna@gmail.com>"
 ]
 edition = "2018"
 repository = "https://github.com/Holo-Host/hpos-config"
@@ -11,4 +12,7 @@ repository = "https://github.com/Holo-Host/hpos-config"
 ed25519-dalek = { version = "1.0.0-pre.1" }
 failure = "0.1.5"
 hpos-config-core = { path = "../core" }
+hpos-config-seed-bundle-explorer = { path = "../seed-bundle-explorer" }
 serde_json = "1.0.64"
+tokio = { version = "1.12.0", features = ["rt-multi-thread", "macros"] }
+structopt = "0.3.25"

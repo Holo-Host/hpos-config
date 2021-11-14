@@ -64,12 +64,6 @@ pub enum Config {
     },
     #[serde(rename = "v2")]
     V2 {
-        #[serde(
-            deserialize_with = "public_key_from_base64",
-            serialize_with = "to_base64"
-        )]
-        /// Public key of the device_bundle
-        holoport_id: PublicKey,
         /// This is the Device Seed Bundle which is compatible with lair-keystore >=v0.0.8
         device_bundle: String,
         /// Derivation path of the seed in this config that was generated for a Master Seed
@@ -118,7 +112,6 @@ impl Config {
         };
         Ok((
             Config::V2 {
-                holoport_id: device_pub_key,
                 device_bundle,
                 derivation_path,
                 registration_code,
