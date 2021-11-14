@@ -69,11 +69,11 @@ fn encrypt_key(seed: &SecretKey, public_key: &PublicKey) -> String {
 }
 
 /// unlock seed_bundles to access the pub-key and seed
-async fn unlock(
+pub async fn unlock(
     device_bundle: String,
     passphrase: Option<String>,
 ) -> Result<(SecretKey, PublicKey), String> {
-    let cipher = base64::decode_config(&device_bundle.as_bytes(), base64::URL_SAFE_NO_PAD).unwrap();
+    let cipher = base64::decode_config(&device_bundle, base64::URL_SAFE_NO_PAD).unwrap();
     match UnlockedSeedBundle::from_locked(&cipher)
         .await
         .unwrap()
