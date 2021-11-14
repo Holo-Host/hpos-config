@@ -1,6 +1,7 @@
 
 (async () => {
   const filesaver = require('file-saver');
+  const hcSeedBundle = require('@holochain/hc-seed-bundle');
   const { config } = await import('../pkg')
   const { 
     validateRegistrationCode,
@@ -9,8 +10,6 @@
     validateEmail,
     validatePassphrae } = await import('./validation')
   const { genConfigFileName, toBase64 } = await import('./utils')
-  const hcSeedBundle = await import('@holochain/hc-seed-bundle')
-  const DOWNLOAD_FILE_NAME = 'hpos-config.json'
   const SEED_FILE_NAME = 'master-seed'
   let stepTracker
   let signalKeyGen = false
@@ -190,7 +189,6 @@
             bundleType: 'deviceRoot'
           })
           deviceRoot.setAppData({
-            // TODO:   
             device_number: deviceNumber,
             generate_by: "quickstart-v2.0"
           })

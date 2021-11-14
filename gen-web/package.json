@@ -18,10 +18,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.15.4",
-    "@holochain/hc-seed-bundle": "^0.0.2",
+    // TODO: update to latest release
+    "@holochain/hc-seed-bundle": "/home/zo-el/Documents/GitRepo/Holo/hcSeedBundle",
     "core-js": "^3.18.3",
     "crypto-browserify": "^3.12.0",
     "file-saver": "^2.0.2",
-    "js-base64": "^3.7.2"
+    "js-base64": "^3.7.2",
+    "libsodium-wrappers": "^0.7.9"
   }
 }

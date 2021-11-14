@@ -8,17 +8,14 @@
  * @param {array} encodedBytes
  */
 
-import { Base64 } from 'js-base64';
-// import _sodium from 'libsodium-wrappers'
+import _sodium from 'libsodium-wrappers'
 
 export const toBase64 = (encodedBytes) => {
-    let u8a = new Uint8Array(encodedBytes);
-    return Base64.fromUint8Array(u8a, true);
-//   return _sodium.to_base64(encodedBytes, _sodium.base64_variants.URLSAFE_NO_PADDING)
+  return _sodium.to_base64(encodedBytes, _sodium.base64_variants.URLSAFE_NO_PADDING)
 }
 
 
-const FILE_PREFIX = "hpos-config"
+const FILE_PREFIX = "hp"
 const FILE_TYPE = ".json"
 
 /**	
@@ -28,7 +25,7 @@ const FILE_TYPE = ".json"
  */	
 export const genConfigFileName = (deviceNumber, pubKey) => {
     if (deviceNumber == 0) {
-        return `${FILE_PREFIX}-primary${FILE_TYPE}`
+        return `${FILE_PREFIX}-primary-${pubKey.substring(0, 5)}${FILE_TYPE}`
     } else {
         return `${FILE_PREFIX}-secondary-${pubKey.substring(0, 5)}${FILE_TYPE}`    
     }
