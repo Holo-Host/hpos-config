@@ -32,8 +32,8 @@ async fn main() -> Fallible<()> {
         }
         Config::V2 { device_bundle, .. } => {
             // take in password
-            let (_, pub_key) = unlock(device_bundle, Some(password)).await.unwrap();
-            println!("{}", public_key::to_base36_id(&pub_key));
+            let Keypair { public, .. } = unlock(&device_bundle, Some(password)).await.unwrap();
+            println!("{}", public_key::to_base36_id(&public));
         }
     }
 
