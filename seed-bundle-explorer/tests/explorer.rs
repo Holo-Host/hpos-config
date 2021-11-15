@@ -8,7 +8,7 @@ mod tests {
     #[tokio::test(flavor = "multi_thread")]
     async fn get_sign_pub_key() -> Result<(), Error> {
         let config: Config = get_mock_config()?;
-        let pub_key = holoport_public_key(config, Some("pass".to_string()))
+        let pub_key = holoport_public_key(&config, Some("pass".to_string()))
             .await
             .unwrap();
         // TODO: Update the bundle that was generate from the gen-web

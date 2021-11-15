@@ -5,12 +5,12 @@ use hpos_config_core::Config;
 
 /// get pub key for the device bundle in the config
 pub async fn holoport_public_key(
-    config: Config,
+    config: &Config,
     passphrase: Option<String>,
 ) -> Result<PublicKey, Error> {
     match config {
         Config::V1 { seed, .. } => {
-            let secret_key = SecretKey::from_bytes(&seed)?;
+            let secret_key = SecretKey::from_bytes(seed)?;
             Ok(PublicKey::from(&secret_key))
         }
         Config::V2 { device_bundle, .. } => {
@@ -27,12 +27,12 @@ pub async fn holoport_public_key(
 
 /// encode the ed25519 keypair making it compatible with lair (<v0.0.6)
 pub async fn encoded_ed25519_keypair(
-    config: Config,
+    config: &Config,
     passphrase: Option<String>,
 ) -> Result<String, Error> {
     match config {
         Config::V1 { seed, .. } => {
-            let secret_key = SecretKey::from_bytes(&seed)?;
+            let secret_key = SecretKey::from_bytes(seed)?;
             Ok(encrypt_key(&secret_key, &PublicKey::from(&secret_key)))
         }
         Config::V2 { device_bundle, .. } => {
@@ -70,10 +70,10 @@ fn encrypt_key(seed: &SecretKey, public_key: &PublicKey) -> String {
 
 /// unlock seed_bundles to access the pub-key and seed
 pub async fn unlock(
-    device_bundle: String,
+    device_bundle: &String,
     passphrase: Option<String>,
 ) -> Result<(SecretKey, PublicKey), String> {
-    let cipher = base64::decode_config(&device_bundle, base64::URL_SAFE_NO_PAD).unwrap();
+    let cipher = base64::decode_config(device_bundle, base64::URL_SAFE_NO_PAD).unwrap();
     match UnlockedSeedBundle::from_locked(&cipher)
         .await
         .unwrap()
