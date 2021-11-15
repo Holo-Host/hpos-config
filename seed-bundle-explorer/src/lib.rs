@@ -19,8 +19,8 @@ pub async fn holoport_public_key(
                 password is pass for now
                 unlock it and get the signPubKey
             */
-            let (_, pub_key) = unlock(device_bundle, passphrase).await.unwrap();
-            Ok(pub_key)
+            let Keypair { public, .. } = unlock(device_bundle, passphrase).await.unwrap();
+            Ok(public)
         }
     }
 }
@@ -42,8 +42,8 @@ pub async fn encoded_ed25519_keypair(
                 unlock it and get the signPubKey
                 Pass the Seed and PublicKey into `encrypt_key(seed, pubKey)`
             */
-            let (seed, pub_key) = unlock(device_bundle, passphrase).await.unwrap();
-            Ok(encrypt_key(&seed, &pub_key))
+            let Keypair { public, secret } = unlock(device_bundle, passphrase).await.unwrap();
+            Ok(encrypt_key(&secret, &public))
         }
     }
 }
@@ -69,10 +69,7 @@ fn encrypt_key(seed: &SecretKey, public_key: &PublicKey) -> String {
 }
 
 /// unlock seed_bundles to access the pub-key and seed
-pub async fn unlock(
-    device_bundle: &String,
-    passphrase: Option<String>,
-) -> Result<(SecretKey, PublicKey), String> {
+pub async fn unlock(device_bundle: &String, passphrase: Option<String>) -> Result<Keypair, String> {
     let cipher = base64::decode_config(device_bundle, base64::URL_SAFE_NO_PAD).unwrap();
     match UnlockedSeedBundle::from_locked(&cipher)
         .await
@@ -83,10 +80,10 @@ pub async fn unlock(
             let passphrase = passphrase.as_ref().unwrap();
             let passphrase = sodoken::BufRead::from(passphrase.as_bytes().to_vec());
             let seed = cipher.unlock(passphrase).await.unwrap();
-            Ok((
-                SecretKey::from_bytes(&*seed.get_seed().read_lock()).unwrap(),
-                PublicKey::from_bytes(&*seed.get_sign_pub_key().read_lock()).unwrap(),
-            ))
+            Ok(Keypair {
+                public: PublicKey::from_bytes(&*seed.get_sign_pub_key().read_lock()).unwrap(),
+                secret: SecretKey::from_bytes(&*seed.get_seed().read_lock()).unwrap(),
+            })
         }
         _ => Err("unsupported cipher".to_string()),
     }
