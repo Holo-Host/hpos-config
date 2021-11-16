@@ -681,8 +681,7 @@ checksum = "ab5ef0d4909ef3724cc8cce6ccc8572c5c817592e9285f5464f8e86f8bd3726e"
 [[package]]
 name = "hc_seed_bundle"
 version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ae01760e90dcdb62fb1b82ac79c8cf8da5cf727fc72efc771c59491d9a96a6bf"
+source = "git+https://github.com/holochain/lair?branch=patch-15-11#bbbe8af9f16e84585666aae8415776c09a88db02"
 dependencies = [
  "futures",
  "one_err",
@@ -1682,9 +1681,8 @@ dependencies = [
 
 [[package]]
 name = "sodoken"
-version = "0.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f90aae9dabf2f1cd20959dc73124a1f5da613a197a222cef94723c72653b13ca"
+version = "0.0.1-alpha21"
+source = "git+https://github.com/zo-el/sodoken?branch=v0.0.1-alpha21#a46ecc30dc3e71ed17f2d887dd0b6c4fd40f6048"
 dependencies = [
  "libc",
  "libsodium-sys",
