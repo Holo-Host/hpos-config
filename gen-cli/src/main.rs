@@ -9,7 +9,7 @@ use sha2::{Digest, Sha512Trunc256};
 use std::{env, fs::File, io, path::PathBuf};
 
 const USAGE: &'static str = "
-Usage: hpos-config-gen-cli --email EMAIL --password STRING --registration-code STRING [--seed-from PATH]
+Usage: hpos-config-gen-cli --email EMAIL --password STRING --registration-code STRING --derivation-path STRING --device-bundle STRING [--seed-from PATH]
        hpos-config-gen-cli --help
 
 Creates HoloPortOS config file that contains seed and admin email/password.
