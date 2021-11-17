@@ -58,7 +58,7 @@ pub fn decoded_to_ed25519_keypair(blob: &String) -> Result<Keypair, Error> {
 }
 
 /// For now lair does not take in any encrypted bytes so we pass back an empty encrypted byte string
-fn encrypt_key(seed: &SecretKey, public_key: &PublicKey) -> String {
+pub fn encrypt_key(seed: &SecretKey, public_key: &PublicKey) -> String {
     let mut encrypted_key = vec![
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0,
