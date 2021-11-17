@@ -1,20 +1,22 @@
 /* Imports */
 
 @font-face {
-  font-family: 'Roboto';
-  src: local('Roboto'), url(./assets/fonts/Roboto-Regular.ttf) format('truetype');
+  font-family: "Roboto";
+  src: local("Roboto"),
+    url(./assets/fonts/Roboto-Regular.ttf) format("truetype");
 }
 
 @font-face {
-  font-family: 'MPLUS1p';
-  src: local('MPLUS1p'), url(./assets/fonts/MPLUS1p-Regular.ttf) format('truetype');
+  font-family: "MPLUS1p";
+  src: local("MPLUS1p"),
+    url(./assets/fonts/MPLUS1p-Regular.ttf) format("truetype");
 }
 
 /* Globals */
 
 html {
-  font-family: 'MPLUS1p', 'Roboto', Helvetica, Arial, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji';
+  font-family: "MPLUS1p", "Roboto", Helvetica, Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 14px;
   line-height: 1.5;
   color: #24292e;
@@ -40,11 +42,13 @@ body.loading {
 
 body.step-monitor .step0,
 body.step0b .step0b,
+body.step-exit .step-exit,
 body.step1 .step1,
 body.step2 .step2,
 body.step3 .step3,
 body.step4 .step4,
-body.step5 .step5 {
+body.step5 .step5,
+body.step6 .step6 {
   display: flex;
   flex-flow: column;
   text-align: left;
@@ -83,7 +87,6 @@ p.break-text span {
 .center-align {
   text-align: center !important;
 }
-
 
 .divider {
   margin: 0 0.5rem;
@@ -257,6 +260,7 @@ body.step3 .subheader-text.tac {
 }
 
 body.step2 .subheader-text,
+body.step3 .subheader-text,
 body.step4 .subheader-text {
   max-width: 80%;
 }
@@ -299,7 +303,8 @@ body.step4 .subheader-text {
 }
 
 body.step-monitor #holo-banner-wrapper,
-body.step0b #holo-banner-wrapper {
+body.step0b #holo-banner-wrapper,
+body.step-exit #holo-banner-wrapper {
   margin-left: calc(-1rem + -2vw);
 }
 
@@ -450,7 +455,8 @@ body.step0b #holo-banner-wrapper {
   width: 80%;
 }
 
-.step0b .content-wrapper.bookend {
+.step0b .content-wrapper.bookend,
+.step-exit .content-wrapper.bookend {
   margin-top: 10%;
 }
 
@@ -472,12 +478,14 @@ body.step0b #holo-banner-wrapper {
   z-index: 2;
 }
 
-body.step5 .greeting-wrapper {
+body.step5 .greeting-wrapper,
+body.step6 .greeting-wrapper {
   margin-left: -20%;
   max-width: 60%;
 }
 
 .greeting-step0b,
+.greeting-step-exit,
 .greeting-step0 {
   line-height: 1.2em;
   margin: 40vh 0 10vh;
@@ -494,7 +502,8 @@ body.step5 .greeting-wrapper {
   max-width: 25vw;
 }
 
-.step5 .greeting {
+.step5 .greeting,
+.step6 .greeting {
   font-size: calc(2.2rem + 1.1vw);
   font-weight: 600;
 }
@@ -516,6 +525,7 @@ body.step5 .greeting-wrapper {
 }
 
 .step5-header,
+.step6-header,
 .step-monitor-header {
   margin: 0 auto;
   font-weight: 300;
@@ -549,6 +559,7 @@ body.step3 .step-label-info {
 }
 
 body.step2 .step-label-info,
+body.step3 .step-label-info,
 body.step4 .step-label-info {
   max-width: 100%;
 }
@@ -583,7 +594,7 @@ body.step3 .image-block {
   margin-left: 0;
 }
 
-body.step5 .image-block {
+body.step5 body.step6 .image-block {
   margin: 2%;
 }
 
@@ -604,12 +615,14 @@ body.step3 .image-block-item {
 }
 
 body.step2 .image-block-item,
+body.step3 .image-block-item,
 body.step4 .image-block-item {
   margin: 5% 0;
   margin-top: 14%;
 }
 
-body.step5 .image-block-item {
+body.step5 .image-block-item,
+body.step6 .image-block-item {
   margin-bottom: 1rem;
 }
 
@@ -658,7 +671,7 @@ li.timer-list-item {
   display: flex;
   border: none;
   mix-blend-mode: normal;
-  width: calc(-1rem + 30vw)
+  width: calc(-1rem + 30vw);
 }
 
 .form-item {
@@ -771,7 +784,7 @@ span.error-red {
 /* checkmark styles: */
 .checkbox-label .checkbox-custom::after {
   position: absolute;
-  content: '';
+  content: "";
   left: 12px;
   top: 12px;
   height: 0px;
@@ -808,7 +821,7 @@ span.error-red {
 /* For Ripple Effect */
 .checkbox-label .checkbox-custom::before {
   position: absolute;
-  content: '';
+  content: "";
   left: 10px;
   top: 10px;
   width: 0px;
@@ -848,6 +861,7 @@ span.error-red {
 }
 
 .step5 .card-wrapper,
+.step6 .card-wrapper,
 .step-monitor .card-wrapper {
   margin: 4vh;
   margin-bottom: 0px;
@@ -904,6 +918,7 @@ button {
 }
 
 #download-button.disabled,
+#gen-seed-button.disabled,
 button:disabled,
 button[disabled],
 a.btn:disabled,
@@ -928,6 +943,7 @@ a.btn[disabled] {
 }
 
 #download-button.disabled,
+#gen-seed-button.disabled,
 .btn:disabled,
 .btn[disabled] {
   background: #94cbcf;
@@ -948,7 +964,7 @@ a.btn[disabled] {
 }
 .next-btn span:after,
 .first-btn span:after {
-  content: '\00bb';
+  content: "\00bb";
   position: absolute;
   opacity: 0;
   top: 0;
@@ -972,7 +988,7 @@ a.btn[disabled] {
 }
 
 .modal-content .next-btn span:after {
-  content: 'X';
+  content: "X";
 }
 
 .previous-btn span {
@@ -982,7 +998,7 @@ a.btn[disabled] {
   transition: 0.5s;
 }
 .previous-btn span:after {
-  content: '\00ab';
+  content: "\00ab";
   position: absolute;
   opacity: 0;
   top: 0;
@@ -1015,7 +1031,18 @@ a.btn[disabled] {
   text-align: center;
 }
 
-#back-button2-confirmation,
+#gen-seed-button {
+  display: block;
+  width: 50%;
+  max-width: 22rem;
+  min-width: 14rem;
+  height: 2rem;
+  line-height: 2rem;
+  font-size: calc(0.8rem + 0.2vw);
+  text-align: center;
+}
+
+#back-button3-confirmation,
 #close-notice {
   width: 14vw;
   min-width: 7rem;
@@ -1023,7 +1050,8 @@ a.btn[disabled] {
 }
 
 body.step-monitor .stepButton,
-body.step5 .stepButton {
+body.step5 .stepButton,
+body.step6 .stepButton {
   margin-top: 2%;
 }
 
@@ -1037,8 +1065,9 @@ body.step5 .stepButton {
   flex-flow: row !important;
 }
 
-body.step-monitor .help-link ,
-body.step0b .help-link {
+body.step-monitor .help-link,
+body.step0b .help-link,
+body.step-exit .help-link {
   margin-left: calc(-0.4rem + -0.2vw);
 }
 
@@ -1096,7 +1125,7 @@ body.step3 .help-link {
 
 /*progressbar connectors*/
 .progressbar li:after {
-  content: '';
+  content: "";
   width: 7vw;
   height: 2px;
   background: #00838d;
@@ -1200,7 +1229,7 @@ body.step3 .help-link {
 .close:after {
   position: absolute;
   left: 15px;
-  content: ' ';
+  content: " ";
   height: 22px;
   width: 2px;
   background-color: #333;
