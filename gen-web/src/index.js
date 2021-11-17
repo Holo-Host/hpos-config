@@ -440,7 +440,6 @@
       /* Add click listener to page container on Page 2 form intake */
       inlineVariables.contentContainer.onclick =  verifyInputData
     } else if (stepTracker === 2) {
-      inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
       verifyDownloadComplete()
     } else if (stepTracker === 3) {
       /* Check for download*/
