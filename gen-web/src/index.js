@@ -14,13 +14,13 @@
   let stepTracker
   let signalKeyGen = false
   let resetUserConfig = false
-  let downloadConfigTracker = {}
-  let downloadSeedTracker = {}
+  let downloadConfigTracker = false
+  let downloadSeedTracker = false
   let configFileBlob = ''
-  let registrationCode
   let master
   let deviceNumber = 0
   let deviceID
+  let registrationCode
 
   /* Parse HTML elements */
   const buttons = {
@@ -44,7 +44,6 @@
     exit: document.querySelector('#exit-button'),
     loop: document.querySelector('#loop-button'),
     termsAndConditions: document.querySelector('#terms-and-conditions'),
-    // forumHelp: document.querySelector('#forum-help')
   }
 
   const inputs = {
@@ -94,11 +93,10 @@
         if (confirmed === true) return updateUiStep(0.5)
         else return null
       } else {
-        // TODO: RESET TO BELOW ONCE OUT OF DEV MODE
-        // updateUiStep(0.5)
+        updateUiStep(0.5)
   
         // DEV MODE HACK TO SWITCH THROUGH PAGES
-        updateUiStep(1)
+        // updateUiStep(2)
       }
     },
     start: () => {
@@ -110,6 +108,7 @@
       if (!inputValidity) return buttons.registrationCode.disabled = true
       // Load registration Code for use in later steps
       registrationCode = inputs.registrationCode.value
+      verifySeedDownloadComplete()
       updateUiStep(2)
       updateProgressBar(1)
     },
@@ -201,6 +200,7 @@
             ])
             
           // DEV MODE - check pub key for devices:
+          console.log("Created from master seed: ", master.signPubKey);
           console.log(`Device ${deviceNumber}: ${toBase64(encodedBytes)}`)
           console.log(`Device signPubkey: ${pubKey}`)
           
@@ -302,8 +302,16 @@
     },
     back3Confirmation: () => {
       click.closeNotice()
-      resetUserConfig = true
+      // Reseting UI
       const rewind = true
+      signalKeyGen = false
+      resetUserConfig = true
+      downloadConfigTracker = false
+      downloadSeedTracker = false
+      configFileBlob = ''
+      master = undefined
+      deviceNumber = 0
+      deviceID = undefined
       updateProgressBar(3, rewind)
       updateProgressBar(2, rewind)
       updateUiStep(1)
@@ -325,6 +333,8 @@
     },
     loop: () => {
       deviceNumber++
+      // hide back option
+      buttons.back3.setAttribute("hidden", "hidden");
       updateProgressBar(6, true)
       updateProgressBar(5, true)
       updateProgressBar(4, true)
@@ -532,10 +542,11 @@
         buttons.postGenSeed.disabled = false
         buttons.genSeed.disabled = true
       }
-      else if (!downloadSeedComplete && newConfig ) {
+      else if (newConfig) {
+        buttons.genSeed.classList.remove('disabled')
+        buttons.genSeed.innerHTML = 'Generate & Save Master Seed*'
         buttons.postGenSeed.disabled = true
         resetUserConfig = false
-        buttons.download.innerHTML = 'Generate & Save Master Seed*'
       }
       else return buttons.postGenSeed.disabled = true
     }
@@ -546,7 +557,6 @@
    * @param {Boolean} downloadConfigComplete
   */
   const verifyDownloadComplete = (downloadConfigComplete = downloadConfigTracker, newConfig = resetUserConfig) => {    
-   
     if (downloadConfigComplete) {
       buttons.postDownload.disabled = false
     }
