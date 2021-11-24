@@ -32,14 +32,6 @@ jobs:
           command: build
           args:
 
-      - name: Cargo Targets
-        uses: actions-rs/cargo@v1
-        env:
-          RUST_BACKTRACE: 1
-        with:
-          command: test
-          args: --all-targets --no-run
-
       - name: Cargo Test
         uses: actions-rs/cargo@v1
         env:

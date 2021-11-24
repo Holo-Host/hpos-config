@@ -64,7 +64,7 @@ pub enum Config {
     },
     #[serde(rename = "v2")]
     V2 {
-        /// This is the Device Seed Bundle which is compatible with lair-keystore >=v0.0.8
+        /// This is the Device Seed Bundle as a base64 string which is compatible with lair-keystore >=v0.0.8
         device_bundle: String,
         /// Derivation path of the seed in this config that was generated for a Master Seed
         derivation_path: String,
