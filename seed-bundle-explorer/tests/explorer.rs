@@ -27,14 +27,17 @@ mod tests {
             derivation_path,
             device_bundle,
             get_mock_pub_key()?,
-        )?;
+        )
+        .unwrap();
         Ok(config)
     }
     fn get_mock_pub_key() -> Result<PublicKey, String> {
         let device_pub_key: String = "To4PzBU8BcVghpjGjnYjLQnP_mkT9uBJ2v969Cs7-xw".to_string();
         Ok(
             base64::decode_config(&device_pub_key, base64::URL_SAFE_NO_PAD)
-                .map(|bytes| PublicKey::from_bytes(&bytes))??,
+                .map(|bytes| PublicKey::from_bytes(&bytes))
+                .unwrap()
+                .unwrap(),
         )
     }
 }
