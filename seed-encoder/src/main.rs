@@ -3,14 +3,14 @@
 //!
 
 use ed25519_dalek::*;
-use failure::*;
+use anyhow::{ Context, Result };
 use hpos_config_core::*;
 use hpos_config_seed_bundle_explorer::{encrypt_key, unlock};
 use std::path::PathBuf;
 use structopt::StructOpt;
 
 #[tokio::main]
-async fn main() -> Fallible<()> {
+async fn main() -> Result<()> {
     #[derive(StructOpt)]
     struct Cli {
         #[structopt(long = "config-path")]
@@ -26,7 +26,7 @@ async fn main() -> Fallible<()> {
         password,
     } = Cli::from_args();
     use std::fs::File;
-    let config_file = File::open(config_path).context("failed to open file")?;
+    let config_file = File::open(&config_path).context(format!("failed to open file {}", &config_path.to_string_lossy()))?;
     match serde_json::from_reader(config_file)? {
         Config::V1 { seed, .. } => {
             let secret_key = SecretKey::from_bytes(&seed)?;
@@ -35,7 +35,13 @@ async fn main() -> Fallible<()> {
         }
         Config::V2 { device_bundle, .. } => {
             // take in password
-            let Keypair { public, secret } = unlock(&device_bundle, Some(password)).await.unwrap();
+            let Keypair { public, secret } =
+                unlock(&device_bundle, Some(password))
+                    .await
+                    .context(format!(
+                        "unable to unlock the device bundle from {}",
+                        &config_path.to_string_lossy()
+                    ))?;
             println!("{}", encrypt_key(&secret, &public));
         }
     }

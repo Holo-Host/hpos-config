@@ -760,8 +760,8 @@ dependencies = [
 name = "hpos-config-into-base36-id"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "ed25519-dalek",
- "failure",
  "hpos-config-core",
  "hpos-config-seed-bundle-explorer",
  "serde_json",
@@ -773,7 +773,7 @@ dependencies = [
 name = "hpos-config-is-valid"
 version = "0.0.1"
 dependencies = [
- "failure",
+ "anyhow",
  "hpos-config-core",
  "serde_json",
 ]
@@ -798,8 +798,8 @@ dependencies = [
 name = "hpos-config-seed-encoder"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "ed25519-dalek",
- "failure",
  "hpos-config-core",
  "hpos-config-seed-bundle-explorer",
  "serde_json",
