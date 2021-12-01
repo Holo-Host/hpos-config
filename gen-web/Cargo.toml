@@ -1,6 +1,6 @@
 [package]
 name = "hpos-config-gen-web"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
   "Lisa Jetton <ldjetton21@gmail.com>",
   "PJ Klimek <pj@imagine-nyc.com>",
@@ -11,6 +11,9 @@ edition = "2018"
 repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]
+arrayref = "0.3.5"
+base64 = "0.10.1"
+ed25519-dalek = { version = "1.0.1", features = ["serde"] }
 failure = "0.1.5"
 hpos-config-core = { path = "../core", features = ["wasm-bindgen"] }
 serde = { version = "1.0.123", features = ["derive"] }

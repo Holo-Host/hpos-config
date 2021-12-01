@@ -5,5 +5,7 @@ members = [
   "gen-cli",
   "gen-web",
   "into-base36-id",
+  "seed-encoder",
+  "seed-bundle-explorer",
   "is-valid"
 ]

@@ -1,10 +1,13 @@
-use anyhow::{Context, Result};
+//! This binary is used for generating a encoded key from the
+//! seed, this is used by the `--load_ed25519_keypair_from_seed` in lair
+//!
+
 use ed25519_dalek::*;
+use anyhow::{ Context, Result };
 use hpos_config_core::*;
-use hpos_config_seed_bundle_explorer::unlock;
+use hpos_config_seed_bundle_explorer::{encrypt_key, unlock};
 use std::path::PathBuf;
 use structopt::StructOpt;
-use std::fs::File;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -21,27 +24,25 @@ async fn main() -> Result<()> {
     let Cli {
         config_path,
         password,
-        ..
     } = Cli::from_args();
-
-    let config_file =
-        File::open(&config_path).context(format!("failed to open file {}", &config_path.to_string_lossy()))?;
+    use std::fs::File;
+    let config_file = File::open(&config_path).context(format!("failed to open file {}", &config_path.to_string_lossy()))?;
     match serde_json::from_reader(config_file)? {
         Config::V1 { seed, .. } => {
             let secret_key = SecretKey::from_bytes(&seed)?;
             let public_key = PublicKey::from(&secret_key);
-            println!("{}", public_key::to_base36_id(&public_key));
+            println!("{}", encrypt_key(&secret_key, &public_key));
         }
         Config::V2 { device_bundle, .. } => {
             // take in password
-            let Keypair { public, .. } =
+            let Keypair { public, secret } =
                 unlock(&device_bundle, Some(password))
                     .await
                     .context(format!(
                         "unable to unlock the device bundle from {}",
                         &config_path.to_string_lossy()
                     ))?;
-            println!("{}", public_key::to_base36_id(&public));
+            println!("{}", encrypt_key(&secret, &public));
         }
     }
 

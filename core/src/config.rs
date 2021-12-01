@@ -3,7 +3,7 @@ use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
-const SEED_SIZE: usize = 32;
+pub const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
@@ -18,7 +18,7 @@ where
         .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
 }
 
-fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
+pub fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -64,10 +64,13 @@ pub enum Config {
     },
     #[serde(rename = "v2")]
     V2 {
-        /// The encrypted key will be the key that is used as the holochain key and as the holoport ID
-        encrypted_key: String,
+        /// This is the Device Seed Bundle as a base64 string which is compatible with lair-keystore >=v0.0.8
+        device_bundle: String,
+        /// Derivation path of the seed in this config that was generated for a Master Seed
+        derivation_path: String,
+        /// Holo registration code is used to identify and authenticate its users
         registration_code: String,
-        /// The pub-key in settings is the holoport key that is used for log-in
+        /// The pub-key in settings is the holoport key that is used for verifying login signatures
         settings: Settings,
     },
 }
@@ -98,69 +101,30 @@ impl Config {
         email: String,
         password: String,
         registration_code: String,
-        maybe_seed: Option<Seed>,
+        derivation_path: String,
+        device_bundle: String,
+        device_pub_key: PublicKey,
     ) -> Result<(Self, PublicKey), Error> {
-        // Eventually this should be the Root bundle/ master bundle
-        // that should be returned back to the host
-        // So that they can create new keys using that bundle
-        let (master_seed, admin_keypair, hp_id_pub_key) =
-            generate_keypair(email.clone(), password, maybe_seed)?;
+        let admin_keypair = admin_keypair_from(device_pub_key, &email, &password)?;
         let admin = Admin {
             email: email,
             public_key: admin_keypair.public,
         };
         Ok((
             Config::V2 {
-                encrypted_key: Config::encrypt_key(master_seed, hp_id_pub_key),
+                device_bundle,
+                derivation_path,
                 registration_code,
                 settings: Settings { admin: admin },
             },
-            hp_id_pub_key,
+            device_pub_key,
         ))
     }
 
     pub fn admin_public_key(&self) -> PublicKey {
         match self {
-            Config::V1 { seed: _, settings } => settings.admin.public_key,
-            Config::V2 {
-                encrypted_key: _,
-                registration_code: _,
-                settings,
-            } => settings.admin.public_key,
+            Config::V1 { settings, .. } | Config::V2 { settings, .. } => settings.admin.public_key,
         }
-    }
-
-    pub fn holoport_public_key(&self) -> Result<PublicKey, Error> {
-        match self {
-            Config::V1 { seed, settings: _ } => {
-                let secret_key = SecretKey::from_bytes(seed)?;
-                Ok(PublicKey::from(&secret_key))
-            }
-            Config::V2 {
-                encrypted_key,
-                registration_code: _,
-                settings: _,
-            } => Ok(Config::decode_key(encrypted_key)?.public),
-        }
-    }
-
-    pub fn encrypt_key(seed: Seed, public_key: PublicKey) -> String {
-        // For now lair does not take in any encrypted bytes so we pass back an empty encrypted byte string
-        let mut encrypted_key = vec![
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0,
-        ];
-        encrypted_key.extend(&public_key.to_bytes());
-        encrypted_key.extend(seed.to_vec());
-        base64::encode(&encrypted_key)
-    }
-
-    pub fn decode_key(blob: &String) -> Result<Keypair, Error> {
-        let decoded_key = base64::decode(blob)?;
-        Ok(Keypair {
-            public: PublicKey::from_bytes(&decoded_key[32..64].to_vec())?,
-            secret: SecretKey::from_bytes(&decoded_key[64..].to_vec())?,
-        })
     }
 }
 
