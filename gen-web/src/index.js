@@ -3,7 +3,7 @@
   const filesaver = require('file-saver');
   const hcSeedBundle = require('@holochain/hc-seed-bundle');
   const { config } = await import('../pkg')
-  const { 
+  const {
     validateRegistrationCode,
     validateScreenSize,
     detectMobileUserAgent,
@@ -90,11 +90,11 @@
     startPrep: () => {
       if (!validateScreenSize() || detectMobileUserAgent()) {
         const confirmed = confirm('This experience has not been optimized for mobile devices. Please continue only if you are using a laptop or PC.\n\nContinuing on a mobile device may result in unexpected issues.')
-        if (confirmed === true) return updateUiStep(0.5)
+        if (confirmed === true) return updateUiStep(1)
         else return null
       } else {
-        updateUiStep(0.5)
-  
+        updateUiStep(1)
+
         // DEV MODE HACK TO SWITCH THROUGH PAGES
         // updateUiStep(2)
       }
@@ -143,10 +143,10 @@
 
           // DEV MODE - check pub key for devices:
           console.log("Created master seed: ", master.signPubKey);
-          
+
           const seedBlob = new Blob([toBase64(encodedBytes)], { type: 'text/plain' })
           filesaver.saveAs(seedBlob, SEED_FILE_NAME)
-        
+
         } catch (e) {
           throw new Error(`Error saving config. Error: ${e}`)
         }
@@ -166,7 +166,7 @@
       signalKeyGen = true
       const inputValidity = await verifyInputData()
       if (!inputValidity) return buttons.generate.disabled = true
-      
+
       /* Set user config */
       user.registrationCode = inputs.registrationCode.value
       user.email = inputs.email.value
@@ -174,7 +174,7 @@
 
       // DEV MODE - Config Check: 
       // console.log('user config : ', user)
-      
+
       /* Communicate visually that something is happening in the bkgd */
       buttons.generate.disabled = true
       downloadConfigTracker = false
@@ -197,13 +197,13 @@
           const encodedBytes = deviceRoot.lock([
             new hcSeedBundle.SeedCipherPwHash(
               hcSeedBundle.parseSecret(pw), 'minimum')
-            ])
-            
+          ])
+
           // DEV MODE - check pub key for devices:
           console.log("Created from master seed: ", master.signPubKey);
           console.log(`Device ${deviceNumber}: ${toBase64(encodedBytes)}`)
           console.log(`Device signPubkey: ${pubKey}`)
-          
+
           // pass seed into the blob
           let seed = {
             derivationPath: deviceNumber,
@@ -241,28 +241,28 @@
         '_blank'
       )
     },
-    download: async () => {      
+    download: async () => {
       /* Communicate visually that something is happening in the bkgd */
-        buttons.download.classList.add('disabled')
-        buttons.download.disabled = true
-        buttons.download.innerHTML = 'Saving Configuration File...'
+      buttons.download.classList.add('disabled')
+      buttons.download.disabled = true
+      buttons.download.innerHTML = 'Saving Configuration File...'
 
-        setTimeout(() => {
-          try {
-            filesaver.saveAs(configFileBlob, genConfigFileName(deviceNumber, deviceID))
-          } catch (e) {
-            throw new Error(`Error saving config. Error: ${e}`)
-          }
+      setTimeout(() => {
+        try {
+          filesaver.saveAs(configFileBlob, genConfigFileName(deviceNumber, deviceID))
+        } catch (e) {
+          throw new Error(`Error saving config. Error: ${e}`)
+        }
 
-          /* Clean State */
-          downloadConfigTracker = true
-          buttons.download.classList.remove('disabled')
-          buttons.download.disabled = false
-          buttons.download.innerHTML = 'Save Configuration File Again'
-          verifyDownloadComplete(downloadConfigTracker)
-        }, 1000)
+        /* Clean State */
+        downloadConfigTracker = true
+        buttons.download.classList.remove('disabled')
+        buttons.download.disabled = false
+        buttons.download.innerHTML = 'Save Configuration File Again'
+        verifyDownloadComplete(downloadConfigTracker)
+      }, 1000)
     },
-    postDownload: () => {  
+    postDownload: () => {
       updateUiStep(5)
       updateProgressBar(4)
     },
@@ -361,14 +361,14 @@
       let labelId
       if (event.target.id.includes('label')) labelId = document.querySelector(`#${event.target.id}`)
       else {
-        const inputId = event.target.id 
+        const inputId = event.target.id
         labelId = document.querySelector(`#${inputId}-label`)
       }
-      
+
       const activeInputs = document.querySelectorAll('.input-active')
       if (activeInputs) {
         for (let activeInput of activeInputs) {
-          if (!activeInput.parentElement.querySelector('input').value){
+          if (!activeInput.parentElement.querySelector('input').value) {
             activeInput.classList.remove('input-active')
             activeInput.dataset.shrink = 'false'
           }
@@ -379,10 +379,10 @@
         labelId.classList.add('input-active')
         labelId.dataset.shrink = 'true'
       }
-      
+
       verifyInputData()
-	},
-	  confirmValidInput: () => confirmValidInput()
+    },
+    confirmValidInput: () => confirmValidInput()
   }
 
   /* Bind keystroke action to listener */
@@ -448,7 +448,7 @@
   const constantCheck = () => {
     if (stepTracker === 1) {
       /* Add click listener to page container on Page 2 form intake */
-      inlineVariables.contentContainer.onclick =  verifyInputData
+      inlineVariables.contentContainer.onclick = verifyInputData
     } else if (stepTracker === 2) {
       verifyDownloadComplete()
     } else if (stepTracker === 3) {
@@ -459,7 +459,7 @@
     } else if (stepTracker === 4) {
       /* Display back User Email on Page 4 for visual email verification */
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
-    } 
+    }
   }
 
 
@@ -475,44 +475,44 @@
     }
     stepTracker = step
     constantCheck()
-    if(step === 0) {
+    if (step === 0) {
       return document.body.className = 'step-monitor'
     } else if (step === 0.5) return document.body.className = 'step0b'
     else if (step === -1) return document.body.className = 'step-exit'
     return document.body.className = 'step' + step
   }
 
- /**
-   * Update the progresss bar
-   *
-   * @param {int} currentTransition
-   * @param {bool} rewind
-  */
- const updateProgressBar = (currentTransition, rewind = false) => {
-  if (!validation[currentTransition] || currentTransition < 1) {
-    console.log(`Wrong parameter ${currentTransition} in updateProgressBar()`)
-    return null
-  }
-
-  /* Locate current step element and remove 'active' class */
-  const childListNodes = document.querySelectorAll('li.progressbar-item')
-  const stepIndex = currentTransition - 1
-  const currentlyActive = childListNodes[stepIndex]
-  currentlyActive.classList.remove('active')
-
-  if (rewind) {
-    for (let i=0; i<(stepIndex - 1) + 1; i++) {
-      childListNodes[i].classList.add('active')
+  /**
+    * Update the progresss bar
+    *
+    * @param {int} currentTransition
+    * @param {bool} rewind
+   */
+  const updateProgressBar = (currentTransition, rewind = false) => {
+    if (!validation[currentTransition] || currentTransition < 1) {
+      console.log(`Wrong parameter ${currentTransition} in updateProgressBar()`)
+      return null
     }
-    return childListNodes[stepIndex - 1]
-  }
-  else {
-    for (let i=0; i<(stepIndex + 1) + 1; i++) {
-      childListNodes[i].classList.add('active')
+
+    /* Locate current step element and remove 'active' class */
+    const childListNodes = document.querySelectorAll('li.progressbar-item')
+    const stepIndex = currentTransition - 1
+    const currentlyActive = childListNodes[stepIndex]
+    currentlyActive.classList.remove('active')
+
+    if (rewind) {
+      for (let i = 0; i < (stepIndex - 1) + 1; i++) {
+        childListNodes[i].classList.add('active')
+      }
+      return childListNodes[stepIndex - 1]
     }
-    return childListNodes[stepIndex + 1]
+    else {
+      for (let i = 0; i < (stepIndex + 1) + 1; i++) {
+        childListNodes[i].classList.add('active')
+      }
+      return childListNodes[stepIndex + 1]
+    }
   }
-}
 
   /**
    * Generate save link of hpos-config.json and attach to `button` domElement
@@ -521,46 +521,46 @@
    * @param {Object} seed {derivationPath, deviceRoot, pubKey}
   */
   const generateBlob = (user, seed) => {
-      const configData = config(user.email, user.password, user.registrationCode.trim(), seed.derivationPath.toString(), seed.deviceRoot, seed.pubKey)
-      const configBlob = new Blob([configData.config], { type: 'application/json' })
-     
-      /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
-      // console.log('Optional HoloPort url : ', configData.url)
-      deviceID = configData.id
-      configFileBlob = configBlob
-     
-      return configFileBlob
+    const configData = config(user.email, user.password, user.registrationCode.trim(), seed.derivationPath.toString(), seed.deviceRoot, seed.pubKey)
+    const configBlob = new Blob([configData.config], { type: 'application/json' })
+
+    /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
+    // console.log('Optional HoloPort url : ', configData.url)
+    deviceID = configData.id
+    configFileBlob = configBlob
+
+    return configFileBlob
   }
 
-   /**
-   * Verify config was saved before allowing progression to next page
-   *
-   * @param {Boolean} downloadSeedComplete
-  */
-    const verifySeedDownloadComplete = (downloadSeedComplete = downloadSeedTracker, newConfig = resetUserConfig) => {     
-      if (downloadSeedComplete) {
-        buttons.postGenSeed.disabled = false
-        buttons.genSeed.disabled = true
-      }
-      else if (newConfig) {
-        buttons.genSeed.classList.remove('disabled')
-        buttons.genSeed.innerHTML = 'Generate & Save Master Seed*'
-        buttons.postGenSeed.disabled = true
-        resetUserConfig = false
-      }
-      else return buttons.postGenSeed.disabled = true
+  /**
+  * Verify config was saved before allowing progression to next page
+  *
+  * @param {Boolean} downloadSeedComplete
+ */
+  const verifySeedDownloadComplete = (downloadSeedComplete = downloadSeedTracker, newConfig = resetUserConfig) => {
+    if (downloadSeedComplete) {
+      buttons.postGenSeed.disabled = false
+      buttons.genSeed.disabled = true
     }
-  
+    else if (newConfig) {
+      buttons.genSeed.classList.remove('disabled')
+      buttons.genSeed.innerHTML = 'Generate & Save Master Seed*'
+      buttons.postGenSeed.disabled = true
+      resetUserConfig = false
+    }
+    else return buttons.postGenSeed.disabled = true
+  }
+
   /**
    * Verify config was saved before allowing progression to next page
    *
    * @param {Boolean} downloadConfigComplete
   */
-  const verifyDownloadComplete = (downloadConfigComplete = downloadConfigTracker, newConfig = resetUserConfig) => {    
+  const verifyDownloadComplete = (downloadConfigComplete = downloadConfigTracker, newConfig = resetUserConfig) => {
     if (downloadConfigComplete) {
       buttons.postDownload.disabled = false
     }
-    else if (!downloadConfigComplete && newConfig ) {
+    else if (!downloadConfigComplete && newConfig) {
       buttons.postDownload.disabled = true
       resetUserConfig = false
       buttons.download.innerHTML = 'Save New Configuration File'
@@ -573,12 +573,12 @@
    *
    * @param {Array} inputElements
   */
-  const resetFields = (inputElements) => {    
+  const resetFields = (inputElements) => {
     for (let inputElement of inputElements) {
       document.querySelector(`#${inputElement.id}-form-item`).classList.remove('error-red')
       try {
         inputElement.parentElement.querySelector('.input-item-label').classList.remove('error-red')
-      } catch(e){/* label does not exist */}
+      } catch (e) {/* label does not exist */ }
       inlineVariables.formErrorMessage.innerHTML = ''
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
     }
@@ -591,11 +591,11 @@
    * @param {Array} errorFieldsArray
   */
   const renderInputError = (errorMessage, errorFieldsArray) => {
-    for (let errorField of errorFieldsArray) {    
+    for (let errorField of errorFieldsArray) {
       document.querySelector(`#${errorField.id}-form-item`).classList.add('error-red')
-      try{
+      try {
         errorField.parentElement.querySelector('.input-item-label').classList.add('error-red')
-      } catch(e){/* label does not exist */}
+      } catch (e) {/* label does not exist */ }
       if (errorMessage === errorMessages.missingFields) inlineVariables.formErrorMessage.innerHTML = errorMessage
       else document.querySelector(`#${errorField.id}-error-message`).innerHTML = errorMessage
     }
@@ -606,7 +606,7 @@
    * Verify all form input before allowing progression to next page
   */
   const verifyInputData = (step = stepTracker) => {
-  let inputValidity = false;
+    let inputValidity = false;
     if (step == 1) {
       inputValidity = confirmValidCode()
       if (inputValidity) buttons.registrationCode.disabled = false
@@ -622,7 +622,7 @@
     }
     return inputValidity
   }
-  
+
   /**
    * Input form error check
    *
@@ -630,9 +630,9 @@
   const confirmValidInput = (submitPressed = signalKeyGen) => {
     const inputElements = Object.values(inputs)
     resetFields(inputElements)
-    if(submitPressed) {
-      if(!inputs.email.value) {
-        const missingFields = inputElements.filter(inputs => !inputs.value) 
+    if (submitPressed) {
+      if (!inputs.email.value) {
+        const missingFields = inputElements.filter(inputs => !inputs.value)
         renderInputError(errorMessages.missingFields, missingFields)
       } else if (!validateEmail(inputs.email.value)) {
         renderInputError(errorMessages.email, [inputs.email])
@@ -652,20 +652,20 @@
     return false
   }
   const confirmValidCode = () => {
-    const inputElements = Object.values({registrationCode: inputs.registrationCode})
+    const inputElements = Object.values({ registrationCode: inputs.registrationCode })
     resetFields(inputElements)
-    if(!inputs.registrationCode.value) {
-      const missingFields = inputElements.filter(inputs => !inputs.value) 
+    if (!inputs.registrationCode.value) {
+      const missingFields = inputElements.filter(inputs => !inputs.value)
       renderInputError(errorMessages.missingFields, missingFields)
     } else if (!validateRegistrationCode(inputs.registrationCode.value)) {
       renderInputError(errorMessages.registrationCode, [inputs.registrationCode])
     } else return true
   }
   const confirmValidPassPhrase = () => {
-    const inputElements = Object.values({seedPassphrase: inputs.seedPassphrase})
+    const inputElements = Object.values({ seedPassphrase: inputs.seedPassphrase })
     resetFields(inputElements)
-    if(!inputs.seedPassphrase.value) {
-      const missingFields = inputElements.filter(inputs => !inputs.value) 
+    if (!inputs.seedPassphrase.value) {
+      const missingFields = inputElements.filter(inputs => !inputs.value)
       renderInputError(errorMessages.missingFields, missingFields)
     } else if (!validatePassphrae(inputs.seedPassphrase.value)) {
       renderInputError(errorMessages.seedPassphrase, [inputs.seedPassphrase])
