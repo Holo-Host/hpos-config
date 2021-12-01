@@ -290,7 +290,7 @@
       updateUiStep(0)
     },
     back1: () => {
-      updateUiStep(0.5)
+      updateUiStep(0)
     },
     back2: () => {
       const rewind = true

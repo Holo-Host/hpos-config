@@ -26,25 +26,59 @@
     <img id="holo-brand-wrapper" class="stepLabel step0 step0b step-exit" src='assets/icons/holo-logo-avatar.svg' />
   </aside>
   <aside id='greeting-container' class="stepHeader step1 step2 step3 step4 step5 step6">
-    <div class="stepLabel step1 step2 step3 step4 step5 step6 greeting-wrapper ">
-      <img id="holo-banner-wrapper" class="stepLabel step1 step2 step3 step4 step5 step6"
+    <div class="stepLabel step1 step2 step3 step4 step5 greeting-wrapper-bookend ">
+      <img id="holo-banner-wrapper" class="stepLabel step1 step2 step3 step4 step5"
         src='assets/images/holo-banner-white.svg' />
       <div class="center-align">
-        <h1 class="stepLabel step5 step6 greeting text-white center-align">You're almost done!</h1>
+        <p class="stepLabel step1 text-white sub-text">
+          <b>Context:</b>
+          &nbsp
+          <br />This is where seed generation and connecting your HoloPort to the network
+          happen.
+        </p>
+        <p class="stepLabel step2 text-white sub-text">
+          <b>Context:</b>
+          &nbsp
+          <br />A master seed is the core basis for your identity such that you can associate Holochain apps....etc.
+          <br />&nbsp;
+          <br />The passphrase you create is what decrypts the master seed.
+        </p>
+        <p class="stepLabel step3 text-white sub-text">
+          <b>Context:</b>
+          &nbsp
+          <br />Host Console is where you can manage your HoloPort and hosting settings.
+        </p>
+        <p class="stepLabel step4 text-white sub-text">
+          <b>Context:</b>
+          &nbsp
+          <br />You’re saving your private keys here, which are equivalent to a login and password. consider your public
+          key is your HoloPort ID.
+        </p>
+        <p class="stepLabel step5 text-white sub-text">
+          <b>Context:</b>
+          &nbsp
+          <br />When you insert USB, your HP is connecting to the Holo network.
+        </p>
       </div>
-      <p class="stepLabel step1 step2 step3 step4 step5 step6 help-link subheader-text">
-      <h1 class="stepLabel step0 greeting-step0 step0b greeting-step0b ">Context:
-
-        This is where seed generation and connecting your HoloPort to the network happen. </h1>
-      <a class="link text-white" href="https://forum.holo.host" target="_blank">Support Forum </a>
-      <span class="divider">|</span>
-      <a class="link text-white" href="mailto:help@holo.host" target="_blank"> help@holo.host</a>
+      <p class="stepLabel step1 step2 step3 step4 step5 help-link subheader-text">
+        <a class="link text-white" href="https://forum.holo.host" target="_blank">Support Forum </a>
+        <span class="divider">|</span>
+        <a class="link text-white" href="mailto:help@holo.host" target="_blank"> help@holo.host</a>
       </p>
     </div>
-    <img id="holoport-flying" class="stepLabel step1 step2 step3 step4 step5 step6"
-      src='assets/images/hports-flying-transparent.png' />
-    <img id="holo-brand-wrapper" class="stepLabel step1 step2 step3 step4 step5 step6"
-      src='assets/icons/holo-logo-avatar.svg' />
+    <div class="stepLabel step6 greeting-wrapper">
+      <img id="holo-banner-wrapper" class="stepLabel step6" src='assets/images/holo-banner-white.svg' />
+      <div class="center-align">
+        <h1 class="stepLabel step6 greeting text-white center-align">You're almost done!</h1>
+      </div>
+      <p class="stepLabel step6 help-link subheader-text">
+        <a class="link text-white" href="https://forum.holo.host" target="_blank">Support Forum </a>
+        <span class="divider">|</span>
+        <a class="link text-white" href="mailto:help@holo.host" target="_blank"> help@holo.host</a>
+      </p>
+    </div>
+    <img id="holoport-flying" class="stepLabel step6" src='assets/images/hports-flying-transparent.png' />
+    <img id="holo-brand-wrapper" class="stepLabel step6" src='assets/icons/holo-logo-avatar.svg' />
   </aside>
   <main id='content-container-bookend' class="stepHeader step0 step0b step-exit">
     <div class="content-wrapper bookend">
@@ -167,7 +201,8 @@
                   seed</strong></div>
               <p class="step-label-info"> Enter a passphrase. This is the most important thing to remember since it
                 decrypts your master seed, keep it somewhere very safe. You can turn off the internet while doing this
-                for added security. <br> Tip: To ensure your passphrase is as strong as possible, make it long, include
+                for added security. <br><br><span class="bold">Tip:</span> To ensure your passphrase is as
+                strong as possible, make it long, include
                 a mix of many different types of characters, and make it hard to guess.</p>
               <span id="form-error-message" class="error-red"></span>
               <span id="form-success-message" class="holo-green"></span>
@@ -221,6 +256,7 @@
             </div>
             <span id="seed-passphrase-error-message" class="error-red"></span>
             <div class="download-button-wrapper">
+              <br><br>
               <a id="gen-seed-button" class="btn button-font action-button"><img
                   src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span
                   class="button-text bold">Generate & Save Master Seed*</span></a>
@@ -232,7 +268,7 @@
               <div class="input-item">
                 <div class="input-base">
                   <label id="email-label" class='input-item-label' data-shrink="false">Your Email*:</label>
-                  <input id="email" class="input-font" name="email" type="text" placeholder="username" />
+                  <input id="email" class="input-font" name="email" type="text" />
                 </div>
               </div>
             </div>
@@ -242,7 +278,7 @@
               <div class="input-item">
                 <div class="input-base">
                   <label id="password-label" class='input-item-label' data-shrink="false">Your Password:</label>
-                  <input id="password" class="input-font" name="password" type="password" placeholder="new-password" />
+                  <input id="password" class="input-font" name="password" type="password" />
                 </div>
               </div>
             </div>
@@ -252,8 +288,7 @@
               <div class="input-item">
                 <div class="input-base">
                   <label id="password-check-label" class='input-item-label' data-shrink="false">Retype Password:</label>
-                  <input id="password-check" class="input-font" name="password-check" type="password"
-                    placeholder="new-password" />
+                  <input id="password-check" class="input-font" name="password-check" type="password" />
                 </div>
               </div>
             </div>
@@ -271,6 +306,7 @@
                     src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span
                     class="button-text bold">Save Configuration File</span></a>
               </div>
+              <br><br>
               <p class="subheader-text tac">*By clicking "Save Configuration File”, you agree to Holo’s <a
                   href="https://holo.host/alpha-terms" target="_blank" id="terms-and-conditions"
                   class="holo-green">Terms and Conditions</a>.</p>
