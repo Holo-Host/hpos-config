@@ -494,29 +494,11 @@ body.step6 .greeting-wrapper {
   max-width: 30vw;
 }
 
-/* .greeting-step1 {
-  line-height: 1.2em;
-  margin: 40vh 0 10vh;
-  font-weight: 300;
-  font-size: calc(1.0rem + 1vw);
-  max-width: 30vw;
-} */
-
-/* .sub-text {
-  line-height: 5.2em;
-  margin: 32vh 0 10vh;
-  font-weight: 500;
-  font-size: calc(1.9rem + 0.9vw);
-  max-width: 25vw;
-} */
+.table-padding {
+  padding: 30px;
+}
 
 .sub-text {
-  /* font-size: calc(1.0rem + 0.6vw);
-  letter-spacing: -0.4px;
-  color: #2c405a;
-  max-width: 33%;
-  margin-top: 30vh; */
-  /* line-height: 1.2em; */
   line-height: calc(0.8rem + 1vw);
   margin: 40vh 0 10vh;
   font-weight: 500;
@@ -654,6 +636,18 @@ body.step4 .image-block-item {
 body.step5 .image-block-item,
 body.step6 .image-block-item {
   margin-bottom: 1rem;
+}
+.table-icons {
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: inline-block !important;
+  margin: 10px 30px 0px 0px;
+  width: 18px;
+  height: 32px;
+}
+.table-icons {
+  width: 66px;
+  height: 65px;
 }
 
 .list-icons,
