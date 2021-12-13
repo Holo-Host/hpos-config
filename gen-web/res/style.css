@@ -494,6 +494,18 @@ body.step6 .greeting-wrapper {
   max-width: 30vw;
 }
 
+.table-padding {
+  padding: 30px;
+}
+
+.sub-text {
+  line-height: calc(0.8rem + 1vw);
+  margin: 40vh 0 10vh;
+  font-weight: 500;
+  font-size: calc(0.2rem + 1vw);
+  max-width: 30vw;
+}
+
 .greeting {
   line-height: 1.2em;
   margin: 32vh 0 10vh;
@@ -624,6 +636,18 @@ body.step4 .image-block-item {
 body.step5 .image-block-item,
 body.step6 .image-block-item {
   margin-bottom: 1rem;
+}
+.table-icons {
+  flex-grow: 0;
+  flex-shrink: 0;
+  display: inline-block !important;
+  margin: 10px 30px 0px 0px;
+  width: 18px;
+  height: 32px;
+}
+.table-icons {
+  width: 66px;
+  height: 65px;
 }
 
 .list-icons,
