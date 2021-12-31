@@ -100,10 +100,10 @@
         if (confirmed === true) return updateUiStep(1)
         else return null
       } else {
-        updateUiStep(0.5)
+        // updateUiStep(0.5)
 
         // DEV MODE HACK TO SWITCH THROUGH PAGES
-        // updateUiStep(2)
+        updateUiStep(4)
       }
     },
     start: () => {
@@ -137,8 +137,6 @@
       updateProgressBar(2)
     },
     genSeed: async () => {
-      const inputValidity = await verifyInputData()
-      if (!inputValidity) return buttons.genSeed.disabled = true
       // Load registration Code for use in later steps
       /* Communicate visually that something is happening in the bkgd */
       buttons.genSeed.classList.add('disabled')
@@ -162,6 +160,10 @@
           console.log('^&* generating seed with passphrase', seedPassphrase)
 
           const pw = (new TextEncoder()).encode(seedPassphrase)
+
+          // clear passphrase from memory
+          seedPassphrase = null
+
           const encodedBytes = master.lock([
             new hcSeedBundle.SeedCipherPwHash(
               hcSeedBundle.parseSecret(pw), 'minimum')
@@ -189,9 +191,13 @@
       updateProgressBar(3)
     },
     generate: async () => {
+      console.log('^&* generate 1')
       signalKeyGen = true
       const inputValidity = await verifyInputData()
       if (!inputValidity) return buttons.generate.disabled = true
+
+      console.log('^&* generate 2, inputValidity', inputValidity)
+
 
       /* Set user config */
       user.registrationCode = inputs.registrationCode.value
@@ -205,8 +211,13 @@
       buttons.generate.disabled = true
       downloadConfigTracker = false
       click.openLoader()
+
+      console.log('^&* generate 3')
+
       setTimeout(() => {
+        console.log('^&* generate 4')
         try {
+          console.log('^&* generate 5')
           inlineVariables.formErrorMessage.innerHTML = ''
           // generate device bundle
           // derive a device root seed from the master
@@ -242,14 +253,15 @@
           // clear our secrets
           deviceRoot.zero()
         } catch (e) {
+          console.log('^&* generate 5 errror')
           inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
           throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
         }
         /* Clean State */
         buttons.generate.disabled = false
         click.closeLoader()
-        updateUiStep(5)
-        updateProgressBar(4)
+        updateUiStep(6)
+        updateProgressBar(5)
 
         /* Reset Password inputs */
         inputs.password.value = ''
@@ -272,6 +284,9 @@
       buttons.download.classList.add('disabled')
       buttons.download.disabled = true
       buttons.download.innerHTML = 'Saving Configuration File...'
+
+      console.log('^&* deviceNumber', deviceNumber)
+      console.log('^&* deviceID', deviceID)
 
       setTimeout(() => {
         try {
@@ -575,8 +590,11 @@
    * @param {Object} seed {derivationPath, deviceRoot, pubKey}
   */
   const generateBlob = (user, seed) => {
+    console.log('^&* generatingBlob', user, seed)
     const configData = config(user.email, user.password, user.registrationCode.trim(), seed.derivationPath.toString(), seed.deviceRoot, seed.pubKey)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
+
+    console.log('^&* configData', configData)
 
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
     // console.log('Optional HoloPort url : ', configData.url)
@@ -659,20 +677,27 @@
   /**
    * Verify all form input before allowing progression to next page
   */
-  const verifyInputData = (step = stepTracker) => {
+  const verifyInputData = () => {
+    console.log('^&* verifyInputData', stepTracker)
     let inputValidity = false;
-    if (step == 1) {
+    if (stepTracker == 1) {
       inputValidity = confirmValidCode()
       if (inputValidity) buttons.registrationCode.disabled = false
       else buttons.registrationCode.disabled = true
-    } if (step == 2) {
+    } if (stepTracker == 2) {
       inputValidity = confirmValidPassPhrase()
-      if (inputValidity) buttons.genSeed.disabled = false
-      else buttons.genSeed.disabled = true
-    } else if (step == 3) {
+      if (inputValidity) {
+        buttons.genSeed.disabled = false
+      } else {
+        buttons.genSeed.disabled = true
+      }
+    } else if (stepTracker == 4) {
       inputValidity = confirmValidInput()
-      if (inputValidity) buttons.generate.disabled = false
-      else buttons.generate.disabled = true
+      if (inputValidity) {
+        buttons.generate.disabled = false
+      } else {
+        buttons.generate.disabled = true
+      }
     }
     return inputValidity
   }
