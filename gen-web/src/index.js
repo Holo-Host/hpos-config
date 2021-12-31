@@ -25,8 +25,9 @@
   /* Parse HTML elements */
   const buttons = {
     startPrep: document.querySelector('#start-prep-button'),
-    start: document.querySelector('#start-button'),
+    start: document.querySelector('#start-button-1a'),
     registrationCode: document.querySelector('#registration-code-button'),
+    saveSeedPassphrase: document.querySelector('#save-seed-passphrase-button'),
     genSeed: document.querySelector('#gen-seed-button'),
     postGenSeed: document.querySelector('#post-gen-seed-button'),
     generate: document.querySelector('#generate-button'),
@@ -35,6 +36,7 @@
     plugInDrive: document.querySelector('#drive-plugin-button'),
     closeNotice: document.querySelector('#close-notice'),
     back0b: document.querySelector('#back-button0b'),
+    back1a: document.querySelector('#back-button1a'),
     back1: document.querySelector('#back-button1'),
     back2: document.querySelector('#back-button2'),
     back3: document.querySelector('#back-button3'),
@@ -44,6 +46,8 @@
     exit: document.querySelector('#exit-button'),
     loop: document.querySelector('#loop-button'),
     termsAndConditions: document.querySelector('#terms-and-conditions'),
+    closeModalIntro: document.querySelector('#close-modal-intro'),
+    closeModalOutro: document.querySelector('#close-modal-outro')
   }
 
   const inputs = {
@@ -82,28 +86,33 @@
     password: ''
   }
 
+  // global variable used to pass seed passphrase between steps 2 and 3
+  let seedPassphrase
 
   /** Actions executed at button click
   * ======================================
   */
   const click = {
     startPrep: () => {
+      console.log('^&* click.startPrep')
       if (!validateScreenSize() || detectMobileUserAgent()) {
         const confirmed = confirm('This experience has not been optimized for mobile devices. Please continue only if you are using a laptop or PC.\n\nContinuing on a mobile device may result in unexpected issues.')
         if (confirmed === true) return updateUiStep(1)
         else return null
       } else {
-        updateUiStep(1)
+        updateUiStep(0.5)
 
         // DEV MODE HACK TO SWITCH THROUGH PAGES
         // updateUiStep(2)
       }
     },
     start: () => {
+      console.log('^&* click.start')
       updateUiStep(1)
       inputs.email.click()
     },
     storeRegistrationCode: async () => {
+      console.log('^&* click.storeRegistrationCode')
       const inputValidity = await verifyInputData()
       if (!inputValidity) return buttons.registrationCode.disabled = true
       // Load registration Code for use in later steps
@@ -111,12 +120,26 @@
       verifySeedDownloadComplete()
       updateUiStep(2)
       updateProgressBar(1)
+      click.showModalSeedIntro()
+    },
+    saveSeedPassphrase: async () => {
+      console.log('^&* saveSeedPassphase')
+      const inputValidity = await verifyInputData()
+
+      console.log('^&* inputValidity', inputValidity)
+
+      if (!inputValidity) {
+        buttons.saveSeedPhrase.disabled = true
+        return
+      }
+      seedPassphrase = inputs.seedPassphrase.value
+      updateUiStep(3)
+      updateProgressBar(2)
     },
     genSeed: async () => {
       const inputValidity = await verifyInputData()
       if (!inputValidity) return buttons.genSeed.disabled = true
       // Load registration Code for use in later steps
-      let seedPassphrase = inputs.seedPassphrase.value
       /* Communicate visually that something is happening in the bkgd */
       buttons.genSeed.classList.add('disabled')
       buttons.genSeed.disabled = true
@@ -135,6 +158,9 @@
             generate_by: "quickstart-v2.0"
           })
           // we need the passphrase as a Uint8Array
+
+          console.log('^&* generating seed with passphrase', seedPassphrase)
+
           const pw = (new TextEncoder()).encode(seedPassphrase)
           const encodedBytes = master.lock([
             new hcSeedBundle.SeedCipherPwHash(
@@ -159,8 +185,8 @@
       }, 1000)
     },
     postGenSeed: () => {
-      updateUiStep(3)
-      updateProgressBar(2)
+      updateUiStep(4)
+      updateProgressBar(3)
     },
     generate: async () => {
       signalKeyGen = true
@@ -172,7 +198,7 @@
       user.email = inputs.email.value
       user.password = inputs.password.value
 
-      // DEV MODE - Config Check: 
+      // DEV MODE - Config Check:
       // console.log('user config : ', user)
 
       /* Communicate visually that something is happening in the bkgd */
@@ -222,8 +248,8 @@
         /* Clean State */
         buttons.generate.disabled = false
         click.closeLoader()
-        updateUiStep(4)
-        updateProgressBar(3)
+        updateUiStep(5)
+        updateProgressBar(4)
 
         /* Reset Password inputs */
         inputs.password.value = ''
@@ -286,11 +312,25 @@
       document.querySelector('#fixed-overlay-notice').style.display = 'none'
       document.querySelector('#modal-overlay-notice').style.display = 'none'
     },
+    showModalSeedIntro: () => {
+      console.log('^&* SHOW MODAL SEED INTRO')
+      document.querySelector('#modal-seed-intro').style.display = 'block'
+    },
+    showModalSeedOutro: () => {
+      document.querySelector('#modal-seed-outro').style.display = 'block'
+    },
+    closeSeedModals: () => {
+      document.querySelector('#modal-seed-intro').style.display = 'none'
+      document.querySelector('#modal-seed-outro').style.display = 'none'
+    },
     back0b: () => {
       updateUiStep(0)
     },
-    back1: () => {
+    back1a: () => {
       updateUiStep(0)
+    },
+    back1: () => {
+      updateUiStep(0.5)
     },
     back2: () => {
       const rewind = true
@@ -399,6 +439,7 @@
   buttons.startPrep.onclick = click.startPrep
   buttons.start.onclick = click.start
   buttons.registrationCode.onclick = click.storeRegistrationCode
+  buttons.saveSeedPassphrase.onclick = click.saveSeedPassphrase
   buttons.genSeed.onclick = click.genSeed
   buttons.postGenSeed.onclick = click.postGenSeed
   buttons.generate.onclick = click.generate
@@ -408,6 +449,7 @@
   buttons.plugInDrive.onclick = click.plugInDrive
   buttons.closeNotice.onclick = click.closeNotice
   buttons.back0b.onclick = click.back0b
+  buttons.back1a.onclick = click.back1a
   buttons.back1.onclick = click.back1
   buttons.back2.onclick = click.back2
   buttons.back3.onclick = click.back3
@@ -416,6 +458,10 @@
   buttons.back5.onclick = click.back5
   buttons.exit.onclick = click.exit
   buttons.loop.onclick = click.loop
+  buttons.closeModalIntro.onclick = click.closeSeedModals
+  buttons.closeModalOutro.onclick = click.closeSeedModals
+
+
   // buttons.forumHelp.onclick = click.forumHelp
   document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
@@ -436,13 +482,13 @@
 
   /** Helper Functions :
   * =============================
-  * 
+  *
   */
   const validation = { 0.5: !0, 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0, 6: !0, '-1': !0 }
 
   const buttonBystep = { 0: buttons.startPrep, 0.5: buttons.start, 1: buttons.registrationCode, 2: buttons.postGenSeed, 3: buttons.generate, 4: buttons.postDownload, 5: buttons.plugInDrive }
 
-  /** 
+  /**
   * Step Listener to initiate step specific actions
   */
   const constantCheck = () => {
@@ -454,32 +500,40 @@
     } else if (stepTracker === 3) {
       /* Check for download*/
       verifyDownloadComplete()
-    } else if (stepTracker === 4) {
+    } else if (stepTracker === 5) {
       inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
-    } else if (stepTracker === 4) {
+    } else if (stepTracker === 'used to be number 4') { // TODO: this condition would never be met in the previous code === 4
       /* Display back User Email on Page 4 for visual email verification */
       inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
     }
   }
-
-
   /**
    * Update UI to the `step` step
    *
    * @param {int} step
    */
   const updateUiStep = (step) => {
+    console.log('updateUiStep', step)
     if (!validation[step]) {
       console.log(`Wrong parameter ${step} in updateUiStep()`)
       return null
     }
     stepTracker = step
     constantCheck()
-    if (step === 0) {
-      return document.body.className = 'step-monitor'
-    } else if (step === 0.5) return document.body.className = 'step0b'
-    else if (step === -1) return document.body.className = 'step-exit'
-    return document.body.className = 'step' + step
+
+    switch (step) {
+      case 0:
+        document.body.className = 'step-monitor'
+        break
+      case 0.5:
+        document.body.className = 'step1a'
+        break
+      case -1:
+        document.body.className = 'step-exit'
+        break
+      default:
+        document.body.className = 'step' + step
+    }
   }
 
   /**

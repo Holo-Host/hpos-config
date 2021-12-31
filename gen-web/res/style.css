@@ -36,13 +36,15 @@ body.loading {
 .stepHeader,
 .stepLabel,
 .stepBox,
-.stepButton {
+.stepButton,
+.progressbar {
   display: none;
 }
 
 body.step-monitor .step0,
 body.step0b .step0b,
 body.step-exit .step-exit,
+body.step1a .step1a,
 body.step1 .step1,
 body.step2 .step2,
 body.step3 .step3,
@@ -1117,6 +1119,10 @@ body.step3 .help-link {
   counter-reset: step;
 }
 
+body.step1a .progressbar {
+  display: none;
+}
+
 .progressbar li {
   margin: 2.37vw;
   margin-bottom: 1vw;
@@ -1236,6 +1242,16 @@ body.step3 .help-link {
   padding: 0 1em;
   height: calc(100% - 6em);
   overflow: hidden;
+}
+
+#modal-seed-intro, #modal-seed-outro {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  z-index: 100;
 }
 
 .close {
