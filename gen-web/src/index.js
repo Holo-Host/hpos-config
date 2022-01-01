@@ -45,7 +45,6 @@
     back5: document.querySelector('#back-button5'),
     exit: document.querySelector('#exit-button'),
     loop: document.querySelector('#loop-button'),
-    termsAndConditions: document.querySelector('#terms-and-conditions'),
     closeModalIntro: document.querySelector('#close-modal-intro'),
     closeModalOutro: document.querySelector('#close-modal-outro')
   }
@@ -100,10 +99,10 @@
         if (confirmed === true) return updateUiStep(1)
         else return null
       } else {
-        // updateUiStep(0.5)
+        updateUiStep(0.5)
 
         // DEV MODE HACK TO SWITCH THROUGH PAGES
-        updateUiStep(4)
+        // updateUiStep(5)
       }
     },
     start: () => {
@@ -260,8 +259,8 @@
         /* Clean State */
         buttons.generate.disabled = false
         click.closeLoader()
-        updateUiStep(6)
-        updateProgressBar(5)
+        updateUiStep(5)
+        updateProgressBar(4)
 
         /* Reset Password inputs */
         inputs.password.value = ''
@@ -271,13 +270,6 @@
     plugInDrive: () => {
       updateUiStep(6)
       updateProgressBar(5)
-    },
-    termsAndConditions: e => {
-      e.preventDefault()
-      window.open(
-        'https://holo.host/alpha-terms',
-        '_blank'
-      )
     },
     download: async () => {
       /* Communicate visually that something is happening in the bkgd */
@@ -304,12 +296,8 @@
       }, 1000)
     },
     postDownload: () => {
-      updateUiStep(5)
-      updateProgressBar(4)
-    },
-    copied: () => {
-      updateUiStep(5)
-      updateProgressBar(4)
+      updateUiStep(6)
+      updateProgressBar(5)
     },
     openLoader: () => {
       document.querySelector('#fixed-overlay-loader').style.display = 'block'
@@ -458,7 +446,6 @@
   buttons.genSeed.onclick = click.genSeed
   buttons.postGenSeed.onclick = click.postGenSeed
   buttons.generate.onclick = click.generate
-  buttons.termsAndConditions.onclick = click.termsAndConditions
   buttons.download.onclick = click.download
   buttons.postDownload.onclick = click.postDownload
   buttons.plugInDrive.onclick = click.plugInDrive
@@ -517,9 +504,6 @@
       verifyDownloadComplete()
     } else if (stepTracker === 5) {
       inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
-    } else if (stepTracker === 'used to be number 4') { // TODO: this condition would never be met in the previous code === 4
-      /* Display back User Email on Page 4 for visual email verification */
-      inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
     }
   }
   /**

@@ -50,7 +50,8 @@ body.step2 .step2,
 body.step3 .step3,
 body.step4 .step4,
 body.step5 .step5,
-body.step6 .step6 {
+body.step6 .step6
+body.step7 .step7 {
   display: flex;
   flex-flow: column;
   text-align: left;
@@ -114,6 +115,10 @@ p.break-text span {
 }
 
 .text-white {
+  color: #ffffff !important;
+}
+
+.text-white a {
   color: #ffffff !important;
 }
 
@@ -585,6 +590,29 @@ body.step4 .step-label-info {
   font-weight: 500;
   font-size: calc(0.81rem + 1.2vw);
   line-height: calc(1rem + 1.5vw);
+}
+
+.intro-header {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 25px;
+  /* identical to box height */
+
+  color: #000000;
+}
+
+.intro-content {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 25px;
+
+  color: #000000;
+}
+
+.intro-content a {
+  color: #000000 !important;
 }
 
 /* List & Image Block Components */
