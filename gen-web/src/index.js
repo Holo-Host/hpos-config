@@ -95,7 +95,6 @@
   */
   const click = {
     startPrep: () => {
-      console.log('^&* click.startPrep')
       if (!validateScreenSize() || detectMobileUserAgent()) {
         const confirmed = confirm('This experience has not been optimized for mobile devices. Please continue only if you are using a laptop or PC.\n\nContinuing on a mobile device may result in unexpected issues.')
         if (confirmed === true) return updateUiStep(1)
@@ -108,12 +107,10 @@
       }
     },
     start: () => {
-      console.log('^&* click.start')
       updateUiStep(1)
       inputs.email.click()
     },
     storeRegistrationCode: async () => {
-      console.log('^&* click.storeRegistrationCode')
       const inputValidity = await verifyInputData()
       if (!inputValidity) return buttons.registrationCode.disabled = true
       // Load registration Code for use in later steps
@@ -124,10 +121,7 @@
       click.showModalSeedIntro()
     },
     saveSeedPassphrase: async () => {
-      console.log('^&* saveSeedPassphase')
       const inputValidity = await verifyInputData()
-
-      console.log('^&* inputValidity', inputValidity)
 
       if (!inputValidity) {
         buttons.saveSeedPhrase.disabled = true
@@ -157,8 +151,6 @@
             generate_by: "quickstart-v2.0"
           })
           // we need the passphrase as a Uint8Array
-
-          console.log('^&* generating seed with passphrase', seedPassphrase)
 
           const pw = (new TextEncoder()).encode(seedPassphrase)
 
@@ -193,13 +185,9 @@
       click.showModalSeedOutro()
     },
     generate: async () => {
-      console.log('^&* generate 1')
       signalKeyGen = true
       const inputValidity = await verifyInputData()
       if (!inputValidity) return buttons.generate.disabled = true
-
-      console.log('^&* generate 2, inputValidity', inputValidity)
-
 
       /* Set user config */
       user.registrationCode = inputs.registrationCode.value
@@ -214,12 +202,8 @@
       downloadConfigTracker = false
       click.openLoader()
 
-      console.log('^&* generate 3')
-
       setTimeout(() => {
-        console.log('^&* generate 4')
         try {
-          console.log('^&* generate 5')
           inlineVariables.formErrorMessage.innerHTML = ''
           // generate device bundle
           // derive a device root seed from the master
@@ -255,7 +239,6 @@
           // clear our secrets
           deviceRoot.zero()
         } catch (e) {
-          console.log('^&* generate 5 errror')
           inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
           throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
         }
@@ -278,9 +261,6 @@
       buttons.download.classList.add('disabled')
       buttons.download.disabled = true
       buttons.download.innerHTML = 'Saving Configuration File...'
-
-      console.log('^&* deviceNumber', deviceNumber)
-      console.log('^&* deviceID', deviceID)
 
       setTimeout(() => {
         try {
@@ -318,7 +298,6 @@
       document.querySelector('#modal-overlay-notice').style.display = 'none'
     },
     showModalSeedIntro: () => {
-      console.log('^&* SHOW MODAL SEED INTRO')
       document.querySelector('#modal-seed-intro').style.display = 'block'
     },
     showModalSeedOutro: () => {
@@ -582,11 +561,8 @@
    * @param {Object} seed {derivationPath, deviceRoot, pubKey}
   */
   const generateBlob = (user, seed) => {
-    console.log('^&* generatingBlob', user, seed)
     const configData = config(user.email, user.password, user.registrationCode.trim(), seed.derivationPath.toString(), seed.deviceRoot, seed.pubKey)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
-
-    console.log('^&* configData', configData)
 
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
     // console.log('Optional HoloPort url : ', configData.url)
@@ -670,7 +646,6 @@
    * Verify all form input before allowing progression to next page
   */
   const verifyInputData = () => {
-    console.log('^&* verifyInputData', stepTracker)
     let inputValidity = false;
     if (stepTracker == 1) {
       inputValidity = confirmValidCode()
