@@ -1035,6 +1035,12 @@ a.btn[disabled] {
   right: 0;
 }
 
+.confirm-btn {
+  color: white;
+  border-color: #5C4DA6;
+  background-color: #5C4DA6;
+}
+
 .info-step-next {
   color: #00838d;
   background-color: #ffffff;
@@ -1276,16 +1282,6 @@ body.step1a .progressbar {
   overflow: hidden;
 }
 
-#modal-seed-intro, #modal-seed-outro {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  z-index: 100;
-}
-
 .close {
   position: absolute;
   right: 0em;
@@ -1311,6 +1307,39 @@ body.step1a .progressbar {
 }
 .close:after {
   transform: rotate(-45deg);
+}
+
+#modal-seed-intro, #modal-seed-outro {
+  display: none;
+}
+
+.modal-seed-body {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 5px;
+  padding: 50px 40px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  z-index: 101;
+}
+
+.modal-seed-body div {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.modal-seed-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(44, 64, 90, 0.7);
+  z-index: 100;
 }
 
 @media only screen and (max-width: 600px) {

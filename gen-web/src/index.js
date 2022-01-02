@@ -104,7 +104,7 @@
         updateUiStep(0.5)
 
         // DEV MODE HACK TO SWITCH THROUGH PAGES
-        // updateUiStep(6)
+        // updateUiStep(2)
       }
     },
     start: () => {
@@ -190,6 +190,7 @@
     postGenSeed: () => {
       updateUiStep(4)
       updateProgressBar(3)
+      click.showModalSeedOutro()
     },
     generate: async () => {
       console.log('^&* generate 1')
