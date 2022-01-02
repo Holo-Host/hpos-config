@@ -27,7 +27,7 @@
   </aside>
   <aside id='greeting-container' class="stepHeader step1a step1 step2 step3 step4 step5 step6 step7">
     <div class="stepLabel step1a step1 step2 step3 step4 step5 greeting-wrapper-bookend ">
-      <img id="holo-banner-wrapper" class="stepLabel step1a step1 step2 step3 step4 step5"
+      <img id="holo-banner-wrapper" class="stepLabel step1a step1 step2 step3 step4 step5 step6"
         src='assets/images/holo-banner-white.svg' />
       <div class="center-align">
         <p class="stepLabel step1 text-white sub-text">
@@ -186,15 +186,17 @@
       <div class="stepHeader step1a step1 step2 step3 step4 step5 step6 step7 card-wrapper">
         <div class="card-transparent left-margin">
           <div class="stepLabel step1a step1 step2 step3 step4 step5 step6 step7">
-            <ul class="progressbar">
-              <li class="progressbar-item 1 active"></li>
-              <li class="progressbar-item 2"></li>
-              <li class="progressbar-item 3"></li>
-              <li class="progressbar-item 4"></li>
-              <li class="progressbar-item 5"></li>
-              <li class="progressbar-item 6"></li>
-            </ul>
 
+            <div class="progressbar-wrapper step1 step2 step3 step4 step5 step6">
+              <ul class="progressbar">
+                <li class="progressbar-item 1 active"></li>
+                <li class="progressbar-item 2"></li>
+                <li class="progressbar-item 3"></li>
+                <li class="progressbar-item 4"></li>
+                <li class="progressbar-item 5"></li>
+                <li class="progressbar-item 6"></li>
+              </ul>
+            </div>
 
             <div class="stepLabel step1a pageHeader">
               <p class="step-label-info intro-header"> Connecting your HoloPort to the Holo network.</p>
@@ -232,7 +234,7 @@
             </div>
             <div class="stepLabel step4 pageHeader">
               <div class="step-label-info"><span class="holo-green bold">Step 4:</span><strong> Create Host Console credentials</strong></div>
-              <p class="step-label-info">Enter the email address you used to register with Holo, and create a Host Console password for your primary HoloPort.</p>
+              <p class="step-label-info">Enter the email address you used to register with Holo, and create a Host Console password for your <span id='current-holoport-descriptor'>primary</span> HoloPort.</p>
             </div>
             <div class="stepLabel step5 pageHeader">
               <div class="step-label-info"><span class="holo-green bold">Step 5:</span><strong> Create your keys and save them</strong></div>
@@ -415,7 +417,7 @@
       </div>
       <div class="stepButton step6">
         <div class="button-wrapper last-btn">
-          <button id="back-button5" class="btn button-font previous-btn"><span>Previous</span></button>
+          <button id="back-button6" class="btn button-font previous-btn"><span>Previous</span></button>
           <div class="break-text">
             <button id="drive-plugin-button" class="btn next-btn button-font"><span>Next</span></button>
             <p class='note-text enter-text'>or press Enter</p>

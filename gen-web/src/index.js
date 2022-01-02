@@ -43,6 +43,7 @@
     back3Confirmation: document.querySelector('#back-button3-confirmation'),
     back4: document.querySelector('#back-button4'),
     back5: document.querySelector('#back-button5'),
+    back6: document.querySelector('#back-button6'),
     exit: document.querySelector('#exit-button'),
     loop: document.querySelector('#loop-button'),
     closeModalIntro: document.querySelector('#close-modal-intro'),
@@ -66,7 +67,8 @@
     passwordInputArea: document.querySelector('#password-form-item'),
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     formErrorMessage: document.querySelector('#form-error-message'),
-    downloadFileName: document.querySelector('#download-file')
+    downloadFileName: document.querySelector('#download-file'),
+    currentHoloportDescriptor: document.querySelector('#current-holoport-descriptor')
   }
 
   const errorMessages = {
@@ -102,7 +104,7 @@
         updateUiStep(0.5)
 
         // DEV MODE HACK TO SWITCH THROUGH PAGES
-        // updateUiStep(5)
+        // updateUiStep(6)
       }
     },
     start: () => {
@@ -268,8 +270,7 @@
       }, 1500)
     },
     plugInDrive: () => {
-      updateUiStep(6)
-      updateProgressBar(5)
+      updateUiStep(7)
     },
     download: async () => {
       /* Communicate visually that something is happening in the bkgd */
@@ -284,7 +285,7 @@
         try {
           filesaver.saveAs(configFileBlob, genConfigFileName(deviceNumber, deviceID))
         } catch (e) {
-          throw new Error(`Error saving config. Error: ${e}`)
+          // TODO do throw here throw new Error(`Error saving config. Error: ${e}`)
         }
 
         /* Clean State */
@@ -369,19 +370,24 @@
       updateProgressBar(5, rewind)
       updateUiStep(4)
     },
+    back6: () => {
+      const rewind = true
+      updateProgressBar(6, rewind)
+      updateUiStep(5)
+    },
     exit: () => {
       // clear our secrets
-      master.zero()
+      master && master.zero()
       updateUiStep(-1)
     },
     loop: () => {
       deviceNumber++
+      inlineVariables.currentHoloportDescriptor.innerHTML = 'additional'
       // hide back option
-      buttons.back3.setAttribute("hidden", "hidden");
+      buttons.back4.setAttribute("hidden", "hidden");
       updateProgressBar(6, true)
       updateProgressBar(5, true)
-      updateProgressBar(4, true)
-      updateUiStep(3)
+      updateUiStep(4)
     },
     forumHelp: e => {
       e.preventDefault()
@@ -486,7 +492,7 @@
   * =============================
   *
   */
-  const validation = { 0.5: !0, 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0, 6: !0, '-1': !0 }
+  const validation = { 0.5: !0, 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0, 6: !0, 7: !0, '-1': !0 }
 
   const buttonBystep = { 0: buttons.startPrep, 0.5: buttons.start, 1: buttons.registrationCode, 2: buttons.postGenSeed, 3: buttons.generate, 4: buttons.postDownload, 5: buttons.plugInDrive }
 
@@ -503,7 +509,8 @@
       /* Check for download*/
       verifyDownloadComplete()
     } else if (stepTracker === 5) {
-      inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
+      // TODO put this back inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
+      inlineVariables.downloadFileName.innerHTML = "whatever.jsoon"
     }
   }
   /**

@@ -50,7 +50,7 @@ body.step2 .step2,
 body.step3 .step3,
 body.step4 .step4,
 body.step5 .step5,
-body.step6 .step6
+body.step6 .step6,
 body.step7 .step7 {
   display: flex;
   flex-flow: column;
@@ -1138,6 +1138,10 @@ body.step3 .help-link {
 }
 
 /*Progress Bar Component*/
+
+.progressbar-wrapper {
+  display: none;
+}
 
 .progressbar {
   display: flex;
