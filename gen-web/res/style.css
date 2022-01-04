@@ -25,7 +25,7 @@ body {
   box-sizing: border-box;
   margin: 0;
   background-color: #f5f5f5;
-
+  /* display: block !important; */
 }
 
 body.loading {
@@ -33,15 +33,24 @@ body.loading {
   display: none;
 }
 
-.stepHeader,
-.stepLabel,
-.stepBox,
-.stepButton,
 .progressbar {
   display: none;
 }
 
-body.step-monitor .step0,
+.step0,
+.step-exit,
+.step1a,
+.step1,
+.step2,
+.step3,
+.step4,
+.step5,
+.step6,
+.step7 {
+  display: none;
+}
+
+body.step0 .step0,
 body.step-exit .step-exit,
 body.step1a .step1a,
 body.step1 .step1,
@@ -54,6 +63,11 @@ body.step7 .step7 {
   display: flex;
   flex-flow: column;
   text-align: left;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
 }
 
 #container-fluid {
@@ -113,14 +127,6 @@ p.break-text span {
   color: #00838d;
 }
 
-.text-white {
-  color: #ffffff !important;
-}
-
-.text-white a {
-  color: #ffffff !important;
-}
-
 .text-black {
   color: #000000 !important;
 }
@@ -176,7 +182,6 @@ label {
   align-items: flex-end;
   letter-spacing: 0.9px;
   text-transform: uppercase;
-  color: #2c405a;
   mix-blend-mode: normal;
   opacity: 0.6;
 }
@@ -251,35 +256,22 @@ label {
   font-size: calc(0.7rem + 0.6vw);
   line-height: calc(0.8rem + 1vw);
   letter-spacing: -0.4px;
-  color: #2c405a;
   max-width: 66%;
   margin-top: 5px;
 }
 
-body.step3 .subheader-text {
-  display: inline-block;
-  max-width: 88%;
-}
-
-body.step3 .subheader-text.tac {
-  margin-top: calc(1rem + 3%);
-}
-
-body.step2 .subheader-text,
-body.step3 .subheader-text,
-body.step4 .subheader-text {
-  max-width: 80%;
+body.step0 .subheader-text,
+body.step-exit .subheader-text {
+  font-size: calc(0.71rem + 0.5vw);
+  line-height: calc(0.7rem + 1.1vw);
+  letter-spacing: 0.6px;
+  max-width: unset;
+  margin-top: unset;
 }
 
 .modal-content .subheader-text {
   max-width: none !important;
   margin-top: 3rem;
-}
-
-.subheader-text-bookend {
-  font-size: calc(0.71rem + 0.5vw);
-  line-height: calc(0.7rem + 1.1vw);
-  letter-spacing: 0.6px;
 }
 
 .block-subtext {
@@ -304,46 +296,37 @@ body.step4 .subheader-text {
   margin-left: -2rem;
 }
 
-body.step-monitor #holo-banner-wrapper,
+body.step0 #holo-banner-wrapper,
 body.step-exit #holo-banner-wrapper {
   margin-left: calc(-1rem + -2vw);
 }
 
 #holo-brand-wrapper {
-  width: 4%;
-  min-width: 2rem;
-  position: fixed;
-  top: 40.5vh;
-  left: 33.0275vw;
-  border-radius: 100px;
-  z-index: 99;
+  position: relative;
 }
 
-@media only screen and (max-width: 600px) {
-  #holo-brand-wrapper {
-    left: 31.0275vw;
-  }
-}
-
-#holoport-flying-bookend {
-  background-repeat: no-repeat;
-  position: fixed;
-  bottom: calc(0.8rem - 9vw);
-  right: -8vw;
-  width: 40%;
-  height: auto;
-  opacity: 0.6;
-  z-index: 1;
+#holo-brand {
+	width: 54px;
+	position: absolute;
+	top: calc(50% - 27px);
+	left: -27px;
+	border-radius: 100px;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 #holoport-flying {
   background-repeat: no-repeat;
   position: fixed;
-  bottom: -2rem;
-  left: 6rem;
-  width: 42vw;
-  height: calc(45vw * 0.55);
   opacity: 0.6;
+}
+
+body.step0 #holoport-flying,
+body.step-exit #holoport-flying {
+  bottom: calc(0.8rem - 9vw);
+  right: -8vw;
+  width: 40%;
+  height: auto;
+  z-index: 1;
 }
 
 .image-block-icon {
@@ -357,10 +340,6 @@ body.step-exit #holo-banner-wrapper {
   background: #ffffff;
   box-shadow: 0px 2.5px 10px rgba(0, 0, 0, 0.15);
   border-radius: 4px;
-}
-
-.step3 #holo-icon {
-  margin-right: none;
 }
 
 #world-icon {
@@ -413,79 +392,52 @@ body.step-exit #holo-banner-wrapper {
 
 /* Page Content Containers & Wrappers */
 
-#greeting-container-bookend {
-  width: 35vw;
-  /* z-index must be higher than flying-hp icon */
-  z-index: 3;
-  background: #ffffff;
-}
-
 #greeting-container {
-  width: 35vw;
+  width: 35.7vw;
   background: #00838d;
+  color: #ffffff;
+  /* top right bottom left */
+  padding: 50px 91px 40px 72px;
+  box-sizing: border-box;
 }
 
-#content-container-bookend {
-  overflow-y: scroll;
-  flex: 1;
-  width: 65vw;
-  background: #00838d;
+body.step0 #greeting-container,
+body.step-exit #greeting-container {
+  background: #ffffff;
+  color: #2c405a;
 }
+
 #content-container {
   overflow-y: scroll;
   flex: 1;
   width: 65vw;
-  /* z-index must be higher than flying-hp icon */
-  z-index: 3;
   background: #ffffff;
+  color: #2c405a;
+}
+
+body.step0 #content-container,
+body.step-exit #content-container {
+  background: #00838d;
+  color: #ffffff;
 }
 
 .content-wrapper {
   display: block;
-  margin: 0 auto;
-  margin-left: 12%;
-  margin-top: 4%;
+  margin-left: 94px;
+  margin-top: 72px;
   position: relative;
-  justify-content: center;
   height: 80vh;
 }
 
-.content-wrapper.bookend {
-  margin: 0 auto;
+body.step0 .content-wrapper,
+body.step-exit .content-wrapper {
   margin-top: 6%;
   width: 80%;
 }
 
-.step-exit .content-wrapper.bookend {
-  margin-top: 10%;
-}
-
 /* Headings, Titles & Labels */
 
-.greeting-wrapper-bookend {
-  margin-left: -8%;
-  max-width: 90%;
-  height: 100vh;
-  align-self: center;
-  z-index: 2;
-}
-
-.greeting-wrapper {
-  margin-left: -80%;
-  max-width: 90%;
-  height: 100vh;
-  align-self: center;
-  z-index: 2;
-}
-
-body.step5 .greeting-wrapper,
-body.step6 .greeting-wrapper {
-  margin-left: -20%;
-  max-width: 60%;
-}
-
-.greeting-step-exit,
-.greeting-step0 {
+.greeting {
   line-height: 1.2em;
   margin: 40vh 0 10vh;
   font-weight: 500;
@@ -497,7 +449,7 @@ body.step6 .greeting-wrapper {
   padding: 30px;
 }
 
-.sub-text {
+.context {
   line-height: calc(0.8rem + 1vw);
   margin: 40vh 0 10vh;
   font-weight: 500;
@@ -505,24 +457,11 @@ body.step6 .greeting-wrapper {
   max-width: 30vw;
 }
 
-.greeting {
-  line-height: 1.2em;
-  margin: 32vh 0 10vh;
-  font-weight: 500;
-  font-size: calc(1.9rem + 0.9vw);
-  max-width: 25vw;
-}
-
-.step5 .greeting,
-.step6 .greeting {
-  font-size: calc(2.2rem + 1.1vw);
-  font-weight: 600;
-}
-
 .greeting-modal-title {
-  line-height: 1.2em;
+  color: #ffffff;
+  /* line-height: 1.2em;
   font-weight: bold;
-  font-size: calc(1.9rem + 0.9vw);
+  font-size: calc(1.9rem + 0.9vw); */
 }
 
 .header {
@@ -535,18 +474,7 @@ body.step6 .greeting-wrapper {
   color: #3aa794;
 }
 
-.step5-header,
-.step6-header,
-.step-monitor-header {
-  margin: 0 auto;
-  font-weight: 300;
-  font-size: 2rem;
-  line-height: 1.2;
-  margin-top: 1rem;
-}
-
-.step-label-info {
-  color: #2c405a;
+.step-description {
   display: block;
   margin: 1rem 0;
   font-style: normal;
@@ -556,32 +484,18 @@ body.step6 .greeting-wrapper {
   max-width: 88%;
 }
 
-.modal-content .step-label-info {
-  font-size: calc(1.95rem + 0.6vw);
-}
-
-body.step1 .step-label-info {
-  max-width: 85%;
-  margin-bottom: 0.5rem;
-}
-
-body.step3 .step-label-info {
-  max-width: 84%;
-}
-
-body.step2 .step-label-info,
-body.step3 .step-label-info,
-body.step4 .step-label-info {
-  max-width: 100%;
-}
-
-.step-label-info-bookend {
+body.step0 .step-label-info,
+body.step-exit .step-label-info {
   display: block;
-  margin-bottom: 1.5rem;
   font-style: normal;
   font-weight: 500;
+  margin: 0 0 1.5rem 0;
   font-size: calc(0.81rem + 1.2vw);
   line-height: calc(1rem + 1.5vw);
+}
+
+.modal-content .step-label-info {
+  font-size: calc(1.95rem + 0.6vw);
 }
 
 .intro-header {
@@ -640,7 +554,6 @@ body.step5 body.step6 .image-block {
   font-size: 1.2rem !important;
   font-weight: 400 !important;
   line-height: 2.5 !important;
-  color: #ffffff;
   margin-bottom: 5%;
 }
 
@@ -708,12 +621,12 @@ li.timer-list-item {
 
 /* Form Fields & Inputs */
 
-.step1 label {
+label {
   min-width: 11vh;
   display: flex;
 }
 
-.step1 input {
+input {
   display: flex;
   border: none;
   mix-blend-mode: normal;
@@ -786,10 +699,6 @@ span.error-red {
 }
 
 /* Checkbox Components */
-
-#tac-checkbox {
-  display: none;
-}
 
 .checkbox-label {
   display: inline;
@@ -900,17 +809,9 @@ span.error-red {
 /* Card Components */
 
 .card-wrapper {
-  margin: 1vh;
   display: flex;
   position: relative;
   justify-content: baseline;
-}
-
-.step5 .card-wrapper,
-.step6 .card-wrapper,
-.step-monitor .card-wrapper {
-  margin: 4vh;
-  margin-bottom: 0px;
 }
 
 .card-transparent {
@@ -924,7 +825,7 @@ span.error-red {
   transition: margin-top 0.3s ease-in-out;
 }
 
-body.step-monitor .card-transparent {
+body.step0 .card-transparent {
   max-width: 640px;
 }
 
@@ -1001,15 +902,17 @@ a.btn[disabled] {
   color: #ffffff;
   background-color: #00838d;
 }
-.next-btn span,
-.first-btn span {
+body.step0 .next-btn {
+  color: #00838d;
+  background-color: #ffffff;
+}
+.next-btn span {
   cursor: pointer;
   display: inline-block;
   position: relative;
   transition: 0.5s;
 }
-.next-btn span:after,
-.first-btn span:after {
+.next-btn span:after {
   content: "\00bb";
   position: absolute;
   opacity: 0;
@@ -1017,12 +920,10 @@ a.btn[disabled] {
   right: -20px;
   transition: 0.5s;
 }
-.next-btn:hover span,
-.first-btn:hover span {
+.next-btn:hover span {
   padding-right: 25px;
 }
-.next-btn:hover span:after,
-.first-btn:hover span:after {
+.next-btn:hover span:after {
   opacity: 1;
   right: 0;
 }
@@ -1083,6 +984,10 @@ a.btn[disabled] {
   text-align: center;
 }
 
+#download-file {
+  font-weight: bold;
+}
+
 #gen-seed-button {
   display: block;
   width: 50%;
@@ -1101,37 +1006,30 @@ a.btn[disabled] {
   max-width: 12rem;
 }
 
-body.step-monitor .stepButton,
-body.step5 .stepButton,
-body.step6 .stepButton {
-  margin-top: 2%;
-}
-
 /* Link Elements */
 
 .help-link {
   position: absolute;
-  margin-top: 92vh;
+  top: 92vh;
   width: 26vw;
   border-width: 0.2rem;
   flex-flow: row !important;
 }
 
-body.step-monitor .help-link,
-body.step-exit .help-link {
-  margin-left: calc(-0.4rem + -0.2vw);
-}
-
-body.step3 .help-link {
-  display: flex;
-}
-
-.link {
+.help-link a {
   text-decoration-line: none;
-  color: #00838d;
   font-weight: bold;
   font-size: calc(0.8rem + 0.3vw);
-  letter-spacing: 0.1rem;
+}
+
+body.step0 .help-link a,
+body.step-exit .help-link a {
+  color: #00838d;
+}
+
+a {
+  font-weight: 700;
+  color: inherit;
 }
 
 /*Progress Bar Component*/
