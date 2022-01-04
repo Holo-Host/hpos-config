@@ -42,7 +42,6 @@ body.loading {
 }
 
 body.step-monitor .step0,
-body.step0b .step0b,
 body.step-exit .step-exit,
 body.step1a .step1a,
 body.step1 .step1,
@@ -306,7 +305,6 @@ body.step4 .subheader-text {
 }
 
 body.step-monitor #holo-banner-wrapper,
-body.step0b #holo-banner-wrapper,
 body.step-exit #holo-banner-wrapper {
   margin-left: calc(-1rem + -2vw);
 }
@@ -458,7 +456,6 @@ body.step-exit #holo-banner-wrapper {
   width: 80%;
 }
 
-.step0b .content-wrapper.bookend,
 .step-exit .content-wrapper.bookend {
   margin-top: 10%;
 }
@@ -487,7 +484,6 @@ body.step6 .greeting-wrapper {
   max-width: 60%;
 }
 
-.greeting-step0b,
 .greeting-step-exit,
 .greeting-step0 {
   line-height: 1.2em;
@@ -1122,7 +1118,6 @@ body.step6 .stepButton {
 }
 
 body.step-monitor .help-link,
-body.step0b .help-link,
 body.step-exit .help-link {
   margin-left: calc(-0.4rem + -0.2vw);
 }

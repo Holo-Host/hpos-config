@@ -35,7 +35,6 @@
     postDownload: document.querySelector('#post-download-button'),
     plugInDrive: document.querySelector('#drive-plugin-button'),
     closeNotice: document.querySelector('#close-notice'),
-    back0b: document.querySelector('#back-button0b'),
     back1a: document.querySelector('#back-button1a'),
     back1: document.querySelector('#back-button1'),
     back2: document.querySelector('#back-button2'),
@@ -307,9 +306,6 @@
       document.querySelector('#modal-seed-intro').style.display = 'none'
       document.querySelector('#modal-seed-outro').style.display = 'none'
     },
-    back0b: () => {
-      updateUiStep(0)
-    },
     back1a: () => {
       updateUiStep(0)
     },
@@ -436,7 +432,6 @@
   buttons.postDownload.onclick = click.postDownload
   buttons.plugInDrive.onclick = click.plugInDrive
   buttons.closeNotice.onclick = click.closeNotice
-  buttons.back0b.onclick = click.back0b
   buttons.back1a.onclick = click.back1a
   buttons.back1.onclick = click.back1
   buttons.back2.onclick = click.back2
