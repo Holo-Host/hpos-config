@@ -711,6 +711,11 @@ a.btn[disabled] {
   box-sizing: border-box;
 }
 
+.modal-button {
+  color: #5C4DA6;
+  border-color: #5C4DA6;
+}
+
 #download-button.disabled,
 #gen-seed-button.disabled,
 .btn:disabled,
