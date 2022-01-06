@@ -161,38 +161,27 @@
 
       <div class="step-display step3">
         <a id="gen-seed-button" class="btn button-font action-button">
-          <img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span class="button-text bold">Generate & Save Seed File</span>
+          <img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span class="button-text">Generate & Save Seed File</span>
         </a>
       </div>
 
       <form id="step4-form" class="column form-margin step-display step4">
-        <div id="email-form-item" class="form-item">
-          <div class="input-item">
-            <div class="input-base">
-              <label id="email-label" class="input-item-label">Your Email</label>
-              <input id="email" class="input-text" name="email" type="text" />
-            </div>
-          </div>
+        <div id="email-form-item" class="input-container">
+          <label id="email-label" class="input-label" for="email">Your Email</label>
+          <input id="email" class="input" name="email" type="text"/>
         </div>
         <span id="email-error-message" class="error-red"></span>
 
-        <div id="password-form-item" class="form-item">
-          <div class="input-item">
-            <div class="input-base">
-              <label id="password-label" class="input-item-label">Password</label>
-              <input id="password" class="input-text" name="password" type="password" />
-            </div>
-          </div>
+        <div id="password-form-item" class="input-container">
+          <label id="password-label" class="input-label" for="password">Password</label>
+          <input id="password" class="input" name="password" type="text"/>
         </div>
         <span id="password-error-message" class="error-red"></span>
 
-        <div id="password-check-form-item" class="form-item">
-          <div class="input-item">
-            <div class="input-base">
-              <label id="password-check-label" class="input-item-label">Retype Password</label>
-              <input id="password-check" class="input-text" name="password-check" type="password" />
-            </div>
-          </div>
+
+        <div id="password-check-form-item" class="input-container">
+          <label id="password-check-label" class="input-label" for="password-check">Passphrase</label>
+          <input id="password-check" class="input" name="password-check" type="text"/>
         </div>
         <span id="password-check-error-message" class="error-red"></span>
       </form>
@@ -200,7 +189,7 @@
       <div class="step-display step5">
         <a id="download-button" class="btn button-font action-button"><img
             src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span
-            class="button-text bold">Save Configuration File</span></a>
+            class="button-text">Save Configuration File</span></a>
       </div>
 
       <div class="step-display step6">
