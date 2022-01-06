@@ -16,11 +16,11 @@
 
 <body id="container-fluid" class="step0">
   <aside id="greeting-container">
-    <img class="holo-banner step-display step0 step-exit" src="assets/images/holo-banner.svg" />
+    <img class="holo-banner step-display step0 step-exit-single step-exit-multiple" src="assets/images/holo-banner.svg" />
     <img class="holo-banner step-display step1a step1 step2 step3 step4 step5 step6"
       src="assets/images/holo-banner-white.svg" />
     <p class="greeting step-display step0">Time for Liftoff!</p>
-    <p class="greeting step-display step-exit">You’re all set!</p>
+    <p class="greeting step-display step-exit-single step-exit-multiple">You’re all set!</p>
     <div class="step-display step1 step2 step3 step4 step5 step6">
       <div class="context">
         <p class="context-header">Context:</b>
@@ -56,10 +56,11 @@
     <img id="holo-brand" src="assets/icons/holo-logo-avatar.svg" />
   </div>
   <main id="content-container">
-    <div class="bookend-container step-display step0 step-exit">
+    <div class="bookend-container step-display step0 step-exit-single step-exit-multiple">
       <h1 class="bookend-header">
         <span class="step-display step0">A few things to note before you get started:</span>
-        <span class="step-display step-exit">Thanks for registering your HoloPort!</span>
+        <span class="step-display step-exit-single">Thanks for registering your HoloPort!</span>
+        <span class="step-display step-exit-multiple">Thanks for registering your HoloPorts!</span>
       </h1>
       <div class="step-display step0">
         <ul class="notes">
@@ -86,9 +87,12 @@
           </li>
         </ul>
       </div>
-      <img id="rocket-icon" src="assets/icons/rocket-icon.svg" class="step-display step-exit" />
-      <div class="farewell-text step-display step-exit">
+      <img id="rocket-icon" src="assets/icons/rocket-icon.svg" class="step-display step-exit-single step-exit-multiple" />
+      <div class="farewell-text step-display step-exit-single">
         You’ll receive an email that includes a link to your Host Console where you can login and manage the settings of your HoloPort.
+      </div>
+      <div class="farewell-text step-display step-exit-multiple">
+        You’ll receive an email for each registered HoloPort, that includes a link to your Host Console where you can login and manage the settings of each HoloPort.
       </div>
     </div>
     <div class="step-display step1a step1 step2 step3 step4 step5 step6 step7">

@@ -410,7 +410,11 @@
         document.body.className = 'step1a'
         break
       case -1:
-        document.body.className = 'step-exit'
+        if (deviceNumber === 0) {
+          document.body.className = 'step-exit-single'
+        } else {
+          document.body.className = 'step-exit-multiple'
+        }
         break
       default:
         document.body.className = 'step' + step

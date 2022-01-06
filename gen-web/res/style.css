@@ -34,7 +34,8 @@ body.loading {
 }
 
 body.step0 .step-display:not(.step0),
-body.step-exit .step-display:not(.step-exit),
+body.step-exit-single .step-display:not(.step-exit-single),
+body.step-exit-multiple .step-display:not(.step-exit-multiple),
 body.step1a .step-display:not(.step1a),
 body.step1 .step-display:not(.step1),
 body.step2 .step-display:not(.step2),
@@ -47,7 +48,8 @@ body.step7 .step-display:not(.step7) {
 }
 
 body.step0 .step-opacity:not(.step0),
-body.step-exit .step-opacity:not(.step-exit),
+body.step-exit-single .step-opacity:not(.step-exit-single),
+body.step-exit-multiple .step-opacity:not(.step-exit-multiple),
 body.step1a .step-opacity:not(.step1a),
 body.step1 .step-opacity:not(.step1),
 body.step2 .step-opacity:not(.step2),
@@ -330,7 +332,8 @@ form > .input-container:not(:first-child) {
 }
 
 body.step0 #greeting-container,
-body.step-exit #greeting-container {
+body.step-exit-single #greeting-container,
+body.step-exit-multiple #greeting-container {
   background: #ffffff;
   color: #2c405a;
 }
@@ -348,7 +351,8 @@ body.step-exit #greeting-container {
 }
 
 body.step0 #content-container,
-body.step-exit #content-container {
+body.step-exit-single #content-container,
+body.step-exit-multiple #content-container {
   background: #00838d;
   color: #ffffff;
 }
@@ -369,7 +373,8 @@ body.step0 .bookend-container {
   padding-top: 76px;
 }
 
-body.step-exit .bookend-container {
+body.step-exit-single .bookend-container,
+body.step-exit-multiple .bookend-container {
   height: 250px;
   justify-content: space-between;
   padding-top: 100px;
@@ -745,7 +750,8 @@ body.step0 .next-button {
 }
 
 body.step0 .help-link a,
-body.step-exit .help-link a {
+body.step-exit-single .help-link a
+body.step-exit-multiple .help-link a {
   color: #00838d;
 }
 
