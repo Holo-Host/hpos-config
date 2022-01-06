@@ -11,42 +11,42 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 
 <body id='container-fluid' class="step0">
   <aside id='greeting-container'>
-    <img id="holo-banner-wrapper" class="step0 step-exit" src='assets/images/holo-banner.svg' />
-    <img id="holo-banner-wrapper" class="step1a step1 step2 step3 step4 step5 step6"
+    <img id="holo-banner" class="step-display step0 step-exit" src='assets/images/holo-banner.svg' />
+    <img id="holo-banner" class="step-display step1a step1 step2 step3 step4 step5 step6"
       src='assets/images/holo-banner-white.svg' />
-    <h1 class="step0 greeting">Time for Liftoff!</h1>
-    <h1 class="step-exit greeting">You're all set!</h1>
-    <div class="step1 step2 step3 step4 step5 step6">
+    <p class="greeting step-display step0">Time for Liftoff!</p>
+    <p class="greeting step-display step-exit">You're all set!</p>
+    <div class="step-display step1 step2 step3 step4 step5 step6">
       <p class="context">
         <b>Context:</b>
         &nbsp
         <br />
-        <span class="step1">
+        <span class="step-display step1">
           A registration code can be used to register either one HoloPort or many HoloPorts during Quickstart. If you don't have your registration code, please register at <a href="https://register.holo.host">https://register.holo.host</a>
         </span>
-        <span class="step2">
+        <span class="step-display step2">
           Your passphrase is an important thing to remember since it will decrypt your seed file &mdash; keep it somewhere very safe!
         </span>
-        <span class="step3">
+        <span class="step-display step3">
           Remember, you will need BOTH the seed and your passphrase to restore any keys that are created from this seed.
         </span>
-        <span class="step4">
+        <span class="step-display step4">
           Host Console is a web interface where you can manage your HoloPort and hosting settings.
         </span>
-        <span class="step5">
+        <span class="step-display step5">
           This is where your public and private keys for your HoloPorts are generated. The keys are the basis of the cryptography in Holochain and Holo. Your private key is stored on an encrypted keystore your HoloPort, and your public key is your address on the Holo network and the first part of your web address for reaching your HoloPort. We also call that your HoloPort ID.
         </span>
-        <span class="step6">
+        <span class="step-display step6">
           When you insert the USB drive into your HoloPort, it will begin connecting to the Holo network.
         </span>
       </p>
     </div>
-    <p class="help-link subheader-text">
+    <p class="help-link">
       <a class="link" href="https://forum.holo.host" target="_blank">Support Forum </a>
       <span class="divider">|</span>
       <a class="link" href="https://help.holo.host/support/tickets/new" target="_blank"> Holo Help Desk</a>
@@ -56,241 +56,190 @@
     <img id="holo-brand" src='assets/icons/holo-logo-avatar.svg' />
   </div>
   <main id='content-container'>
-    <div class="content-wrapper">
-      <div class="step0 step-exit card-wrapper">
-        <div class="card-transparent">
-          <div class="step0 step0-header">
-            <h2 class="step-label-info">A few things to note before you get started:</h2>
-          </div>
-          <div class="step0">
-            <ul class="list-group">
-              <li class="list-group-item">
-                <img id="world-icon" src="assets/icons/world-icon.svg" class="step0 list-icons" />
-                <div class="list-content step0 subheader-text">Power on and connect your HoloPort to
-                  the Internet</div>
-              </li>
-              <li class="list-group-item">
-                <img id="cloud-yes-icon" src="assets/icons/cloud-yes-icon.svg" class="step0 list-icons" />
-                <div class="list-content step0 subheader-text">Allow your HoloPort to update. When the
-                  light on your HoloPort stops flashing green, the update process is complete</div>
-              </li>
-              <li class="list-group-item">
-                <img id="connected-icon" src="assets/icons/connected-icon.svg" class="step0 list-icons" />
-                <div class="list-content step0 subheader-text">Have the USB drive included with your
-                  HoloPort at hand</div>
-              </li>
-              <li class="list-group-item">
-                <img src="assets/icons/person-icon.svg" class="step0 list-icons" />
-                <div class="list-content step0 subheader-text">Be sure to register your HoloPort using
-                  the same email you purchased it with</div>
-              </li>
-              <li class="list-group-item">
-                <img id="locked-icon" src="assets/icons/locked-icon.svg" class="step0 list-icons" />
-                <div class="list-content step0 subheader-text"> Keep a copy of the password you create
-                  for registration somewhere secure--cryptographic keys are <span
-                    class="italic inline-contents">not</span> replaceable</div>
-              </li>
-            </ul>
-          </div>
-          <div class="step-exit">
-            <div class="center-align">
-              <table>
-                <tr>
-                  <td class="table-padding center-align">
-                    <h2 class="step-label-info">Thanks for registering your HoloPort!</h2>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="table-padding center-align">
-                    <img id="rocket-icon" src="assets/icons/rocket-icon.svg" class="table-icons" />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="table-padding">
-                    <div class="list-content step-exit subheader-text center-align">You'll
-                      receive an
-                      email that
-                      includes a link to your Host Console where you can login and manage the settings of your HoloPort.
-                    </div>
-                  </td>
-                </tr>
-              </table>
+    <div class="bookend-container step-display step0 step-exit">
+      <h1 class="bookend-header">
+        <span class="step-display step0">A few things to note before you get started:</span>
+        <span class="step-display step-exit">Thanks for registering your HoloPort!</span>
+      </h1>
+      <div class="step-display step0">
+        <ul class="notes">
+          <li class="note">
+            <img id="world-icon" src="assets/icons/world-icon.svg" class="note-icon" />
+            <div class="note-text">Power on and connect your HoloPort to
+              the Internet</div>
+          </li>
+          <li class="note">
+            <img id="cloud-yes-icon" src="assets/icons/cloud-yes-icon.svg" class="note-icon" />
+            <div class="note-text">Allow your HoloPort to update. When the
+              light on your HoloPort stops flashing green, the update process is complete</div>
+          </li>
+          <li class="note">
+            <img id="connected-icon" src="assets/icons/connected-icon.svg" class="note-icon" />
+            <div class="note-text">Have the USB drive included with your
+              HoloPort at hand</div>
+          </li>
+          <li class="note">
+            <img id="locked-icon" src="assets/icons/locked-icon.svg" class="note-icon" />
+            <div class="note-text">
+              Keep a copy of the passphrase you create for registration somewhere secure—cryptographic keys are <em>not</em> replaceable
+            </div>
+          </li>
+        </ul>
+      </div>
+      <img id="rocket-icon" src="assets/icons/rocket-icon.svg" class="step-display step-exit" />
+      <div class="list-content center-align step-display step-exit">
+        You'll receive an email that includes a link to your Host Console where you can login and manage the settings of your HoloPort.
+      </div>
+    </div>
+    <div class="step-display step1a step1 step2 step3 step4 step5 step6 step7">
+      <div class="progressbar-wrapper">
+        <ul class="progressbar step-opacity step1 step2 step3 step4 step5 step6">
+          <li class="progressbar-item 1 active"></li>
+          <li class="progressbar-item 2"></li>
+          <li class="progressbar-item 3"></li>
+          <li class="progressbar-item 4"></li>
+          <li class="progressbar-item 5"></li>
+          <li class="progressbar-item 6"></li>
+        </ul>
+      </div>
+      <h1 class="step-title">
+        <span class="step-display step1a">
+          Connecting your HoloPort to the Holo network
+        </span>
+        <span class="step-display step1">
+          <span class="step-number">Step 1:</span> Registration Code
+        </span>
+        <span class="step-display step2">
+          <span class="step-number">Step 2:</span> Enter a passphrase
+        </span>
+        <span class="step-display step3">
+          <span class="step-number">Step 3:</span> Generate a seed file
+        </span>
+        <span class="step-display step4">
+          <span class="step-number">Step 4:</span> Create Host Console credentials
+        </span>
+        <span class="step-display step5">
+          <span class="step-number">Step 5:</span> Create your keys and save them
+        </span>
+        <span class="step-display step6">
+          <span class="step-number">Step 6:</span> Connect to the Holo Network
+        </span>
+        <span class="step-display step7">
+          Register additional HoloPorts
+        </span>
+      </h1>
+      <div class="step-description">
+        <p class="step-display step1a">If you do not have a registration code you need to begin at <a href="https://register.holo.host/holo">https://register.holo.host/holo</a>. Otherwise, click the “next” button and enter the registration code you received in your email.</p>
+        <p class="step-display step1">Enter the registration code you received in your email.</p>
+        <p class="step-display step2">Make your passphrase as strong as possible. It should be long, include a mix of many different types of characters, and be hard to guess.</p>
+        <p class="step-display step2">You can optionally turn off your internet while doing this for added security.</p>
+        <p class="step-display step3">Click the button below to generate and save your seed file. You will need to save it to your hard drive or to a USB drive that is <strong><u>NOT</u></strong> the same USB drive used for your HoloPort.</p>
+        <p class="step-display step4">Enter the email address you used to register with Holo, and create a Host Console password for your <span id='current-holoport-descriptor'>primary</span> HoloPort.</p>
+        <p class="step-display step5">Click the button below to download the configuration file, and then move the file to the HoloPort USB drive. The filename must be <span id="download-file"></span> for your HoloPort to read it.</p>
+        <p class="step-display step6">Safely eject the USB drive from your computer and insert it into the associated HoloPort.</p>
+        <p class="step-display step7">Do you have additional HoloPorts that you’d like to register at this time?</p>
+      </div>
+      <span id="form-error-message" class="error-red"></span>
+      <span id="form-success-message" class="holo-green"></span>
+      <form id='step1-form' class="step-display step1">
+        <div id='registration-code-form-item'>
+          <div class="input-item">
+            <div class="input-base">
+              <input id="registration-code" class="input-font" name="registration-code" type="text"/>
             </div>
           </div>
         </div>
+        <span id="registration-code-error-message" class="error-red"></span>
+      </form>
+
+      <form id='step2-form' class="step-display step2">
+        <div id='seed-passphrase-form-item'>
+          <div class="input-item">
+            <div class="input-base">
+              <input id="seed-passphrase" class="input-font" name="seed-passphrase" type="text"/>
+            </div>
+          </div>
+        </div>
+        <span id="seed-passphrase-error-message" class="error-red"></span>
+        <p class="step-label-info"> <span class="bold">Tip:</span> Write down or store your passphrase in a password manager.</p>
+      </form>
+
+
+      <form id='step3-form' class="step-display step3">
+        <div class="download-button-wrapper">
+          <br><br>
+          <a id="gen-seed-button" class="btn button-font action-button"><img
+              src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span
+              class="button-text bold">Generate & Save Seed File</span></a>
+        </div>
+      </form>
+
+      <form id='step4-form' class="step-display step4">
+        <div id='email-form-item' class='form-item'>
+          <div class="input-item">
+            <div class="input-base">
+              <label id="email-label" class='input-item-label' data-shrink="false">Your Email*:</label>
+              <input id="email" class="input-font input-borderless" name="email" type="text" />
+            </div>
+          </div>
+        </div>
+        <span id="email-error-message" class="error-red"></span>
+
+        <div id='password-form-item' class='form-item'>
+          <div class="input-item">
+            <div class="input-base">
+              <label id="password-label" class='input-item-label' data-shrink="false">Your Password:</label>
+              <input id="password" class="input-font input-borderless" name="password" type="password" />
+            </div>
+          </div>
+        </div>
+        <span id="password-error-message" class="error-red"></span>
+
+        <div id='password-check-form-item' class='form-item'>
+          <div class="input-item">
+            <div class="input-base">
+              <label id="password-check-label" class='input-item-label' data-shrink="false">Retype Password:</label>
+              <input id="password-check" class="input-font input-borderless" name="password-check" type="password" />
+            </div>
+          </div>
+        </div>
+        <span id="password-check-error-message" class="error-red"></span>
+      </form>
+
+      <div class="step-display step5">
+        <div class="block-subtext">
+          <div class="download-button-wrapper">
+            <a id="download-button" class="btn button-font action-button"><img
+                src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span
+                class="button-text bold">Save Configuration File</span></a>
+          </div>
+          <br><br>
+        </div>
       </div>
-      <div class="step1a step1 step2 step3 step4 step5 step6 step7 card-wrapper">
-        <div class="card-transparent left-margin">
-          <div class="column">
-            <div class="progressbar-wrapper">
-              <ul class="progressbar step1 step2 step3 step4 step5 step6">
-                <li class="progressbar-item 1 active"></li>
-                <li class="progressbar-item 2"></li>
-                <li class="progressbar-item 3"></li>
-                <li class="progressbar-item 4"></li>
-                <li class="progressbar-item 5"></li>
-                <li class="progressbar-item 6"></li>
-              </ul>
-            </div>
-            <h1 class="step-title">
-              <span class="step1a">
-                Connecting your HoloPort to the Holo network
-              </span>
-              <span class="step1">
-                <span class="step-number">Step 1:</span> Registration Code
-              </span>
-              <span class="step2">
-                <span class="step-number">Step 2:</span> Enter a passphrase
-              </span>
-              <span class="step3">
-                <span class="step-number">Step 3:</span> Generate a seed file
-              </span>
-              <span class="step4">
-                <span class="step-number">Step 4:</span> Create Host Console credentials
-              </span>
-              <span class="step5">
-                <span class="step-number">Step 5:</span> Create your keys and save them
-              </span>
-              <span class="step6">
-                <span class="step-number">Step 6:</span> Connect to the Holo Network
-              </span>
-              <span class="step7">
-                Register additional HoloPorts
-              </span>
-            </h1>
-            <div class="step-description">
-              <p class="step1a">If you do not have a registration code you need to begin at <a href="https://register.holo.host/holo">https://register.holo.host/holo</a>. Otherwise, click the “next” button and enter the registration code you received in your email.</p>
-              <p class="step1">Enter the registration code you received in your email.</p>
-              <p class="step2">Make your passphrase as strong as possible. It should be long, include a mix of many different types of characters, and be hard to guess.</p>
-              <p class="step2">You can optionally turn off your internet while doing this for added security.</p>
-              <p class="step3">Click the button below to generate and save your seed file. You will need to save it to your hard drive or to a USB drive that is <strong><u>NOT</u></strong> the same USB drive used for your HoloPort.</p>
-              <p class="step4">Enter the email address you used to register with Holo, and create a Host Console password for your <span id='current-holoport-descriptor'>primary</span> HoloPort.</p>
-              <p class="step5">Click the button below to download the configuration file, and then move the file to the HoloPort USB drive. The filename must be <span id="download-file"></span> for your HoloPort to read it.</p>
-              <p class="step6">Safely eject the USB drive from your computer and insert it into the associated HoloPort.</p>
-              <p class="step7">Do you have additional HoloPorts that you’d like to register at this time?</p>
-            </div>
-            <span id="form-error-message" class="error-red"></span>
-            <span id="form-success-message" class="holo-green"></span>
+
+      <div class="step-display step6">
+        <div class="image-block">
+          <div class="image-block-item">
+            <img src="assets/icons/holoport-device-icon.svg" class="display-image-holoport" />
           </div>
-          <form id='step1-form' class="step1">
-            <div id='registration-code-form-item' class='form-item'>
-              <div class="input-item">
-                <div class="input-base">
-                  <input id="registration-code" class="input-font" name="registration-code" type="text"
-                    placeholder="-registration-code-" />
-                </div>
-              </div>
-            </div>
-            <span id="registration-code-error-message" class="error-red"></span>
-          </form>
+        </div>
+      </div>
 
-          <form id='step2-form' class="step2">
-            <div id='seed-passphrase-form-item' class='form-item'>
-              <div class="input-item">
-                <div class="input-base">
-                  <input id="seed-passphrase" class="input-font" name="seed-passphrase" type="text"
-                    placeholder="-passphrase-" />
-                </div>
-              </div>
-            </div>
-            <span id="seed-passphrase-error-message" class="error-red"></span>
-            <p class="step-label-info"> <span class="bold">Tip:</span> Write down or store your passphrase in a password manager.</p>
-          </form>
-
-
-          <form id='step3-form' class="step3">
-            <div class="download-button-wrapper">
-              <br><br>
-              <a id="gen-seed-button" class="btn button-font action-button"><img
-                  src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span
-                  class="button-text bold">Generate & Save Seed File</span></a>
-            </div>
-          </form>
-
-          <form id='step4-form' class="step4">
-            <div id='email-form-item' class='form-item'>
-              <div class="input-item">
-                <div class="input-base">
-                  <label id="email-label" class='input-item-label' data-shrink="false">Your Email*:</label>
-                  <input id="email" class="input-font" name="email" type="text" />
-                </div>
-              </div>
-            </div>
-            <span id="email-error-message" class="error-red"></span>
-
-            <div id='password-form-item' class='form-item'>
-              <div class="input-item">
-                <div class="input-base">
-                  <label id="password-label" class='input-item-label' data-shrink="false">Your Password:</label>
-                  <input id="password" class="input-font" name="password" type="password" />
-                </div>
-              </div>
-            </div>
-            <span id="password-error-message" class="error-red"></span>
-
-            <div id='password-check-form-item' class='form-item'>
-              <div class="input-item">
-                <div class="input-base">
-                  <label id="password-check-label" class='input-item-label' data-shrink="false">Retype Password:</label>
-                  <input id="password-check" class="input-font" name="password-check" type="password" />
-                </div>
-              </div>
-            </div>
-            <span id="password-check-error-message" class="error-red"></span>
-
-            <div>
-              <p class="note-text email-disclaimer">*You must use the same email you used to purchase your HoloPort.</p>
-            </div>
-          </form>
-
-          <div class="step5">
-            <div class="block-subtext">
-              <div class="download-button-wrapper">
-                <a id="download-button" class="btn button-font action-button"><img
-                    src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span
-                    class="button-text bold">Save Configuration File</span></a>
-              </div>
-              <br><br>
-            </div>
-          </div>
-
-          <div class="step6">
-            <div class="image-block">
-              <div class="image-block-item">
-                <img src="assets/icons/holoport-device-icon.svg" class="display-image-holoport" />
-              </div>
-            </div>
-            <div>
-              <p class="subheader-text"></p>
-            </div>
-          </div>
-
-          <div class="step7">
-            <div class="button-wrapper last-btn">
-              <button id="exit-button" class="btn button-font previous-btn"><span>No</span></button>
-              <div class="break-text">
-                <button id="loop-button" class="btn next-btn button-font"><span>Yes</span></button>
-              </div>
-            </div>
-            <div>
-              <p class="subheader-text"></p>
-            </div>
-          </div>
+      <div class="step-display step7">
+        <div class="buttons">
+          <button id="exit-button" class="btn button-font"><span>No</span></button>
+          <button id="loop-button" class="btn action-btn button-font"><span>Yes</span></button>
         </div>
       </div>
     </div>
 
-    <div id='button-container' class="step0 step1a step1 step2 step3 step4 step5 step6">
-      <div class="button-wrapper">
-        <button id="previous-button" class="btn button-font previous-btn step1a step1 step2 step3 step4 step5 step6"><span>Previous</span></button>
-        <div class="break-text">
-          <button id="next-button" class="btn button-font next-btn"><span>Next</span></button>
-        </div>
-      </div>
+    <div class="buttons lower-right">
+      <button id="previous-button" class="btn button-font previous-btn step-opacity step1a step1 step2 step3 step4 step5 step6"><span>Previous</span></button>
+      <button id="next-button" class="btn button-font next-btn"><span>Next</span></button>
     </div>
-    <img id="holoport-flying" class="step0"
-      src='assets/images/hports-flying-transparent.png' />
   </main>
+  <img id="holoport-flying" class="step-display step0"
+    src='assets/images/hports-flying-transparent.png' />
 
   <div id="fixed-overlay-loader">
     <div class="modal-content">
@@ -318,7 +267,7 @@
     <div class="modal-content">
       <div class="pageHeader">
         <div class="step-label-info">You’ve already generated your Master Seed!</div>
-        <p class="subheader-text"> If you continue, new seed will be generated and you will need to create a new master
+        <p> If you continue, new seed will be generated and you will need to create a new master
           seed.</p>
       </div>
       <div class="button-wrapper">

@@ -46,8 +46,6 @@
 
   const inlineVariables = {
     contentContainer: document.querySelector('#content-container'),
-    registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
-    seedPassphraseInputArea: document.querySelector('#seed-passphrase-form-item'),
     emailPlaceholder: document.querySelector('#email-placeholder'),
     emailInputArea: document.querySelector('#email-form-item'),
     passwordInputArea: document.querySelector('#password-form-item'),
@@ -285,11 +283,20 @@
         '_blank'
       )
     },
-    handleEnter: event => {
-      const step = stepTracker
+    handleKeyPress: event => {
       const keycode = (event.keyCode ? event.keyCode : event.which)
       /* Number 13 is the "Enter" key on the keyboard */
-      if (keycode === 13 && step <= 4) {
+      if (keycode === 13 && stepTracker <= 4) {
+        console.log('preventing default')
+        event.preventDefault()
+      }
+      else return null
+    },
+    handleKeyUp: event => {
+      const keycode = (event.keyCode ? event.keyCode : event.which)
+      /* Number 13 is the "Enter" key on the keyboard */
+      if (keycode === 13 && stepTracker <= 4) {
+        event.preventDefault()
         click.nextStep()
       }
       else return null
@@ -323,7 +330,8 @@
   }
 
   /* Bind keystroke action to listener */
-  document.querySelector('body').onkeyup = click.handleEnter
+  document.querySelector('body').onkeypress = click.handleKeyPress
+  document.querySelector('body').onkeyup = click.handleKeyUp
 
   /* Bind actions to buttons */
   buttons.nextStep.onclick = click.nextStep
@@ -340,8 +348,6 @@
   // buttons.forumHelp.onclick = click.forumHelp
   document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
-  inlineVariables.registrationCodeInputArea.onclick = e => { inputs.registrationCode.focus(); return click.activateInput(e) }
-  inlineVariables.seedPassphraseInputArea.onclick = e => { inputs.seedPassphrase.focus(); return click.activateInput(e) }
   inlineVariables.emailInputArea.onclick = e => { inputs.email.focus(); return click.activateInput(e) }
   inlineVariables.passwordInputArea.onclick = e => { inputs.password.focus(); return click.activateInput(e) }
   inlineVariables.passwordCheckInputArea.onclick = e => { inputs.passwordCheck.focus(); return click.activateInput(e) }
