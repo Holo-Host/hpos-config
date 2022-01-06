@@ -589,7 +589,7 @@ label {
   display: flex;
 }
 
-.input-borderless {
+input {
   display: flex;
   border: none;
   mix-blend-mode: normal;

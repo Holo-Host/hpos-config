@@ -46,6 +46,8 @@
 
   const inlineVariables = {
     contentContainer: document.querySelector('#content-container'),
+    registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
+    seedPassphraseInputArea: document.querySelector('#seed-passphrase-form-item'),
     emailPlaceholder: document.querySelector('#email-placeholder'),
     emailInputArea: document.querySelector('#email-form-item'),
     passwordInputArea: document.querySelector('#password-form-item'),
@@ -348,6 +350,8 @@
   // buttons.forumHelp.onclick = click.forumHelp
   document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
+  inlineVariables.registrationCodeInputArea.onclick = e => { inputs.registrationCode.focus(); return click.activateInput(e) }
+  inlineVariables.seedPassphraseInputArea.onclick = e => { inputs.seedPassphrase.focus(); return click.activateInput(e) }
   inlineVariables.emailInputArea.onclick = e => { inputs.email.focus(); return click.activateInput(e) }
   inlineVariables.passwordInputArea.onclick = e => { inputs.password.focus(); return click.activateInput(e) }
   inlineVariables.passwordCheckInputArea.onclick = e => { inputs.passwordCheck.focus(); return click.activateInput(e) }
