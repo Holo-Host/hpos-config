@@ -245,7 +245,7 @@ label {
 }
 
 /* Image & Icon Elements */
-#holo-banner {
+.holo-banner {
   width: 140px;
 }
 
@@ -323,10 +323,9 @@ label {
 /* Page Content Containers & Wrappers */
 
 #greeting-container {
-  width: 35.7vw;
+  width: 450px;
   background: #00838d;
   color: #ffffff;
-  /* top right bottom left */
   padding: 50px 91px 40px 72px;
   box-sizing: border-box;
   display: flex;
@@ -342,12 +341,11 @@ body.step-exit #greeting-container {
 #content-container {
   overflow-y: scroll;
   flex: 1;
-  width: 65vw;
+  width: auto;
   background: #ffffff;
   color: #2c405a;
   display: flex;
   flex-direction: column;
-  /* top right down left */
   padding: 70px 72px 83px 94px;
   box-sizing: border-box;
 }
@@ -393,9 +391,16 @@ body.step-exit .bookend-container {
   padding: 30px;
 }
 
+.context-header {
+  font-weight: 700;
+}
+
 .context {
   margin-top: 80px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: 0em;
 }
 
 .greeting-modal-title {

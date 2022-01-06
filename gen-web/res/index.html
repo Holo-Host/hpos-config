@@ -16,35 +16,33 @@
 
 <body id='container-fluid' class="step0">
   <aside id='greeting-container'>
-    <img id="holo-banner" class="step-display step0 step-exit" src='assets/images/holo-banner.svg' />
-    <img id="holo-banner" class="step-display step1a step1 step2 step3 step4 step5 step6"
+    <img class="holo-banner step-display step0 step-exit" src='assets/images/holo-banner.svg' />
+    <img class="holo-banner step-display step1a step1 step2 step3 step4 step5 step6"
       src='assets/images/holo-banner-white.svg' />
     <p class="greeting step-display step0">Time for Liftoff!</p>
     <p class="greeting step-display step-exit">You're all set!</p>
     <div class="step-display step1 step2 step3 step4 step5 step6">
-      <p class="context">
-        <b>Context:</b>
-        &nbsp
-        <br />
-        <span class="step-display step1">
+      <div class="context">
+        <p class="context-header">Context:</b>
+        <p class="step-display step1">
           A registration code can be used to register either one HoloPort or many HoloPorts during Quickstart. If you don't have your registration code, please register at <a href="https://register.holo.host">https://register.holo.host</a>
-        </span>
-        <span class="step-display step2">
+        </p>
+        <p class="step-display step2">
           Your passphrase is an important thing to remember since it will decrypt your seed file &mdash; keep it somewhere very safe!
-        </span>
-        <span class="step-display step3">
+        </p>
+        <p class="step-display step3">
           Remember, you will need BOTH the seed and your passphrase to restore any keys that are created from this seed.
-        </span>
-        <span class="step-display step4">
+        </p>
+        <p class="step-display step4">
           Host Console is a web interface where you can manage your HoloPort and hosting settings.
-        </span>
-        <span class="step-display step5">
+        </p>
+        <p class="step-display step5">
           This is where your public and private keys for your HoloPorts are generated. The keys are the basis of the cryptography in Holochain and Holo. Your private key is stored on an encrypted keystore your HoloPort, and your public key is your address on the Holo network and the first part of your web address for reaching your HoloPort. We also call that your HoloPort ID.
-        </span>
-        <span class="step-display step6">
+        </p>
+        <p class="step-display step6">
           When you insert the USB drive into your HoloPort, it will begin connecting to the Holo network.
-        </span>
-      </p>
+        </p>
+      </div>
     </div>
     <p class="help-link">
       <a class="link" href="https://forum.holo.host" target="_blank">Support Forum </a>
