@@ -35,7 +35,8 @@
     exit: document.querySelector('#exit-button'),
     loop: document.querySelector('#loop-button'),
     closeModalIntro: document.querySelector('#close-modal-intro'),
-    closeModalOutro: document.querySelector('#close-modal-outro')
+    hasWrittenPassphrase: document.querySelector('#has-written-passphrase'),
+    hasNotWrittenPassphrase: document.querySelector('#has-not-written-passphrase')
   }
 
   const inputs = {
@@ -82,7 +83,7 @@
   * ======================================
   */
   const click = {
-    nextStep: () => {
+    nextStep: async () => {
       switch (stepTracker) {
         case 0:
           if (!validateScreenSize() || detectMobileUserAgent()) {
@@ -102,7 +103,7 @@
           registrationCode = inputs.registrationCode.value
           updateUiStep(2)
           updateProgressBar(1)
-          click.showModalSeedIntro()
+          click.showModalPassphraseIntro()
           break
         case 2:
           if (!verifyInputData()) {
@@ -110,13 +111,15 @@
             return
           }
           seedPassphrase = inputs.seedPassphrase.value
+          if (!await confirmPassphraseWritten()) {
+            return
+          }
           updateUiStep(3)
           updateProgressBar(2)
           break
         case 3:
           updateUiStep(4)
           updateProgressBar(3)
-          click.showModalSeedOutro()
           break
         case 4:
           generate()
@@ -243,15 +246,14 @@
       document.querySelector('#fixed-overlay-notice').style.display = 'none'
       document.querySelector('#modal-overlay-notice').style.display = 'none'
     },
-    showModalSeedIntro: () => {
-      document.querySelector('#modal-seed-intro').style.display = 'block'
+    showModalPassphraseIntro: () => {
+      document.querySelector('#modal-passphrase-intro').style.display = 'block'
     },
-    showModalSeedOutro: () => {
-      document.querySelector('#modal-seed-outro').style.display = 'block'
+    showModalPassphraseOutro: () => {
+      document.querySelector('#modal-passphrase-outro').style.display = 'block'
     },
-    closeSeedModals: () => {
-      document.querySelector('#modal-seed-intro').style.display = 'none'
-      document.querySelector('#modal-seed-outro').style.display = 'none'
+    closePassphraseIntro: () => {
+      document.querySelector('#modal-passphrase-intro').style.display = 'none'
     },
     back3Confirmation: () => {
       click.closeNotice()
@@ -345,8 +347,7 @@
   buttons.download.onclick = click.download
   buttons.exit.onclick = click.exit
   buttons.loop.onclick = click.loop
-  buttons.closeModalIntro.onclick = click.closeSeedModals
-  buttons.closeModalOutro.onclick = click.closeSeedModals
+  buttons.closeModalIntro.onclick = click.closePassphraseIntro
 
 
   document.onkeyup = click.activateInput
@@ -449,6 +450,21 @@
       }
       return childListNodes[stepIndex + 1]
     }
+  }
+
+  const confirmPassphraseWritten = async () => {
+    click.showModalPassphraseOutro()
+
+    const confirmed = await new Promise(resolve => {
+      buttons.hasWrittenPassphrase.onclick = () => {
+        resolve(true)
+      }
+      buttons.hasNotWrittenPassphrase.onclick = () => {
+        resolve(false)
+      }
+    })
+    document.querySelector('#modal-passphrase-outro').style.display = 'none'
+    return confirmed
   }
 
   const generate = async () => {

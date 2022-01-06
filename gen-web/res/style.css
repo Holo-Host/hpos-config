@@ -990,11 +990,11 @@ a {
   transform: rotate(-45deg);
 }
 
-#modal-seed-intro, #modal-seed-outro {
+#modal-passphrase-intro, #modal-passphrase-outro {
   display: none;
 }
 
-.modal-seed-body {
+.modal-passphrase-body {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -1008,12 +1008,12 @@ a {
   z-index: 101;
 }
 
-.modal-seed-body div {
+.modal-passphrase-body div {
   text-align: center;
   margin-bottom: 30px;
 }
 
-.modal-seed-overlay {
+.modal-passphrase-overlay {
   position: fixed;
   top: 0;
   left: 0;

@@ -269,8 +269,8 @@
   </div>
   <div id="modal-overlay-notice"></div>
 
-  <div id="modal-seed-intro">
-    <div class='modal-seed-body'>
+  <div id="modal-passphrase-intro">
+    <div class='modal-passphrase-body'>
       <img class="exclamation" src='assets/images/exclamation.svg' />
 
       <h2>Important!</h2>
@@ -280,28 +280,24 @@
 
       <button id="close-modal-intro" class="btn button-font confirm-button"><span>I understand</span></button>
     </div>
-    <div class='modal-seed-overlay'></div>
+    <div class='modal-passphrase-overlay'></div>
   </div>
 
-  <div id="modal-seed-outro">
-    <div class='modal-seed-body'>
+  <div id="modal-passphrase-outro">
+    <div class='modal-passphrase-body'>
       <img class="exclamation" src='assets/images/exclamation.svg' />
 
       <h2>Important!</h2>
 
-      <div>Did you remember to write down your passphrase and save your seed file in a safe and memorable place?</div>
+      <div>Did you remember to write down your passphrase in a safe and memorable place?</div>
 
-      <button id="close-modal-outro" class="btn button-font confirm-button"><span>Yes</span></button>
+      <div class="buttons">
+        <button id="has-not-written-passphrase" class="btn button-font"><span>Go back</span></button>
+        <button id="has-written-passphrase" class="btn button-font confirm-button"><span>Yes</span></button>
+      </div>
     </div>
-    <div class='modal-seed-overlay'></div>
+    <div class='modal-passphrase-overlay'></div>
   </div>
-
-
-
-  <!-- <div id="modal-seed-outro">
-    Important! OUTRO
-    <button id="close-modal-outro" class="btn button-font next-button"><span>I Understand</span></button>
-  </div> -->
 
   <script src="main.js"></script>
 </body>
