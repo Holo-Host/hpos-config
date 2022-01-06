@@ -308,19 +308,18 @@
         labelId = document.querySelector(`#${inputId}-label`)
       }
 
+      /* input-active currently unused */
       const activeInputs = document.querySelectorAll('.input-active')
       if (activeInputs) {
         for (let activeInput of activeInputs) {
           if (!activeInput.parentElement.querySelector('input').value) {
             activeInput.classList.remove('input-active')
-            activeInput.dataset.shrink = 'false'
           }
         }
       }
 
       if (labelId) {
         labelId.classList.add('input-active')
-        labelId.dataset.shrink = 'true'
       }
 
       verifyInputData()
