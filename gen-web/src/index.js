@@ -239,12 +239,10 @@
       document.querySelector('#modal-overlay-loader').style.display = 'none'
     },
     openNotice: () => {
-      document.querySelector('#fixed-overlay-notice').style.display = 'block'
-      document.querySelector('#modal-overlay-notice').style.display = 'block'
+      document.querySelector('#change-seed-modal').style.display = 'block'
     },
     closeNotice: () => {
-      document.querySelector('#fixed-overlay-notice').style.display = 'none'
-      document.querySelector('#modal-overlay-notice').style.display = 'none'
+      document.querySelector('#change-seed-modal').style.display = 'none'
     },
     showModalPassphraseIntro: () => {
       document.querySelector('#modal-passphrase-intro').style.display = 'block'

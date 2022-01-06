@@ -161,7 +161,7 @@
           </div>
         </div>
         <span id="seed-passphrase-error-message" class="error-red"></span>
-        <p class="step-label-info"> <span class="bold">Tip:</span> Write down or store your passphrase in a password manager.</p>
+        <p><span class="bold">Tip:</span> Write down or store your passphrase in a password manager.</p>
       </div>
 
 
@@ -234,43 +234,39 @@
     src='assets/images/hports-flying-transparent.png' />
 
   <div id="fixed-overlay-loader">
-    <div class="modal-content">
-      <div class="loader-grid">
-        <div class="flex">
-          <div class="lds-grid">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
+    <div class="loader-grid">
+      <div class="flex">
+        <div class="lds-grid">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
-        <h1 class="greeting-modal-title flex">Generating Your Keys</h1>
       </div>
+      <h1 class="greeting-modal-title flex">Generating Your Keys</h1>
     </div>
   </div>
   <div id="modal-overlay-loader"></div>
 
-  <div id="fixed-overlay-notice">
-    <div class="modal-content">
-      <div class="pageHeader">
-        <div class="step-label-info">You’ve already generated your Seed File!</div>
-      </div>
-      <p> If you go back, a new seed will have to be generated, and you will need to save it securely again.</p>
+  <div id="change-seed-modal">
+    <div class="modal-body">
+      <h2>You’ve already generated your Seed File!</h2>
+      <p>If you go back, a new seed file will have to be generated, and you will need to save it securely again.</p>
       <div class="buttons">
         <button id="back-button3-confirmation" class="btn button-font previous-button"><span>Go back</span></button>
-        <button id="close-notice" class="btn button-font next-button"><span>Cancel</span></button>
+        <button id="close-notice" class="btn button-font cancel-button"><span>Cancel</span></button>
       </div>
     </div>
+    <div class='modal-overlay'></div>
   </div>
-  <div id="modal-overlay-notice"></div>
 
   <div id="modal-passphrase-intro">
-    <div class='modal-passphrase-body'>
+    <div class='modal-body'>
       <img class="exclamation" src='assets/images/exclamation.svg' />
 
       <h2>Important!</h2>
@@ -280,11 +276,11 @@
 
       <button id="close-modal-intro" class="btn button-font confirm-button"><span>I understand</span></button>
     </div>
-    <div class='modal-passphrase-overlay'></div>
+    <div class='modal-overlay'></div>
   </div>
 
   <div id="modal-passphrase-outro">
-    <div class='modal-passphrase-body'>
+    <div class='modal-body'>
       <img class="exclamation" src='assets/images/exclamation.svg' />
 
       <h2>Important!</h2>
@@ -296,7 +292,7 @@
         <button id="has-written-passphrase" class="btn button-font confirm-button"><span>Yes</span></button>
       </div>
     </div>
-    <div class='modal-passphrase-overlay'></div>
+    <div class='modal-overlay'></div>
   </div>
 
   <script src="main.js"></script>

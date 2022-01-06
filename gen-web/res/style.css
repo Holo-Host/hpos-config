@@ -440,10 +440,6 @@ body.step0 .bookend-header {
   color: #000000;
 }
 
-.modal-content .step-label-info {
-  font-size: calc(1.95rem + 0.6vw);
-}
-
 .intro-header {
   font-style: normal;
   font-weight: bold;
@@ -664,11 +660,6 @@ span.error-red {
   margin-left: auto;
 }
 
-.modal-content .button-wrapper {
-  margin-top: 4rem;
-  justify-content: center;
-}
-
 .download-button-wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -725,9 +716,15 @@ a.btn[disabled] {
 }
 
 .action-button,
-.next-button {
+.next-button,
+.cancel-button {
   color: #ffffff;
   background-color: #00838d;
+}
+
+body.step0 .next-button {
+  color: #00838d;
+  background-color: #ffffff;
 }
 
 #gen-seed-button,
@@ -743,17 +740,15 @@ a.btn[disabled] {
   line-height: 20px;
 }
 
-body.step0 .next-button {
-  color: #00838d;
-  background-color: #ffffff;
-}
-.next-button span {
+.next-button span,
+.cancel-button span {
   cursor: pointer;
   display: inline-block;
   position: relative;
   transition: 0.5s;
 }
-.next-button span:after {
+.next-button span:after,
+.cancel-button span:after {
   content: "\00bb";
   position: absolute;
   opacity: 0;
@@ -761,10 +756,12 @@ body.step0 .next-button {
   right: -20px;
   transition: 0.5s;
 }
-.next-button:hover span {
+.next-button:hover span,
+.cancel-button:hover span {
   padding-right: 25px;
 }
-.next-button:hover span:after {
+.next-button:hover span:after,
+.cancel-button:hover span {
   opacity: 1;
   right: 0;
 }
@@ -773,10 +770,6 @@ body.step0 .next-button {
   color: white;
   border-color: #5C4DA6;
   background-color: #5C4DA6;
-}
-
-.modal-content .next-button span:after {
-  content: "X";
 }
 
 .previous-button span {
@@ -907,7 +900,7 @@ a {
 
 /* Modal Components */
 
-#fixed-overlay-notice {
+/* #change-seed-modal {
   display: none;
   position: fixed;
   top: calc(26% - 6em);
@@ -922,7 +915,7 @@ a {
   border: 1px #ddd solid;
   overflow: hidden;
   z-index: 1010;
-}
+} */
 
 #fixed-overlay-loader {
   display: none;
@@ -939,16 +932,7 @@ a {
   z-index: 1010;
 }
 
-#modal-overlay-notice {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(44, 64, 90, 0.8);
-  z-index: 1000;
-}
+
 
 #modal-overlay-loader {
   display: none;
@@ -959,13 +943,6 @@ a {
   height: 100%;
   background: rgba(44, 64, 90, 0.8);
   z-index: 1000;
-}
-
-.modal-content {
-  margin: 3em;
-  padding: 0 1em;
-  height: calc(100% - 6em);
-  overflow: hidden;
 }
 
 .close {
@@ -995,11 +972,11 @@ a {
   transform: rotate(-45deg);
 }
 
-#modal-passphrase-intro, #modal-passphrase-outro {
+#modal-passphrase-intro, #modal-passphrase-outro, #change-seed-modal {
   display: none;
 }
 
-.modal-passphrase-body {
+.modal-body {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -1013,12 +990,12 @@ a {
   z-index: 101;
 }
 
-.modal-passphrase-body div {
+.modal-body div {
   text-align: center;
   margin-bottom: 30px;
 }
 
-.modal-passphrase-overlay {
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -1026,16 +1003,6 @@ a {
   height: 100%;
   background-color: rgba(44, 64, 90, 0.7);
   z-index: 100;
-}
-
-@media only screen and (max-width: 600px) {
-  #fixed-overlay-notice,
-  #fixed-overlay-loader {
-    position: fixed;
-    top: calc(26% - 6em);
-    left: 0%;
-    width: 100%;
-  }
 }
 
 /* Loader Component */
