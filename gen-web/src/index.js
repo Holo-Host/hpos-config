@@ -1,7 +1,7 @@
 
 (async () => {
-  const filesaver = require('file-saver');
-  const hcSeedBundle = require('@holochain/hc-seed-bundle');
+  const filesaver = require('file-saver')
+  const hcSeedBundle = require('@holochain/hc-seed-bundle')
   const { config } = await import('../pkg')
   const {
     validateRegistrationCode,
@@ -21,6 +21,8 @@
   let deviceNumber = 0
   let deviceID
   let registrationCode
+  let genSeedStartingHtml
+  let downloadStartingHtml
 
   /* Parse HTML elements */
   const buttons = {
@@ -59,10 +61,10 @@
 
   const errorMessages = {
     missingFields: 'Please complete missing fields.',
-    seedPassphrase: 'Your passphrase needs to be at least 20 character in length',
+    seedPassphrase: 'Your passphrase needs to be at least 20 characters in length',
     registrationCode: 'Invalid code',
     email: 'Email domain not recognized',
-    password: 'Your password needs to be at least eight character in length',
+    password: 'Your password needs to be at least 8 characters in length',
     passwordCheck: 'Passwords do not match',
     generateConfig: 'An error occurred when configuring your user file. Please update your information and try again.'
   }
@@ -85,21 +87,19 @@
         case 0:
           if (!validateScreenSize() || detectMobileUserAgent()) {
             const confirmed = confirm('This experience has not been optimized for mobile devices. Please continue only if you are using a laptop or PC.\n\nContinuing on a mobile device may result in unexpected issues.')
-            if (confirmed === true) return updateUiStep(1)
-            else return null
-          } else {
-            updateUiStep(0.5)
+            if (!confirmed) {
+              return
+            }
           }
+          updateUiStep(0.5)
           break
         case 0.5:
           updateUiStep(1)
-          inputs.email.click()
           break
         case 1:
           if (!verifyInputData()) return buttons.nextStep.disabled = true
           // Load registration Code for use in later steps
           registrationCode = inputs.registrationCode.value
-          verifySeedDownloadComplete()
           updateUiStep(2)
           updateProgressBar(1)
           click.showModalSeedIntro()
@@ -149,7 +149,11 @@
           updateUiStep(stepTracker - 1)
           break
         case 3:
-          click.openNotice()
+          if (downloadSeedTracker) {
+            click.openNotice()
+          } else {
+            updateUiStep(2)
+          }
           break
         default:
           throw new Error(`unexpected stepTracker in prevStep: ${stepTracker}`)
@@ -157,10 +161,10 @@
     },
     genSeed: async () => {
       // Load registration Code for use in later steps
-      /* Communicate visually that something is happening in the bkgd */
+      /* Communicate visually that something is happening in the background */
       buttons.genSeed.classList.add('disabled')
       buttons.genSeed.disabled = true
-      buttons.genSeed.innerHTML = 'Saving Master Seed...'
+      buttons.genSeed.innerHTML = 'Saving Seed File...'
 
       setTimeout(async () => {
         try {
@@ -187,7 +191,7 @@
           ])
 
           // DEV MODE - check pub key for devices:
-          console.log("Created master seed: ", master.signPubKey);
+          console.log("Created master seed: ", master.signPubKey)
 
           const seedBlob = new Blob([toBase64(encodedBytes)], { type: 'text/plain' })
           filesaver.saveAs(seedBlob, SEED_FILE_NAME)
@@ -199,12 +203,12 @@
         /* Clean State */
         downloadSeedTracker = true
         buttons.genSeed.disabled = true
-        buttons.genSeed.innerHTML = 'Saved Master Seed*'
+        buttons.genSeed.innerHTML = 'Saved Seed File'
         verifySeedDownloadComplete(downloadSeedTracker)
       }, 1000)
     },
     download: async () => {
-      /* Communicate visually that something is happening in the bkgd */
+      /* Communicate visually that something is happening in the background */
       buttons.download.disabled = true
       buttons.download.innerHTML = 'Saving Configuration File...'
 
@@ -218,7 +222,8 @@
         /* Clean State */
         downloadConfigTracker = true
         buttons.download.disabled = false
-        buttons.download.innerHTML = 'Save Configuration File Again'
+        buttons.download.innerHTML = downloadStartingHtml
+        buttons.download.querySelector('span').innerHTML = 'Save Configuration File Again'
         verifyDownloadComplete(downloadConfigTracker)
       }, 1000)
     },
@@ -271,19 +276,11 @@
     },
     loop: () => {
       deviceNumber++
+      downloadConfigTracker = false
       inlineVariables.currentHoloportDescriptor.innerHTML = 'additional'
-      // hide back option
-      buttons.back4.setAttribute("hidden", "hidden");
       updateProgressBar(6, true)
       updateProgressBar(5, true)
       updateUiStep(4)
-    },
-    forumHelp: e => {
-      e.preventDefault()
-      window.open(
-        'https://forum.holo.host',
-        '_blank'
-      )
     },
     handleKeyPress: event => {
       const keycode = (event.keyCode ? event.keyCode : event.which)
@@ -331,6 +328,10 @@
     confirmValidInput: () => confirmValidInput()
   }
 
+  /* Back-up HTML that gets dynamically modified */
+  genSeedStartingHtml = buttons.genSeed.innerHTML
+  downloadStartingHtml = buttons.download.innerHTML
+
   /* Bind keystroke action to listener */
   document.querySelector('body').onkeypress = click.handleKeyPress
   document.querySelector('body').onkeyup = click.handleKeyUp
@@ -341,13 +342,13 @@
   buttons.genSeed.onclick = click.genSeed
   buttons.closeNotice.onclick = click.closeNotice
   buttons.back3Confirmation.onclick = click.back3Confirmation
+  buttons.download.onclick = click.download
   buttons.exit.onclick = click.exit
   buttons.loop.onclick = click.loop
   buttons.closeModalIntro.onclick = click.closeSeedModals
   buttons.closeModalOutro.onclick = click.closeSeedModals
 
 
-  // buttons.forumHelp.onclick = click.forumHelp
   document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
   inlineVariables.registrationCodeInputArea.onclick = e => { inputs.registrationCode.focus(); return click.activateInput(e) }
@@ -375,17 +376,17 @@
   * Step Listener to initiate step specific actions
   */
   const constantCheck = () => {
-    if (stepTracker === 1) {
+    if (stepTracker === 2) {
       /* Add click listener to page container on Page 2 form intake */
       inlineVariables.contentContainer.onclick = verifyInputData
-    } else if (stepTracker === 2) {
-      verifyDownloadComplete()
     } else if (stepTracker === 3) {
       /* Check for download*/
-      verifyDownloadComplete()
+      verifySeedDownloadComplete()
+    } else if (stepTracker === 4 && deviceNumber > 0) {
+      buttons.prevStep.disabled = true
     } else if (stepTracker === 5) {
-      // TODO put this back inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
-      inlineVariables.downloadFileName.innerHTML = "whatever.jsoon"
+      inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
+      verifyDownloadComplete()
     }
   }
   /**
@@ -394,13 +395,13 @@
    * @param {int} step
    */
   const updateUiStep = (step) => {
-    console.log('updateUiStep', step)
     if (!validation[step]) {
       console.log(`Wrong parameter ${step} in updateUiStep()`)
       return null
     }
     stepTracker = step
-    buttons.nextStep.disabled = false;
+    buttons.nextStep.disabled = false
+    buttons.prevStep.disabled = false
     constantCheck()
 
     switch (step) {
@@ -463,7 +464,7 @@
     // DEV MODE - Config Check:
     // console.log('user config : ', user)
 
-    /* Communicate visually that something is happening in the bkgd */
+    /* Communicate visually that something is happening in the background */
     buttons.nextStep.disabled = true
     downloadConfigTracker = false
     click.openLoader()
@@ -489,7 +490,7 @@
         ])
 
         // DEV MODE - check pub key for devices:
-        console.log("Created from master seed: ", master.signPubKey);
+        console.log("Created from master seed: ", master.signPubKey)
         console.log(`Device ${deviceNumber}: ${toBase64(encodedBytes)}`)
         console.log(`Device signPubkey: ${pubKey}`)
 
@@ -549,7 +550,7 @@
     }
     else if (newConfig) {
       buttons.genSeed.classList.remove('disabled')
-      buttons.genSeed.innerHTML = 'Generate & Save Master Seed*'
+      buttons.genSeed.innerHTML = genSeedStartingHtml
       buttons.nextStep.disabled = true
       resetUserConfig = false
     }
@@ -562,15 +563,14 @@
    * @param {Boolean} downloadConfigComplete
   */
   const verifyDownloadComplete = (downloadConfigComplete = downloadConfigTracker, newConfig = resetUserConfig) => {
-    if (downloadConfigComplete) {
-      buttons.nextStep.disabled = false
+    const complete = downloadConfigComplete && !newConfig
+    buttons.nextStep.disabled = !complete
+    if (!downloadConfigComplete) {
+      buttons.download.innerHTML = downloadStartingHtml
+      if (newConfig) {
+        resetUserConfig = false
+      }
     }
-    else if (!downloadConfigComplete && newConfig) {
-      buttons.nextStep.disabled = true
-      resetUserConfig = false
-      buttons.download.innerHTML = 'Save New Configuration File'
-    }
-    else return buttons.nextStep.disabled = true
   }
 
   /**
@@ -611,19 +611,19 @@
    * Verify all form input before allowing progression to next page
   */
   const verifyInputData = () => {
-    let inputValidity = false;
-    if (stepTracker == 1) {
+    let inputValidity = false
+    if (stepTracker === 1) {
       inputValidity = confirmValidCode()
       if (inputValidity) buttons.nextStep.disabled = false
       else buttons.nextStep.disabled = true
-    } if (stepTracker == 2) {
+    } if (stepTracker === 2) {
       inputValidity = confirmValidPassPhrase()
       if (inputValidity) {
-        buttons.genSeed.disabled = false
+        buttons.nextStep.disabled = false
       } else {
-        buttons.genSeed.disabled = true
+        buttons.nextStep.disabled = true
       }
-    } else if (stepTracker == 4) {
+    } else if (stepTracker === 4) {
       inputValidity = confirmValidInput()
       if (inputValidity) {
         buttons.nextStep.disabled = false
