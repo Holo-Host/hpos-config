@@ -593,10 +593,7 @@
   */
   const resetFields = (inputElements) => {
     for (let inputElement of inputElements) {
-      document.querySelector(`#${inputElement.id}-form-item`).classList.remove('error-red')
-      try {
-        inputElement.parentElement.querySelector('.input-item-label').classList.remove('error-red')
-      } catch (e) {/* label does not exist */ }
+      inputElement.classList.remove('error-red')
       inlineVariables.formErrorMessage.innerHTML = ''
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
     }
@@ -610,10 +607,7 @@
   */
   const renderInputError = (errorMessage, errorFieldsArray) => {
     for (let errorField of errorFieldsArray) {
-      document.querySelector(`#${errorField.id}-form-item`).classList.add('error-red')
-      try {
-        errorField.parentElement.querySelector('.input-item-label').classList.add('error-red')
-      } catch (e) {/* label does not exist */ }
+      errorField.classList.add('error-red')
       if (errorMessage === errorMessages.missingFields) inlineVariables.formErrorMessage.innerHTML = errorMessage
       else document.querySelector(`#${errorField.id}-error-message`).innerHTML = errorMessage
     }

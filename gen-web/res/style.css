@@ -148,6 +148,32 @@ ul li {
   min-height: 2.2em;
 }
 
+.bold {
+  font-weight: bolder;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+.inline-contents {
+  display: contents;
+}
+
+.paragraph-text {
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 2.5;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Forms & Inputs */
+
 form {
   display: flex;
   justify-content: center;
@@ -167,81 +193,46 @@ form {
   opacity: 0.8;
 }
 
-label {
-  border: none;
-  padding-left: 0;
+#form-error-message {
+  margin-bottom: 0px;
+}
+
+.form-margin {
+  margin-top: 45px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: #000000;
+  border: 0px;
+  outline: 0px;
+  border-bottom: 1px solid rgba(44, 64, 90, 0.4);
+}
+
+.input.error-red {
+  border-bottom: 1px solid #ee4266;
+}
+
+.input-label {
   font-style: normal;
-  font-weight: bold;
+  font-weight: 700;
   font-size: 10px;
   line-height: 13px;
-  display: flex;
-  align-items: flex-end;
   letter-spacing: 0.9px;
   text-transform: uppercase;
+
   mix-blend-mode: normal;
   opacity: 0.6;
-}
 
-.input-font {
-  color: #2c405a;
-  font-size: 16px;
-  line-height: 22px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  letter-spacing: -0.4px;
-}
-
-.button-font {
-  font-size: 16px;
-  line-height: 4px;
-  text-align: center;
-}
-
-.bold {
-  font-weight: bolder;
-}
-
-.italic {
-  font-style: italic;
-}
-
-.underline {
-  text-decoration: underline;
-}
-
-.inline-contents {
-  display: contents;
-}
-
-:focus {
-  outline-color: transparent;
-  outline-style: none;
-}
-
-.paragraph-text {
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 2.5;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.button-text {
-  vertical-align: text-bottom;
-  cursor: pointer;
-  letter-spacing: 1px;
-}
-
-.email-text {
-  display: block;
-  margin-left: 3%;
-  font-size: calc(0.21rem + 1.1vw);
-  line-height: calc(0.8rem + 1.9vw);
-}
-
-.block-subtext {
-  margin-top: 2vh;
+  transform: translate(0, -10px) scale(1);
 }
 
 /* Image & Icon Elements */
@@ -429,7 +420,7 @@ body.step0 .bookend-header {
 }
 
 .step-title {
-  font-weight: bold;
+  font-weight: 800;
   font-size: 18px;
   line-height: 25px;
   color: #000000;
@@ -573,83 +564,6 @@ body.step6 .image-block-item {
   height: 32px;
 }
 
-/* Form Fields & Inputs */
-
-label {
-  min-width: 11vh;
-  display: flex;
-}
-
-input {
-  display: flex;
-  border: none;
-  mix-blend-mode: normal;
-  width: calc(-1rem + 30vw);
-}
-
-.form-item {
-  margin: 6vh 20px 15px 0px;
-  border-bottom: 1px solid #2c405a;
-  width: 85%;
-}
-
-.form-item.error-red {
-  border-bottom: 1px solid #ee4266;
-}
-
-.input-item {
-  margin: 0;
-  border: 0;
-  display: inline-flex;
-  padding: 0;
-  position: relative;
-  min-width: 0;
-  flex-direction: column;
-  vertical-align: top;
-  /* extract font styles into typography section.. */
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 2.5;
-}
-
-.input-item-label {
-  margin-right: 10px;
-  font-style: normal;
-  font-weight: 700;
-  font-size: 10px;
-  line-height: 13px;
-  letter-spacing: 0.9px;
-  text-transform: uppercase;
-
-  mix-blend-mode: normal;
-  opacity: 0.6;
-
-  transform: translate(0, -10px) scale(1);
-}
-.input-item-label.error-red {
-  color: #ee4266;
-}
-
-.input-base {
-  height: 0.01em;
-  display: flex;
-  max-height: 2em;
-  align-items: center;
-}
-
-.input-note {
-  justify-self: flex-end;
-}
-
-#form-error-message {
-  margin-bottom: 0px;
-}
-
-span.error-red {
-  margin: 5px 0px 0px 0px;
-  margin-top: -5px;
-}
-
 /* Button Components */
 
 .buttons {
@@ -666,6 +580,18 @@ span.error-red {
 .download-button-wrapper {
   display: flex;
   flex-wrap: wrap;
+}
+
+.button-text {
+  vertical-align: text-bottom;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.button-font {
+  font-size: 16px;
+  line-height: 4px;
+  text-align: center;
 }
 
 button {

@@ -11,21 +11,21 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 
-<body id='container-fluid' class="step0">
-  <aside id='greeting-container'>
-    <img class="holo-banner step-display step0 step-exit" src='assets/images/holo-banner.svg' />
+<body id="container-fluid" class="step0">
+  <aside id="greeting-container">
+    <img class="holo-banner step-display step0 step-exit" src="assets/images/holo-banner.svg" />
     <img class="holo-banner step-display step1a step1 step2 step3 step4 step5 step6"
-      src='assets/images/holo-banner-white.svg' />
+      src="assets/images/holo-banner-white.svg" />
     <p class="greeting step-display step0">Time for Liftoff!</p>
-    <p class="greeting step-display step-exit">You're all set!</p>
+    <p class="greeting step-display step-exit">You’re all set!</p>
     <div class="step-display step1 step2 step3 step4 step5 step6">
       <div class="context">
         <p class="context-header">Context:</b>
         <p class="step-display step1">
-          A registration code can be used to register either one HoloPort or many HoloPorts during Quickstart. If you don't have your registration code, please register at <a href="https://register.holo.host">https://register.holo.host</a>
+          A registration code can be used to register either one HoloPort or many HoloPorts during Quickstart. If you don’t have your registration code, please register at <a href="https://register.holo.host">https://register.holo.host</a>
         </p>
         <p class="step-display step2">
           Your passphrase is an important thing to remember since it will decrypt your seed file &mdash; keep it somewhere very safe!
@@ -53,9 +53,9 @@
     </p>
   </aside>
   <div id="holo-brand-wrapper">
-    <img id="holo-brand" src='assets/icons/holo-logo-avatar.svg' />
+    <img id="holo-brand" src="assets/icons/holo-logo-avatar.svg" />
   </div>
-  <main id='content-container'>
+  <main id="content-container">
     <div class="bookend-container step-display step0 step-exit">
       <h1 class="bookend-header">
         <span class="step-display step0">A few things to note before you get started:</span>
@@ -88,7 +88,7 @@
       </div>
       <img id="rocket-icon" src="assets/icons/rocket-icon.svg" class="step-display step-exit" />
       <div class="farewell-text step-display step-exit">
-        You'll receive an email that includes a link to your Host Console where you can login and manage the settings of your HoloPort.
+        You’ll receive an email that includes a link to your Host Console where you can login and manage the settings of your HoloPort.
       </div>
     </div>
     <div class="step-display step1a step1 step2 step3 step4 step5 step6 step7">
@@ -134,33 +134,25 @@
         <p class="step-display step2">Make your passphrase as strong as possible. It should be long, include a mix of many different types of characters, and be hard to guess.</p>
         <p class="step-display step2">You can optionally turn off your internet while doing this for added security.</p>
         <p class="step-display step3">Click the button below to generate and save your seed file. You will need to save it to your hard drive or to a USB drive that is <strong><u>NOT</u></strong> the same USB drive used for your HoloPort.</p>
-        <p class="step-display step4">Enter the email address you used to register with Holo, and create a Host Console password for your <span id='current-holoport-descriptor'>primary</span> HoloPort.</p>
+        <p class="step-display step4">Enter the email address you used to register with Holo, and create a Host Console password for your <span id="current-holoport-descriptor">primary</span> HoloPort.</p>
         <p class="step-display step5">Click the button below to download the configuration file, and then move the file to the HoloPort USB drive. The filename must be <span id="download-file"></span> for your HoloPort to read it.</p>
         <p class="step-display step6">Safely eject the USB drive from your computer and insert it into the associated HoloPort.</p>
         <p class="step-display step7">Do you have additional HoloPorts that you’d like to register at this time?</p>
       </div>
       <span id="form-error-message" class="error-red"></span>
       <span id="form-success-message" class="holo-green"></span>
-      <div class="column step-display step1">
-        <div id='registration-code-form-item' class='form-item'>
-          <div class="input-item">
-            <div class="input-base">
-              <label id="registration-code-label" class='input-item-label'>Registration Code</label>
-              <input id="registration-code" class="input-font" name="registration-code" type="text"/>
-            </div>
-          </div>
+      <div class="column form-margin step-display step1">
+        <div id="registration-code-form-item" class="input-container">
+          <label id="registration-code-label" class="input-label" for="registration-code">Registration Code</label>
+          <input id="registration-code" class="input" name="registration-code" type="text"/>
         </div>
         <span id="registration-code-error-message" class="error-red"></span>
       </div>
 
-      <div class="column step-display step2">
-        <div id='seed-passphrase-form-item' class='form-item'>
-          <div class="input-item">
-            <div class="input-base">
-              <label id="seed-passphrase-label" class='input-item-label'>Passphrase</label>
-              <input id="seed-passphrase" class="input-font" name="seed-passphrase" type="text"/>
-            </div>
-          </div>
+      <div class="column form-margin step-display step2">
+        <div id="seed-passphrase-form-item" class="input-container">
+          <label id="seed-passphrase-label" class="input-label" for="seed-passphrase">Passphrase</label>
+          <input id="seed-passphrase" class="input" name="seed-passphrase" type="text"/>
         </div>
         <span id="seed-passphrase-error-message" class="error-red"></span>
         <p><span class="bold">Tip:</span> Write down or store your passphrase in a password manager.</p>
@@ -173,32 +165,32 @@
         </a>
       </div>
 
-      <form id='step4-form' class="column step-display step4">
-        <div id='email-form-item' class='form-item'>
+      <form id="step4-form" class="column form-margin step-display step4">
+        <div id="email-form-item" class="form-item">
           <div class="input-item">
             <div class="input-base">
-              <label id="email-label" class='input-item-label'>Your Email</label>
-              <input id="email" class="input-font" name="email" type="text" />
+              <label id="email-label" class="input-item-label">Your Email</label>
+              <input id="email" class="input-text" name="email" type="text" />
             </div>
           </div>
         </div>
         <span id="email-error-message" class="error-red"></span>
 
-        <div id='password-form-item' class='form-item'>
+        <div id="password-form-item" class="form-item">
           <div class="input-item">
             <div class="input-base">
-              <label id="password-label" class='input-item-label'>Password</label>
-              <input id="password" class="input-font" name="password" type="password" />
+              <label id="password-label" class="input-item-label">Password</label>
+              <input id="password" class="input-text" name="password" type="password" />
             </div>
           </div>
         </div>
         <span id="password-error-message" class="error-red"></span>
 
-        <div id='password-check-form-item' class='form-item'>
+        <div id="password-check-form-item" class="form-item">
           <div class="input-item">
             <div class="input-base">
-              <label id="password-check-label" class='input-item-label'>Retype Password</label>
-              <input id="password-check" class="input-font" name="password-check" type="password" />
+              <label id="password-check-label" class="input-item-label">Retype Password</label>
+              <input id="password-check" class="input-text" name="password-check" type="password" />
             </div>
           </div>
         </div>
@@ -264,12 +256,12 @@
         <button id="close-notice" class="btn button-font cancel-button"><span>Cancel</span></button>
       </div>
     </div>
-    <div class='modal-overlay'></div>
+    <div class="modal-overlay"></div>
   </div>
 
   <div id="modal-passphrase-intro">
-    <div class='modal-body'>
-      <img class="exclamation" src='assets/images/exclamation.svg' />
+    <div class="modal-body">
+      <img class="exclamation" src="assets/images/exclamation.svg" />
 
       <h2>Important!</h2>
 
@@ -278,12 +270,12 @@
 
       <button id="close-modal-intro" class="btn button-font confirm-button"><span>I understand</span></button>
     </div>
-    <div class='modal-overlay'></div>
+    <div class="modal-overlay"></div>
   </div>
 
   <div id="modal-passphrase-outro">
-    <div class='modal-body'>
-      <img class="exclamation" src='assets/images/exclamation.svg' />
+    <div class="modal-body">
+      <img class="exclamation" src="assets/images/exclamation.svg" />
 
       <h2>Important!</h2>
 
@@ -294,7 +286,7 @@
         <button id="has-written-passphrase" class="btn button-font confirm-button"><span>Yes</span></button>
       </div>
     </div>
-    <div class='modal-overlay'></div>
+    <div class="modal-overlay"></div>
   </div>
 
   <script src="main.js"></script>
