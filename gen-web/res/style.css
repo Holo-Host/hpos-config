@@ -613,16 +613,11 @@ button {
   font-weight: 500;
 }
 
-#download-button.disabled,
-#gen-seed-button.disabled,
-button:disabled,
-button[disabled],
-a.btn:disabled,
-a.btn[disabled] {
+.btn.disabled,
+.btn:disabled {
   cursor: not-allowed;
   pointer-events: none;
-  background: rgb(247, 247, 247);
-  border-color: rgb(213, 213, 213);
+  opacity: 0.6
 }
 
 .btn {
@@ -641,14 +636,6 @@ a.btn[disabled] {
 .modal-button {
   color: #5C4DA6;
   border-color: #5C4DA6;
-}
-
-#download-button.disabled,
-#gen-seed-button.disabled,
-.btn:disabled,
-.btn[disabled] {
-  background: #94cbcf;
-  color: #ffffff;
 }
 
 .action-button,
