@@ -213,7 +213,7 @@
         try {
           filesaver.saveAs(configFileBlob, genConfigFileName(deviceNumber, deviceID))
         } catch (e) {
-          // TODO do throw here throw new Error(`Error saving config. Error: ${e}`)
+          throw new Error(`Error saving config. Error: ${e}`)
         }
 
         /* Clean State */

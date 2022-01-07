@@ -25,11 +25,9 @@ body {
   box-sizing: border-box;
   margin: 0;
   background-color: #f5f5f5;
-  /* display: block !important; */
 }
 
 body.loading {
-  background-color: #f5f5f5;
   display: none;
 }
 
@@ -407,9 +405,9 @@ body.step-exit-multiple .bookend-container {
 
 .greeting-modal-title {
   color: #ffffff;
-  /* line-height: 1.2em;
+  line-height: 1.2em;
   font-weight: bold;
-  font-size: calc(1.9rem + 0.9vw); */
+  font-size: calc(1.9rem + 0.9vw);
 }
 
 .header {
@@ -832,23 +830,6 @@ a {
 }
 
 /* Modal Components */
-
-/* #change-seed-modal {
-  display: none;
-  position: fixed;
-  top: calc(26% - 6em);
-  left: 26%;
-  width: 50%;
-  max-width: 900px;
-  min-width: 350px;
-  height: 60%;
-  max-height: 505px;
-  background: #fff;
-  border-radius: 4px;
-  border: 1px #ddd solid;
-  overflow: hidden;
-  z-index: 1010;
-} */
 
 #fixed-overlay-loader {
   display: none;
