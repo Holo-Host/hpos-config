@@ -64,7 +64,7 @@
     missingFields: 'Please complete missing fields.',
     seedPassphrase: 'Your passphrase needs to be at least 20 characters in length',
     registrationCode: 'Invalid code',
-    email: 'Email domain not recognized',
+    email: 'Invalid email format',
     password: 'Your password needs to be at least 8 characters in length',
     passwordCheck: 'Passwords do not match',
     generateConfig: 'An error occurred when configuring your user file. Please update your information and try again.'
@@ -86,12 +86,6 @@
     nextStep: async () => {
       switch (stepTracker) {
         case 0:
-          if (!validateScreenSize() || detectMobileUserAgent()) {
-            const confirmed = confirm('This experience has not been optimized for mobile devices. Please continue only if you are using a laptop or PC.\n\nContinuing on a mobile device may result in unexpected issues.')
-            if (!confirmed) {
-              return
-            }
-          }
           updateUiStep(0.5)
           break
         case 0.5:
@@ -143,6 +137,13 @@
         case 1:
           updateUiStep(0.5)
           break
+        case 3:
+          if (downloadSeedTracker) {
+            click.openNotice()
+            break
+          } else {
+            // fall through to next case due to lack of `break`
+          }
         case 2:
         case 4:
         case 5:
@@ -150,13 +151,6 @@
           const rewind = true
           updateProgressBar(stepTracker, rewind)
           updateUiStep(stepTracker - 1)
-          break
-        case 3:
-          if (downloadSeedTracker) {
-            click.openNotice()
-          } else {
-            updateUiStep(2)
-          }
           break
         default:
           throw new Error(`unexpected stepTracker in prevStep: ${stepTracker}`)
@@ -266,8 +260,7 @@
       deviceNumber = 0
       deviceID = undefined
       updateProgressBar(3, rewind)
-      updateProgressBar(2, rewind)
-      updateUiStep(1)
+      updateUiStep(2)
     },
     exit: () => {
       // clear our secrets
@@ -325,6 +318,10 @@
       verifyInputData()
     },
     confirmValidInput: () => confirmValidInput()
+  }
+
+  if (!validateScreenSize() || detectMobileUserAgent()) {
+    alert('This page is not usable on mobile devices because it requires plugging in a USB.')
   }
 
   /* Back-up HTML that gets dynamically modified */

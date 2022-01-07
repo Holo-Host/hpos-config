@@ -622,7 +622,7 @@ button {
 .btn:disabled {
   cursor: not-allowed;
   pointer-events: none;
-  opacity: 0.6
+  opacity: 0.3;
 }
 
 .btn {
@@ -689,9 +689,13 @@ body.step0 .next-button {
   padding-right: 25px;
 }
 .next-button:hover span:after,
-.cancel-button:hover span {
+.cancel-button:hover span:after {
   opacity: 1;
   right: 0;
+}
+
+.cancel-button span:after {
+  content: "X";
 }
 
 .confirm-button {
@@ -807,7 +811,7 @@ a {
   background: #00838d;
   position: absolute;
   left: -6vw;
-  top: 20px;
+  top: 24px;
   z-index: -1;
   font-size: 50px;
   opacity: 0.4;
@@ -917,10 +921,10 @@ a {
   align-items: center;
   flex-direction: column;
   z-index: 101;
+  text-align: center;
 }
 
 .modal-body div {
-  text-align: center;
   margin-bottom: 30px;
 }
 
