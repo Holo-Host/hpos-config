@@ -481,9 +481,8 @@ body.step0 .bookend-header {
 
 .notes {
   max-width: 480px;
-  font-size: 14px;
-  line-height: 19px;
-  font-weight: 500;
+  font-size: 18px;
+  line-height: 25px;
   justify-content: start;
   display: flex;
   flex-direction: column;
