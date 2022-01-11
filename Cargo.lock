@@ -44,7 +44,7 @@ checksum = "8b26702f315f53b6071259e15dd9d64528213b44d61de1ec926eca7715d62203"
 [[package]]
 name = "argon2min"
 version = "0.3.0"
-source = "git+https://github.com/Holo-Host/argon2min?branch=2019-10-13-holo-config#65627302021261496067933fa100487304fc5c61"
+source = "git+https://github.com/Holo-Host/argon2min?branch=2019-10-13-holo-config#28e765e4369e19bc0126bb46acaacadf1303de22"
 dependencies = [
  "blake2-rfc",
 ]
