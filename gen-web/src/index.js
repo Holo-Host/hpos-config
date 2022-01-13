@@ -320,7 +320,7 @@
 
       verifyInputData()
     },
-    confirmValidInput: () => confirmValidInput()
+    confirmValidInput: () => confirmValidStep4Form()
   }
 
   if (!validateScreenSize() || detectMobileUserAgent()) {
@@ -651,13 +651,13 @@
   const verifyInputData = () => {
     let inputValidity = false
     if (stepTracker === 1) {
-      inputValidity = confirmValidCode()
+      inputValidity = confirmValidStep1Form()
       buttons.nextStep.disabled = !inputValidity
     } if (stepTracker === 2) {
       inputValidity = confirmValidPassPhrase()
       buttons.nextStep.disabled = !inputValidity
     } else if (stepTracker === 4) {
-      inputValidity = confirmValidInput()
+      inputValidity = confirmValidStep4Form()
       buttons.nextStep.disabled = !inputValidity
     }
     return inputValidity
@@ -667,16 +667,11 @@
    * Input form error check
    *
   */
-  const confirmValidInput = (submitPressed = signalKeyGen) => {
+  const confirmValidStep4Form = (submitPressed = signalKeyGen) => {
     const inputElements = Object.values(inputs)
     resetFields(inputElements)
     if (submitPressed) {
-      if (!inputs.email.value) {
-        const missingFields = inputElements.filter(inputs => !inputs.value)
-        renderInputError(errorMessages.missingFields, missingFields)
-      } else if (!validateEmail(inputs.email.value)) {
-        renderInputError(errorMessages.email, [inputs.email])
-      } else if (!inputs.password.value || inputs.password.value.length <= 7) {
+      if (!inputs.password.value || inputs.password.value.length <= 7) {
         renderInputError(errorMessages.password, [inputs.password])
       } else if (inputs.password.value && inputs.password.value !== inputs.passwordCheck.value) {
         const errorInputs = [inputs.passwordCheck]
@@ -691,15 +686,25 @@
 
     return false
   }
-  const confirmValidCode = () => {
-    const inputElements = Object.values({ registrationCode: inputs.registrationCode })
+  const confirmValidStep1Form = () => {
+    const inputElements = [inputs.email, inputs.registrationCode]
     resetFields(inputElements)
-    if (!inputs.registrationCode.value) {
-      const missingFields = inputElements.filter(inputs => !inputs.value)
+    let valid = true
+    const missingFields = inputElements.filter(inputs => !inputs.value)
+    if (missingFields.length !== 0) {
       renderInputError(errorMessages.missingFields, missingFields)
-    } else if (!validateRegistrationCode(inputs.registrationCode.value)) {
-      renderInputError(errorMessages.registrationCode, [inputs.registrationCode])
-    } else return true
+      valid = false
+    } else {
+      if (!validateEmail(inputs.email.value)) {
+        renderInputError(errorMessages.email, [inputs.email])
+        valid = false
+      }
+      if (!validateRegistrationCode(inputs.registrationCode.value)) {
+        renderInputError(errorMessages.registrationCode, [inputs.registrationCode])
+        valid = false
+      }
+    }
+    return valid
   }
   const confirmValidPassPhrase = () => {
     const inputElements = Object.values({ seedPassphrase: inputs.seedPassphrase })
