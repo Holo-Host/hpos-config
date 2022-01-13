@@ -11,6 +11,7 @@
     validatePassphrae } = await import('./validation')
   const { genConfigFileName, toBase64 } = await import('./utils')
   const SEED_FILE_NAME = 'master-seed'
+  const MEMBRANE_PROOF_SERVICE_URL = 'http://localhost:8800' // TODO: put real URL
   let stepTracker = 0
   let signalKeyGen = false
   let resetUserConfig = false
@@ -95,6 +96,8 @@
           if (!verifyInputData()) return buttons.nextStep.disabled = true
           // Load registration Code for use in later steps
           registrationCode = inputs.registrationCode.value
+          const result = await verifyRegistrationCode({ registration_code: registrationCode, email: "jack@holo.host" })
+          console.log('result', result)
           updateUiStep(2)
           updateProgressBar(1)
           click.showModalPassphraseIntro()
@@ -465,6 +468,33 @@
     return confirmed
   }
 
+  // Verifies a registration code by contacting the Holo Membrane Proof Service.
+  // Returns `true` if successful. Returns a string for user error feedback if applicable. Otherwise throws.
+  const verifyRegistrationCode = async ({ registration_code, email }) => {
+    const response = await fetch(`${MEMBRANE_PROOF_SERVICE_URL}/verify-registration-code/`, {
+      body: JSON.stringify({
+        registration_code,
+        email,
+      }),
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    if (response.status === 200) {
+      return true
+    }
+    if (response.status !== 500) {
+      throw new Error(`Service responded with status code ${response.status}`)
+    }
+    const body = await response.json()
+    console.log('body', body)
+    if (!body.isDisplayedToUser) {
+      throw new Error(`Received error response from service: ${body.error}: ${body.info}`)
+    }
+    return body.info
+  }
+
   const generate = async () => {
     signalKeyGen = true
     const inputValidity = await verifyInputData()
@@ -622,22 +652,13 @@
     let inputValidity = false
     if (stepTracker === 1) {
       inputValidity = confirmValidCode()
-      if (inputValidity) buttons.nextStep.disabled = false
-      else buttons.nextStep.disabled = true
+      buttons.nextStep.disabled = !inputValidity
     } if (stepTracker === 2) {
       inputValidity = confirmValidPassPhrase()
-      if (inputValidity) {
-        buttons.nextStep.disabled = false
-      } else {
-        buttons.nextStep.disabled = true
-      }
+      buttons.nextStep.disabled = !inputValidity
     } else if (stepTracker === 4) {
       inputValidity = confirmValidInput()
-      if (inputValidity) {
-        buttons.nextStep.disabled = false
-      } else {
-        buttons.nextStep.disabled = true
-      }
+      buttons.nextStep.disabled = !inputValidity
     }
     return inputValidity
   }
