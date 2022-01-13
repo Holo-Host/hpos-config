@@ -50,10 +50,11 @@
 
   const inlineVariables = {
     contentContainer: document.querySelector('#content-container'),
-    registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
-    seedPassphraseInputArea: document.querySelector('#seed-passphrase-form-item'),
     emailPlaceholder: document.querySelector('#email-placeholder'),
     emailInputArea: document.querySelector('#email-form-item'),
+    registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
+    seedPassphraseInputArea: document.querySelector('#seed-passphrase-form-item'),
+    emailReadOnly: document.querySelector('#email-read-only'),
     passwordInputArea: document.querySelector('#password-form-item'),
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     formErrorMessage: document.querySelector('#form-error-message'),
@@ -380,8 +381,11 @@
     } else if (stepTracker === 3) {
       /* Check for download*/
       verifySeedDownloadComplete()
-    } else if (stepTracker === 4 && deviceNumber > 0) {
-      buttons.prevStep.disabled = true
+    } else if (stepTracker === 4) {
+      inlineVariables.emailReadOnly.value = inputs.email.value
+      if (deviceNumber > 0) {
+        buttons.prevStep.disabled = true
+      }
     } else if (stepTracker === 5) {
       inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
       verifyDownloadComplete()
