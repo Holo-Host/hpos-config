@@ -1,7 +1,7 @@
 
 (async () => {
-  const filesaver = require('file-saver');
-  const hcSeedBundle = require('@holochain/hc-seed-bundle');
+  const filesaver = require('file-saver')
+  const hcSeedBundle = require('@holochain/hc-seed-bundle')
   const { config } = await import('../pkg')
   const {
     validateRegistrationCode,
@@ -11,7 +11,7 @@
     validatePassphrae } = await import('./validation')
   const { genConfigFileName, toBase64 } = await import('./utils')
   const SEED_FILE_NAME = 'master-seed'
-  let stepTracker
+  let stepTracker = 0
   let signalKeyGen = false
   let resetUserConfig = false
   let downloadConfigTracker = false
@@ -21,29 +21,22 @@
   let deviceNumber = 0
   let deviceID
   let registrationCode
+  let genSeedStartingHtml
+  let downloadStartingHtml
 
   /* Parse HTML elements */
   const buttons = {
-    startPrep: document.querySelector('#start-prep-button'),
-    start: document.querySelector('#start-button'),
-    registrationCode: document.querySelector('#registration-code-button'),
+    nextStep: document.querySelector('#next-button'),
+    prevStep: document.querySelector('#previous-button'),
     genSeed: document.querySelector('#gen-seed-button'),
-    postGenSeed: document.querySelector('#post-gen-seed-button'),
-    generate: document.querySelector('#generate-button'),
     download: document.querySelector('#download-button'),
-    postDownload: document.querySelector('#post-download-button'),
-    plugInDrive: document.querySelector('#drive-plugin-button'),
     closeNotice: document.querySelector('#close-notice'),
-    back0b: document.querySelector('#back-button0b'),
-    back1: document.querySelector('#back-button1'),
-    back2: document.querySelector('#back-button2'),
-    back3: document.querySelector('#back-button3'),
     back3Confirmation: document.querySelector('#back-button3-confirmation'),
-    back4: document.querySelector('#back-button4'),
-    back5: document.querySelector('#back-button5'),
     exit: document.querySelector('#exit-button'),
     loop: document.querySelector('#loop-button'),
-    termsAndConditions: document.querySelector('#terms-and-conditions'),
+    closeModalIntro: document.querySelector('#close-modal-intro'),
+    hasWrittenPassphrase: document.querySelector('#has-written-passphrase'),
+    hasNotWrittenPassphrase: document.querySelector('#has-not-written-passphrase')
   }
 
   const inputs = {
@@ -63,15 +56,16 @@
     passwordInputArea: document.querySelector('#password-form-item'),
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     formErrorMessage: document.querySelector('#form-error-message'),
-    downloadFileName: document.querySelector('#download-file')
+    downloadFileName: document.querySelector('#download-file'),
+    currentHoloportDescriptor: document.querySelector('#current-holoport-descriptor')
   }
 
   const errorMessages = {
     missingFields: 'Please complete missing fields.',
-    seedPassphrase: 'Your passphrase needs to be at least 20 character in length',
+    seedPassphrase: 'Your passphrase needs to be at least 20 characters in length',
     registrationCode: 'Invalid code',
-    email: 'Email domain not recognized',
-    password: 'Your password needs to be at least eight character in length',
+    email: 'Invalid email format',
+    password: 'Your password needs to be at least 8 characters in length',
     passwordCheck: 'Passwords do not match',
     generateConfig: 'An error occurred when configuring your user file. Please update your information and try again.'
   }
@@ -82,45 +76,92 @@
     password: ''
   }
 
+  // global variable used to pass seed passphrase between steps 2 and 3
+  let seedPassphrase
 
   /** Actions executed at button click
   * ======================================
   */
   const click = {
-    startPrep: () => {
-      if (!validateScreenSize() || detectMobileUserAgent()) {
-        const confirmed = confirm('This experience has not been optimized for mobile devices. Please continue only if you are using a laptop or PC.\n\nContinuing on a mobile device may result in unexpected issues.')
-        if (confirmed === true) return updateUiStep(1)
-        else return null
-      } else {
-        updateUiStep(1)
-
-        // DEV MODE HACK TO SWITCH THROUGH PAGES
-        // updateUiStep(2)
+    nextStep: async () => {
+      switch (stepTracker) {
+        case 0:
+          updateUiStep(0.5)
+          break
+        case 0.5:
+          updateUiStep(1)
+          break
+        case 1:
+          if (!verifyInputData()) return buttons.nextStep.disabled = true
+          // Load registration Code for use in later steps
+          registrationCode = inputs.registrationCode.value
+          updateUiStep(2)
+          updateProgressBar(1)
+          click.showModalPassphraseIntro()
+          break
+        case 2:
+          if (!verifyInputData()) {
+            buttons.nextStep.disabled = true
+            return
+          }
+          seedPassphrase = inputs.seedPassphrase.value
+          if (!await confirmPassphraseWritten()) {
+            return
+          }
+          updateUiStep(3)
+          updateProgressBar(2)
+          break
+        case 3:
+          updateUiStep(4)
+          updateProgressBar(3)
+          break
+        case 4:
+          generate()
+          break
+        case 5:
+          updateUiStep(6)
+          updateProgressBar(5)
+          break
+        case 6:
+          updateUiStep(7)
+          break
+        default:
+          throw new Error(`unexpected stepTracker in nextStep: ${stepTracker}`)
       }
     },
-    start: () => {
-      updateUiStep(1)
-      inputs.email.click()
-    },
-    storeRegistrationCode: async () => {
-      const inputValidity = await verifyInputData()
-      if (!inputValidity) return buttons.registrationCode.disabled = true
-      // Load registration Code for use in later steps
-      registrationCode = inputs.registrationCode.value
-      verifySeedDownloadComplete()
-      updateUiStep(2)
-      updateProgressBar(1)
+    prevStep: () => {
+      switch (stepTracker) {
+        case 0.5:
+          updateUiStep(0)
+          break
+        case 1:
+          updateUiStep(0.5)
+          break
+        case 3:
+          if (downloadSeedTracker) {
+            click.openNotice()
+            break
+          } else {
+            // fall through to next case due to lack of `break`
+          }
+        case 2:
+        case 4:
+        case 5:
+        case 6:
+          const rewind = true
+          updateProgressBar(stepTracker, rewind)
+          updateUiStep(stepTracker - 1)
+          break
+        default:
+          throw new Error(`unexpected stepTracker in prevStep: ${stepTracker}`)
+      }
     },
     genSeed: async () => {
-      const inputValidity = await verifyInputData()
-      if (!inputValidity) return buttons.genSeed.disabled = true
       // Load registration Code for use in later steps
-      let seedPassphrase = inputs.seedPassphrase.value
-      /* Communicate visually that something is happening in the bkgd */
+      /* Communicate visually that something is happening in the background */
       buttons.genSeed.classList.add('disabled')
       buttons.genSeed.disabled = true
-      buttons.genSeed.innerHTML = 'Saving Master Seed...'
+      buttons.genSeed.innerHTML = 'Saving Seed File...'
 
       setTimeout(async () => {
         try {
@@ -135,14 +176,19 @@
             generate_by: "quickstart-v2.0"
           })
           // we need the passphrase as a Uint8Array
+
           const pw = (new TextEncoder()).encode(seedPassphrase)
+
+          // clear passphrase from memory
+          seedPassphrase = null
+
           const encodedBytes = master.lock([
             new hcSeedBundle.SeedCipherPwHash(
               hcSeedBundle.parseSecret(pw), 'minimum')
           ])
 
           // DEV MODE - check pub key for devices:
-          console.log("Created master seed: ", master.signPubKey);
+          console.log("Created master seed: ", master.signPubKey)
 
           const seedBlob = new Blob([toBase64(encodedBytes)], { type: 'text/plain' })
           filesaver.saveAs(seedBlob, SEED_FILE_NAME)
@@ -154,96 +200,12 @@
         /* Clean State */
         downloadSeedTracker = true
         buttons.genSeed.disabled = true
-        buttons.genSeed.innerHTML = 'Saved Master Seed*'
+        buttons.genSeed.innerHTML = 'Saved Seed File'
         verifySeedDownloadComplete(downloadSeedTracker)
       }, 1000)
     },
-    postGenSeed: () => {
-      updateUiStep(3)
-      updateProgressBar(2)
-    },
-    generate: async () => {
-      signalKeyGen = true
-      const inputValidity = await verifyInputData()
-      if (!inputValidity) return buttons.generate.disabled = true
-
-      /* Set user config */
-      user.registrationCode = inputs.registrationCode.value
-      user.email = inputs.email.value
-      user.password = inputs.password.value
-
-      // DEV MODE - Config Check: 
-      // console.log('user config : ', user)
-
-      /* Communicate visually that something is happening in the bkgd */
-      buttons.generate.disabled = true
-      downloadConfigTracker = false
-      click.openLoader()
-      setTimeout(() => {
-        try {
-          inlineVariables.formErrorMessage.innerHTML = ''
-          // generate device bundle
-          // derive a device root seed from the master
-          const deviceRoot = master.derive(deviceNumber, {
-            bundleType: 'deviceRoot'
-          })
-          deviceRoot.setAppData({
-            device_number: deviceNumber,
-            generate_by: "quickstart-v2.0"
-          })
-          // encrypts it with password: pass
-          let pubKey = deviceRoot.signPubKey
-          const pw = (new TextEncoder()).encode('pass')
-          const encodedBytes = deviceRoot.lock([
-            new hcSeedBundle.SeedCipherPwHash(
-              hcSeedBundle.parseSecret(pw), 'minimum')
-          ])
-
-          // DEV MODE - check pub key for devices:
-          console.log("Created from master seed: ", master.signPubKey);
-          console.log(`Device ${deviceNumber}: ${toBase64(encodedBytes)}`)
-          console.log(`Device signPubkey: ${pubKey}`)
-
-          // pass seed into the blob
-          let seed = {
-            derivationPath: deviceNumber,
-            // base64 encode it URLSAFE_NO_PADDING
-            deviceRoot: toBase64(encodedBytes),
-            pubKey
-          }
-          // Generate hpos-config.json and create download blob attached to url
-          generateBlob(user, seed)
-          // clear our secrets
-          deviceRoot.zero()
-        } catch (e) {
-          inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
-          throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
-        }
-        /* Clean State */
-        buttons.generate.disabled = false
-        click.closeLoader()
-        updateUiStep(4)
-        updateProgressBar(3)
-
-        /* Reset Password inputs */
-        inputs.password.value = ''
-        inputs.passwordCheck.value = ''
-      }, 1500)
-    },
-    plugInDrive: () => {
-      updateUiStep(6)
-      updateProgressBar(5)
-    },
-    termsAndConditions: e => {
-      e.preventDefault()
-      window.open(
-        'https://holo.host/alpha-terms',
-        '_blank'
-      )
-    },
     download: async () => {
-      /* Communicate visually that something is happening in the bkgd */
-      buttons.download.classList.add('disabled')
+      /* Communicate visually that something is happening in the background */
       buttons.download.disabled = true
       buttons.download.innerHTML = 'Saving Configuration File...'
 
@@ -256,19 +218,11 @@
 
         /* Clean State */
         downloadConfigTracker = true
-        buttons.download.classList.remove('disabled')
         buttons.download.disabled = false
-        buttons.download.innerHTML = 'Save Configuration File Again'
+        buttons.download.innerHTML = downloadStartingHtml
+        buttons.download.querySelector('span').innerHTML = 'Save Configuration File Again'
         verifyDownloadComplete(downloadConfigTracker)
       }, 1000)
-    },
-    postDownload: () => {
-      updateUiStep(5)
-      updateProgressBar(4)
-    },
-    copied: () => {
-      updateUiStep(5)
-      updateProgressBar(4)
     },
     openLoader: () => {
       document.querySelector('#fixed-overlay-loader').style.display = 'block'
@@ -279,26 +233,19 @@
       document.querySelector('#modal-overlay-loader').style.display = 'none'
     },
     openNotice: () => {
-      document.querySelector('#fixed-overlay-notice').style.display = 'block'
-      document.querySelector('#modal-overlay-notice').style.display = 'block'
+      document.querySelector('#change-seed-modal').style.display = 'block'
     },
     closeNotice: () => {
-      document.querySelector('#fixed-overlay-notice').style.display = 'none'
-      document.querySelector('#modal-overlay-notice').style.display = 'none'
+      document.querySelector('#change-seed-modal').style.display = 'none'
     },
-    back0b: () => {
-      updateUiStep(0)
+    showModalPassphraseIntro: () => {
+      document.querySelector('#modal-passphrase-intro').style.display = 'block'
     },
-    back1: () => {
-      updateUiStep(0)
+    showModalPassphraseOutro: () => {
+      document.querySelector('#modal-passphrase-outro').style.display = 'block'
     },
-    back2: () => {
-      const rewind = true
-      updateProgressBar(2, rewind)
-      updateUiStep(1)
-    },
-    back3: () => {
-      click.openNotice()
+    closePassphraseIntro: () => {
+      document.querySelector('#modal-passphrase-intro').style.display = 'none'
     },
     back3Confirmation: () => {
       click.closeNotice()
@@ -313,47 +260,36 @@
       deviceNumber = 0
       deviceID = undefined
       updateProgressBar(3, rewind)
-      updateProgressBar(2, rewind)
-      updateUiStep(1)
-    },
-    back4: () => {
-      const rewind = true
-      updateProgressBar(4, rewind)
-      updateUiStep(3)
-    },
-    back5: () => {
-      const rewind = true
-      updateProgressBar(5, rewind)
-      updateUiStep(4)
+      updateUiStep(2)
     },
     exit: () => {
       // clear our secrets
-      master.zero()
+      master && master.zero()
       updateUiStep(-1)
     },
     loop: () => {
       deviceNumber++
-      // hide back option
-      buttons.back3.setAttribute("hidden", "hidden");
+      downloadConfigTracker = false
+      inlineVariables.currentHoloportDescriptor.innerHTML = 'additional'
       updateProgressBar(6, true)
       updateProgressBar(5, true)
-      updateProgressBar(4, true)
-      updateUiStep(3)
+      updateUiStep(4)
     },
-    forumHelp: e => {
-      e.preventDefault()
-      window.open(
-        'https://forum.holo.host',
-        '_blank'
-      )
-    },
-    handleEnter: event => {
-      const step = stepTracker || 0
+    handleKeyPress: event => {
       const keycode = (event.keyCode ? event.keyCode : event.which)
       /* Number 13 is the "Enter" key on the keyboard */
-      if (keycode === 13 && step <= 4) {
-        const stepButton = buttonBystep[step]
-        stepButton.click()
+      if (keycode === 13 && stepTracker <= 4) {
+        console.log('preventing default')
+        event.preventDefault()
+      }
+      else return null
+    },
+    handleKeyUp: event => {
+      const keycode = (event.keyCode ? event.keyCode : event.which)
+      /* Number 13 is the "Enter" key on the keyboard */
+      if (keycode === 13 && stepTracker <= 4) {
+        event.preventDefault()
+        click.nextStep()
       }
       else return null
     },
@@ -365,19 +301,18 @@
         labelId = document.querySelector(`#${inputId}-label`)
       }
 
+      /* input-active currently unused */
       const activeInputs = document.querySelectorAll('.input-active')
       if (activeInputs) {
         for (let activeInput of activeInputs) {
           if (!activeInput.parentElement.querySelector('input').value) {
             activeInput.classList.remove('input-active')
-            activeInput.dataset.shrink = 'false'
           }
         }
       }
 
       if (labelId) {
         labelId.classList.add('input-active')
-        labelId.dataset.shrink = 'true'
       }
 
       verifyInputData()
@@ -385,38 +320,30 @@
     confirmValidInput: () => confirmValidInput()
   }
 
-  /* Bind keystroke action to listener */
-  document.querySelector('body').onkeyup = click.handleEnter
+  if (!validateScreenSize() || detectMobileUserAgent()) {
+    alert('This page is not usable on mobile devices because it requires plugging in a USB.')
+  }
 
-  /* Set intial 'disable' state for all config actions buttons */
-  buttons.generate.disabled = false
-  buttons.registrationCode.disabled = false
-  buttons.genSeed.disabled = true
-  buttons.postGenSeed.disabled = true
-  buttons.postDownload.disabled = true
+  /* Back-up HTML that gets dynamically modified */
+  genSeedStartingHtml = buttons.genSeed.innerHTML
+  downloadStartingHtml = buttons.download.innerHTML
+
+  /* Bind keystroke action to listener */
+  document.querySelector('body').onkeypress = click.handleKeyPress
+  document.querySelector('body').onkeyup = click.handleKeyUp
 
   /* Bind actions to buttons */
-  buttons.startPrep.onclick = click.startPrep
-  buttons.start.onclick = click.start
-  buttons.registrationCode.onclick = click.storeRegistrationCode
+  buttons.nextStep.onclick = click.nextStep
+  buttons.prevStep.onclick = click.prevStep
   buttons.genSeed.onclick = click.genSeed
-  buttons.postGenSeed.onclick = click.postGenSeed
-  buttons.generate.onclick = click.generate
-  buttons.termsAndConditions.onclick = click.termsAndConditions
-  buttons.download.onclick = click.download
-  buttons.postDownload.onclick = click.postDownload
-  buttons.plugInDrive.onclick = click.plugInDrive
   buttons.closeNotice.onclick = click.closeNotice
-  buttons.back0b.onclick = click.back0b
-  buttons.back1.onclick = click.back1
-  buttons.back2.onclick = click.back2
-  buttons.back3.onclick = click.back3
   buttons.back3Confirmation.onclick = click.back3Confirmation
-  buttons.back4.onclick = click.back4
-  buttons.back5.onclick = click.back5
+  buttons.download.onclick = click.download
   buttons.exit.onclick = click.exit
   buttons.loop.onclick = click.loop
-  // buttons.forumHelp.onclick = click.forumHelp
+  buttons.closeModalIntro.onclick = click.closePassphraseIntro
+
+
   document.onkeyup = click.activateInput
   /* Bind input actions to inputArea actions */
   inlineVariables.registrationCodeInputArea.onclick = e => { inputs.registrationCode.focus(); return click.activateInput(e) }
@@ -436,33 +363,27 @@
 
   /** Helper Functions :
   * =============================
-  * 
+  *
   */
-  const validation = { 0.5: !0, 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0, 6: !0, '-1': !0 }
+  const validation = { 0.5: !0, 0: !0, 1: !0, 2: !0, 3: !0, 4: !0, 5: !0, 6: !0, 7: !0, '-1': !0 }
 
-  const buttonBystep = { 0: buttons.startPrep, 0.5: buttons.start, 1: buttons.registrationCode, 2: buttons.postGenSeed, 3: buttons.generate, 4: buttons.postDownload, 5: buttons.plugInDrive }
-
-  /** 
+  /**
   * Step Listener to initiate step specific actions
   */
   const constantCheck = () => {
-    if (stepTracker === 1) {
+    if (stepTracker === 2) {
       /* Add click listener to page container on Page 2 form intake */
       inlineVariables.contentContainer.onclick = verifyInputData
-    } else if (stepTracker === 2) {
-      verifyDownloadComplete()
     } else if (stepTracker === 3) {
       /* Check for download*/
-      verifyDownloadComplete()
-    } else if (stepTracker === 4) {
+      verifySeedDownloadComplete()
+    } else if (stepTracker === 4 && deviceNumber > 0) {
+      buttons.prevStep.disabled = true
+    } else if (stepTracker === 5) {
       inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
-    } else if (stepTracker === 4) {
-      /* Display back User Email on Page 4 for visual email verification */
-      inlineVariables.emailPlaceholder.innerHTML = user.email || console.error('User Email not found. Config may be corrupted.')
+      verifyDownloadComplete()
     }
   }
-
-
   /**
    * Update UI to the `step` step
    *
@@ -474,12 +395,27 @@
       return null
     }
     stepTracker = step
+    buttons.nextStep.disabled = false
+    buttons.prevStep.disabled = false
     constantCheck()
-    if (step === 0) {
-      return document.body.className = 'step-monitor'
-    } else if (step === 0.5) return document.body.className = 'step0b'
-    else if (step === -1) return document.body.className = 'step-exit'
-    return document.body.className = 'step' + step
+
+    switch (step) {
+      case 0:
+        document.body.className = 'step0'
+        break
+      case 0.5:
+        document.body.className = 'step1a'
+        break
+      case -1:
+        if (deviceNumber === 0) {
+          document.body.className = 'step-exit-single'
+        } else {
+          document.body.className = 'step-exit-multiple'
+        }
+        break
+      default:
+        document.body.className = 'step' + step
+    }
   }
 
   /**
@@ -514,6 +450,90 @@
     }
   }
 
+  const confirmPassphraseWritten = async () => {
+    click.showModalPassphraseOutro()
+
+    const confirmed = await new Promise(resolve => {
+      buttons.hasWrittenPassphrase.onclick = () => {
+        resolve(true)
+      }
+      buttons.hasNotWrittenPassphrase.onclick = () => {
+        resolve(false)
+      }
+    })
+    document.querySelector('#modal-passphrase-outro').style.display = 'none'
+    return confirmed
+  }
+
+  const generate = async () => {
+    signalKeyGen = true
+    const inputValidity = await verifyInputData()
+    if (!inputValidity) return buttons.nextStep.disabled = true
+
+    /* Set user config */
+    user.registrationCode = inputs.registrationCode.value
+    user.email = inputs.email.value
+    user.password = inputs.password.value
+
+    // DEV MODE - Config Check:
+    // console.log('user config : ', user)
+
+    /* Communicate visually that something is happening in the background */
+    buttons.nextStep.disabled = true
+    downloadConfigTracker = false
+    click.openLoader()
+
+    setTimeout(() => {
+      try {
+        inlineVariables.formErrorMessage.innerHTML = ''
+        // generate device bundle
+        // derive a device root seed from the master
+        const deviceRoot = master.derive(deviceNumber, {
+          bundleType: 'deviceRoot'
+        })
+        deviceRoot.setAppData({
+          device_number: deviceNumber,
+          generate_by: "quickstart-v2.0"
+        })
+        // encrypts it with password: pass
+        let pubKey = deviceRoot.signPubKey
+        const pw = (new TextEncoder()).encode('pass')
+        const encodedBytes = deviceRoot.lock([
+          new hcSeedBundle.SeedCipherPwHash(
+            hcSeedBundle.parseSecret(pw), 'minimum')
+        ])
+
+        // DEV MODE - check pub key for devices:
+        console.log("Created from master seed: ", master.signPubKey)
+        console.log(`Device ${deviceNumber}: ${toBase64(encodedBytes)}`)
+        console.log(`Device signPubkey: ${pubKey}`)
+
+        // pass seed into the blob
+        let seed = {
+          derivationPath: deviceNumber,
+          // base64 encode it URLSAFE_NO_PADDING
+          deviceRoot: toBase64(encodedBytes),
+          pubKey
+        }
+        // Generate hpos-config.json and create download blob attached to url
+        generateBlob(user, seed)
+        // clear our secrets
+        deviceRoot.zero()
+      } catch (e) {
+        inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
+        throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
+      }
+      /* Clean State */
+      click.closeLoader()
+      updateUiStep(5)
+      updateProgressBar(4)
+
+      /* Reset Password inputs */
+      inputs.password.value = ''
+      inputs.passwordCheck.value = ''
+    }, 1500)
+  }
+
   /**
    * Generate save link of hpos-config.json and attach to `button` domElement
    *
@@ -539,16 +559,16 @@
  */
   const verifySeedDownloadComplete = (downloadSeedComplete = downloadSeedTracker, newConfig = resetUserConfig) => {
     if (downloadSeedComplete) {
-      buttons.postGenSeed.disabled = false
+      buttons.nextStep.disabled = false
       buttons.genSeed.disabled = true
     }
     else if (newConfig) {
       buttons.genSeed.classList.remove('disabled')
-      buttons.genSeed.innerHTML = 'Generate & Save Master Seed*'
-      buttons.postGenSeed.disabled = true
+      buttons.genSeed.innerHTML = genSeedStartingHtml
+      buttons.nextStep.disabled = true
       resetUserConfig = false
     }
-    else return buttons.postGenSeed.disabled = true
+    else return buttons.nextStep.disabled = true
   }
 
   /**
@@ -557,15 +577,14 @@
    * @param {Boolean} downloadConfigComplete
   */
   const verifyDownloadComplete = (downloadConfigComplete = downloadConfigTracker, newConfig = resetUserConfig) => {
-    if (downloadConfigComplete) {
-      buttons.postDownload.disabled = false
+    const complete = downloadConfigComplete && !newConfig
+    buttons.nextStep.disabled = !complete
+    if (!downloadConfigComplete) {
+      buttons.download.innerHTML = downloadStartingHtml
+      if (newConfig) {
+        resetUserConfig = false
+      }
     }
-    else if (!downloadConfigComplete && newConfig) {
-      buttons.postDownload.disabled = true
-      resetUserConfig = false
-      buttons.download.innerHTML = 'Save New Configuration File'
-    }
-    else return buttons.postDownload.disabled = true
   }
 
   /**
@@ -575,10 +594,7 @@
   */
   const resetFields = (inputElements) => {
     for (let inputElement of inputElements) {
-      document.querySelector(`#${inputElement.id}-form-item`).classList.remove('error-red')
-      try {
-        inputElement.parentElement.querySelector('.input-item-label').classList.remove('error-red')
-      } catch (e) {/* label does not exist */ }
+      inputElement.classList.remove('error-red')
       inlineVariables.formErrorMessage.innerHTML = ''
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
     }
@@ -592,10 +608,7 @@
   */
   const renderInputError = (errorMessage, errorFieldsArray) => {
     for (let errorField of errorFieldsArray) {
-      document.querySelector(`#${errorField.id}-form-item`).classList.add('error-red')
-      try {
-        errorField.parentElement.querySelector('.input-item-label').classList.add('error-red')
-      } catch (e) {/* label does not exist */ }
+      errorField.classList.add('error-red')
       if (errorMessage === errorMessages.missingFields) inlineVariables.formErrorMessage.innerHTML = errorMessage
       else document.querySelector(`#${errorField.id}-error-message`).innerHTML = errorMessage
     }
@@ -605,20 +618,26 @@
   /**
    * Verify all form input before allowing progression to next page
   */
-  const verifyInputData = (step = stepTracker) => {
-    let inputValidity = false;
-    if (step == 1) {
+  const verifyInputData = () => {
+    let inputValidity = false
+    if (stepTracker === 1) {
       inputValidity = confirmValidCode()
-      if (inputValidity) buttons.registrationCode.disabled = false
-      else buttons.registrationCode.disabled = true
-    } if (step == 2) {
+      if (inputValidity) buttons.nextStep.disabled = false
+      else buttons.nextStep.disabled = true
+    } if (stepTracker === 2) {
       inputValidity = confirmValidPassPhrase()
-      if (inputValidity) buttons.genSeed.disabled = false
-      else buttons.genSeed.disabled = true
-    } else if (step == 3) {
+      if (inputValidity) {
+        buttons.nextStep.disabled = false
+      } else {
+        buttons.nextStep.disabled = true
+      }
+    } else if (stepTracker === 4) {
       inputValidity = confirmValidInput()
-      if (inputValidity) buttons.generate.disabled = false
-      else buttons.generate.disabled = true
+      if (inputValidity) {
+        buttons.nextStep.disabled = false
+      } else {
+        buttons.nextStep.disabled = true
+      }
     }
     return inputValidity
   }
