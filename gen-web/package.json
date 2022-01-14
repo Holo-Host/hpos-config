@@ -3,7 +3,7 @@
   "name": "quickstart",
   "version": "1.0.0",
   "scripts": {
-    "start": "webpack serve --mode development --open",
+    "start": "MEMBRANE_PROOF_SERVICE_URL=http://localhost:8800 webpack serve --mode development --open",
     "build": "webpack --mode production",
     "dev": "webpack --mode development",
     "serve": "webpack serve"
