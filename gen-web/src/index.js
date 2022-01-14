@@ -516,12 +516,12 @@
   // Verifies a registration code by contacting the Holo Membrane Proof Service.
   // Returns `true` if successful. Returns a string for user error feedback if applicable. Otherwise throws.
   const verifyRegistrationCode = async ({ registration_code, email }) => {
-    const response = await fetch(`${MEMBRANE_PROOF_SERVICE_URL}/verify-registration-code/`, {
-      body: JSON.stringify({
-        registration_code,
-        email,
-      }),
-      method: 'PUT',
+    const url = new URL(`${MEMBRANE_PROOF_SERVICE_URL}/verify-registration-code/`)
+    url.searchParams.append('registration_code', registration_code)
+    url.searchParams.append('email', email)
+    const response = await fetch(url,
+    {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
