@@ -261,7 +261,9 @@
         result = await promise
       } finally {
         cancelled = nextStepLoadingPromise !== promise
-        click.stopLoadingNextStep()
+        if (!cancelled) {
+          click.stopLoadingNextStep()
+        }
       }
 
       return { cancelled, result }
@@ -412,10 +414,7 @@
   * Step Listener to initiate step specific actions
   */
   const constantCheck = () => {
-    if (stepTracker === 2) {
-      /* Add click listener to page container on Page 2 form intake */
-      inlineVariables.contentContainer.onclick = verifyInputData
-    } else if (stepTracker === 3) {
+    if (stepTracker === 3) {
       /* Check for download*/
       verifySeedDownloadComplete()
     } else if (stepTracker === 4) {
@@ -542,16 +541,13 @@
 
   const generate = async () => {
     signalKeyGen = true
-    const inputValidity = await verifyInputData()
+    const inputValidity = verifyInputData()
     if (!inputValidity) return buttons.nextStep.disabled = true
 
     /* Set user config */
     user.registrationCode = inputs.registrationCode.value
     user.email = inputs.email.value
     user.password = inputs.password.value
-
-    // DEV MODE - Config Check:
-    // console.log('user config : ', user)
 
     /* Communicate visually that something is happening in the background */
     buttons.nextStep.disabled = true
