@@ -21,9 +21,9 @@
   let master
   let deviceNumber = 0
   let deviceID
-  let registrationCode
   let genSeedStartingHtml
   let downloadStartingHtml
+  let nextStepLoadingPromise = null
 
   /* Parse HTML elements */
   const buttons = {
@@ -62,6 +62,8 @@
     currentHoloportDescriptor: document.querySelector('#current-holoport-descriptor')
   }
 
+  const nextButtonLoaderColumn = document.querySelector('#next-button-loader-column')
+
   const errorMessages = {
     missingFields: 'Please complete missing fields.',
     seedPassphrase: 'Your passphrase needs to be at least 20 characters in length',
@@ -95,13 +97,20 @@
           break
         case 1:
           if (!verifyInputData()) return buttons.nextStep.disabled = true
-          // Load registration Code for use in later steps
-          registrationCode = inputs.registrationCode.value
-          const result = await verifyRegistrationCode({ registration_code: registrationCode, email: "jack@holo.host" })
-          console.log('result', result)
-          updateUiStep(2)
-          updateProgressBar(1)
-          click.showModalPassphraseIntro()
+          user.registrationCode = inputs.registrationCode.value
+          user.email = inputs.email.value
+
+          const { cancelled, result } = await click.loadNextStep(verifyRegistrationCode({ registration_code: user.registrationCode, email: user.email }))
+          if (cancelled) {
+            return
+          }
+          if (result === true) {
+            updateUiStep(2)
+            updateProgressBar(1)
+            click.showModalPassphraseIntro()
+          } else {
+            inlineVariables.formErrorMessage.textContent = result
+          }
           break
         case 2:
           if (!verifyInputData()) {
@@ -235,6 +244,29 @@
     closeLoader: () => {
       document.querySelector('#fixed-overlay-loader').style.display = 'none'
       document.querySelector('#modal-overlay-loader').style.display = 'none'
+    },
+    loadNextStep: async promise => {
+      nextButtonLoaderColumn.classList.add('loading')
+      buttons.nextStep.disabled = true
+
+      nextStepLoadingPromise = promise
+      let result
+      let cancelled
+      try {
+        result = await promise
+      } finally {
+        cancelled = nextStepLoadingPromise !== promise
+        click.stopLoadingNextStep()
+      }
+
+      return { cancelled, result }
+    },
+    stopLoadingNextStep: () => {
+      if (nextStepLoadingPromise !== null) {
+        nextStepLoadingPromise = null
+        nextButtonLoaderColumn.classList.remove('loading')
+        buttons.nextStep.disabled = false
+      }
     },
     openNotice: () => {
       document.querySelector('#change-seed-modal').style.display = 'block'
@@ -402,8 +434,13 @@
       return null
     }
     stepTracker = step
+
+    // Reset state
     buttons.nextStep.disabled = false
     buttons.prevStep.disabled = false
+    inlineVariables.formErrorMessage.innerHTML = ''
+    click.stopLoadingNextStep()
+
     constantCheck()
 
     switch (step) {
@@ -426,7 +463,7 @@
   }
 
   /**
-    * Update the progresss bar
+    * Update the progress bar
     *
     * @param {int} currentTransition
     * @param {bool} rewind
@@ -492,7 +529,6 @@
       throw new Error(`Service responded with status code ${response.status}`)
     }
     const body = await response.json()
-    console.log('body', body)
     if (!body.isDisplayedToUser) {
       throw new Error(`Received error response from service: ${body.error}: ${body.info}`)
     }
@@ -622,20 +658,20 @@
   }
 
   /**
-   * Reset Form Input Feilds while form is active
+   * Reset Form Input Fields while form is active
    *
    * @param {Array} inputElements
   */
   const resetFields = (inputElements) => {
+    inlineVariables.formErrorMessage.innerHTML = ''
     for (let inputElement of inputElements) {
       inputElement.classList.remove('error-red')
-      inlineVariables.formErrorMessage.innerHTML = ''
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
     }
   }
 
   /**
-   * Render specfic form input error messages and styles
+   * Render specific form input error messages and styles
    *
    * @param {String} errorMessage
    * @param {Array} errorFieldsArray

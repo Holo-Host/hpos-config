@@ -219,11 +219,19 @@
 
     <div class="buttons lower-right step-opacity step0 step1a step1 step2 step3 step4 step5 step6">
       <button id="previous-button" class="btn button-font previous-button step-opacity step1a step1 step2 step3 step4 step5 step6"><span>Previous</span></button>
-      <button id="next-button" class="btn button-font next-button"><span>Next</span></button>
+      <div id="next-button-loader-column">
+        <div class="loader-dots">
+          <div class="loader-dot"></div>
+          <div class="loader-dot"></div>
+          <div class="loader-dot"></div>
+          <div class="loader-dot"></div>
+        </div>
+        <button id="next-button" class="btn button-font next-button"><span>Next</span></button>
+      </div>
     </div>
   </main>
   <img id="holoport-flying" class="step-display step0"
-    src='assets/images/hports-flying-transparent.png' />
+    src="assets/images/hports-flying-transparent.png" />
 
   <div id="fixed-overlay-loader">
     <div class="loader-grid">
