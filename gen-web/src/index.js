@@ -11,7 +11,12 @@
     validatePassphrae } = await import('./validation')
   const { genConfigFileName, toBase64 } = await import('./utils')
   const SEED_FILE_NAME = 'master-seed'
-  const MEMBRANE_PROOF_SERVICE_URL = 'http://localhost:8800' // TODO: put real URL
+
+  // TODO: Is it possible to use an environment variable or some webpack feature to make this a build-time parameter?
+  const MEMBRANE_PROOF_SERVICE_URL = 'https://test-membrane-proof-service.holo.host'
+  // const MEMBRANE_PROOF_SERVICE_URL = 'http://localhost:8800'
+  // const MEMBRANE_PROOF_SERVICE_URL = 'https://membrane-proof-service.holo.host'
+
   let stepTracker = 0
   let signalKeyGen = false
   let resetUserConfig = false
