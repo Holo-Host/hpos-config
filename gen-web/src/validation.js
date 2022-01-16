@@ -13,7 +13,7 @@ export const validateRegistrationCode = (registrationCode) => {
  * @param {string} registrationCode
  */
 export const validatePassphrae = (passphrase) => {
-    return passphrase.length > 20
+    return passphrase.length >= 20
 }
 
 /**	
