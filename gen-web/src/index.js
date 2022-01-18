@@ -11,6 +11,9 @@
     validatePassphrae } = await import('./validation')
   const { genConfigFileName, toBase64 } = await import('./utils')
   const SEED_FILE_NAME = 'master-seed'
+
+  const MEMBRANE_PROOF_SERVICE_URL = process.env.MEMBRANE_PROOF_SERVICE_URL
+
   let stepTracker = 0
   let signalKeyGen = false
   let resetUserConfig = false
@@ -20,9 +23,9 @@
   let master
   let deviceNumber = 0
   let deviceID
-  let registrationCode
   let genSeedStartingHtml
   let downloadStartingHtml
+  let nextStepLoadingPromise = null
 
   /* Parse HTML elements */
   const buttons = {
@@ -49,16 +52,19 @@
 
   const inlineVariables = {
     contentContainer: document.querySelector('#content-container'),
-    registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
-    seedPassphraseInputArea: document.querySelector('#seed-passphrase-form-item'),
     emailPlaceholder: document.querySelector('#email-placeholder'),
     emailInputArea: document.querySelector('#email-form-item'),
+    registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
+    seedPassphraseInputArea: document.querySelector('#seed-passphrase-form-item'),
+    emailReadOnly: document.querySelector('#email-read-only'),
     passwordInputArea: document.querySelector('#password-form-item'),
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     formErrorMessage: document.querySelector('#form-error-message'),
     downloadFileName: document.querySelector('#download-file'),
     currentHoloportDescriptor: document.querySelector('#current-holoport-descriptor')
   }
+
+  const nextButtonLoaderColumn = document.querySelector('#next-button-loader-column')
 
   const errorMessages = {
     missingFields: 'Please complete missing fields.',
@@ -93,11 +99,20 @@
           break
         case 1:
           if (!verifyInputData()) return buttons.nextStep.disabled = true
-          // Load registration Code for use in later steps
-          registrationCode = inputs.registrationCode.value
-          updateUiStep(2)
-          updateProgressBar(1)
-          click.showModalPassphraseIntro()
+          user.registrationCode = inputs.registrationCode.value
+          user.email = inputs.email.value
+
+          const { cancelled, result } = await click.loadNextStep(verifyRegistrationCode({ registration_code: user.registrationCode, email: user.email }))
+          if (cancelled) {
+            return
+          }
+          if (result === true) {
+            updateUiStep(2)
+            updateProgressBar(1)
+            click.showModalPassphraseIntro()
+          } else {
+            inlineVariables.formErrorMessage.textContent = result
+          }
           break
         case 2:
           if (!verifyInputData()) {
@@ -232,6 +247,31 @@
       document.querySelector('#fixed-overlay-loader').style.display = 'none'
       document.querySelector('#modal-overlay-loader').style.display = 'none'
     },
+    loadNextStep: async promise => {
+      nextButtonLoaderColumn.classList.add('loading')
+      buttons.nextStep.disabled = true
+
+      nextStepLoadingPromise = promise
+      let result
+      let cancelled
+      try {
+        result = await promise
+      } finally {
+        cancelled = nextStepLoadingPromise !== promise
+        if (!cancelled) {
+          click.stopLoadingNextStep()
+        }
+      }
+
+      return { cancelled, result }
+    },
+    stopLoadingNextStep: () => {
+      if (nextStepLoadingPromise !== null) {
+        nextStepLoadingPromise = null
+        nextButtonLoaderColumn.classList.remove('loading')
+        buttons.nextStep.disabled = false
+      }
+    },
     openNotice: () => {
       document.querySelector('#change-seed-modal').style.display = 'block'
     },
@@ -317,7 +357,7 @@
 
       verifyInputData()
     },
-    confirmValidInput: () => confirmValidInput()
+    confirmValidInput: () => confirmValidStep4Form()
   }
 
   if (!validateScreenSize() || detectMobileUserAgent()) {
@@ -371,14 +411,14 @@
   * Step Listener to initiate step specific actions
   */
   const constantCheck = () => {
-    if (stepTracker === 2) {
-      /* Add click listener to page container on Page 2 form intake */
-      inlineVariables.contentContainer.onclick = verifyInputData
-    } else if (stepTracker === 3) {
+    if (stepTracker === 3) {
       /* Check for download*/
       verifySeedDownloadComplete()
-    } else if (stepTracker === 4 && deviceNumber > 0) {
-      buttons.prevStep.disabled = true
+    } else if (stepTracker === 4) {
+      inlineVariables.emailReadOnly.value = inputs.email.value
+      if (deviceNumber > 0) {
+        buttons.prevStep.disabled = true
+      }
     } else if (stepTracker === 5) {
       inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
       verifyDownloadComplete()
@@ -395,8 +435,13 @@
       return null
     }
     stepTracker = step
+
+    // Reset state
     buttons.nextStep.disabled = false
     buttons.prevStep.disabled = false
+    inlineVariables.formErrorMessage.innerHTML = ''
+    click.stopLoadingNextStep()
+
     constantCheck()
 
     switch (step) {
@@ -419,7 +464,7 @@
   }
 
   /**
-    * Update the progresss bar
+    * Update the progress bar
     *
     * @param {int} currentTransition
     * @param {bool} rewind
@@ -465,18 +510,41 @@
     return confirmed
   }
 
+  // Verifies a registration code by contacting the Holo Membrane Proof Service.
+  // Returns `true` if successful. Returns a string for user error feedback if applicable. Otherwise throws.
+  const verifyRegistrationCode = async ({ registration_code, email }) => {
+    const url = new URL(`${MEMBRANE_PROOF_SERVICE_URL}/verify-registration-code/`)
+    url.searchParams.append('registration_code', registration_code)
+    url.searchParams.append('email', email)
+    const response = await fetch(url,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    if (response.status === 200) {
+      return true
+    }
+    if (response.status !== 500) {
+      throw new Error(`Service responded with status code ${response.status}`)
+    }
+    const body = await response.json()
+    if (!body.isDisplayedToUser) {
+      throw new Error(`Received error response from service: ${body.error}: ${body.info}`)
+    }
+    return body.info
+  }
+
   const generate = async () => {
     signalKeyGen = true
-    const inputValidity = await verifyInputData()
+    const inputValidity = verifyInputData()
     if (!inputValidity) return buttons.nextStep.disabled = true
 
     /* Set user config */
     user.registrationCode = inputs.registrationCode.value
     user.email = inputs.email.value
     user.password = inputs.password.value
-
-    // DEV MODE - Config Check:
-    // console.log('user config : ', user)
 
     /* Communicate visually that something is happening in the background */
     buttons.nextStep.disabled = true
@@ -588,20 +656,20 @@
   }
 
   /**
-   * Reset Form Input Feilds while form is active
+   * Reset Form Input Fields while form is active
    *
    * @param {Array} inputElements
   */
   const resetFields = (inputElements) => {
+    inlineVariables.formErrorMessage.innerHTML = ''
     for (let inputElement of inputElements) {
       inputElement.classList.remove('error-red')
-      inlineVariables.formErrorMessage.innerHTML = ''
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
     }
   }
 
   /**
-   * Render specfic form input error messages and styles
+   * Render specific form input error messages and styles
    *
    * @param {String} errorMessage
    * @param {Array} errorFieldsArray
@@ -621,23 +689,14 @@
   const verifyInputData = () => {
     let inputValidity = false
     if (stepTracker === 1) {
-      inputValidity = confirmValidCode()
-      if (inputValidity) buttons.nextStep.disabled = false
-      else buttons.nextStep.disabled = true
+      inputValidity = confirmValidStep1Form()
+      buttons.nextStep.disabled = !inputValidity
     } if (stepTracker === 2) {
       inputValidity = confirmValidPassPhrase()
-      if (inputValidity) {
-        buttons.nextStep.disabled = false
-      } else {
-        buttons.nextStep.disabled = true
-      }
+      buttons.nextStep.disabled = !inputValidity
     } else if (stepTracker === 4) {
-      inputValidity = confirmValidInput()
-      if (inputValidity) {
-        buttons.nextStep.disabled = false
-      } else {
-        buttons.nextStep.disabled = true
-      }
+      inputValidity = confirmValidStep4Form()
+      buttons.nextStep.disabled = !inputValidity
     }
     return inputValidity
   }
@@ -646,16 +705,11 @@
    * Input form error check
    *
   */
-  const confirmValidInput = (submitPressed = signalKeyGen) => {
+  const confirmValidStep4Form = (submitPressed = signalKeyGen) => {
     const inputElements = Object.values(inputs)
     resetFields(inputElements)
     if (submitPressed) {
-      if (!inputs.email.value) {
-        const missingFields = inputElements.filter(inputs => !inputs.value)
-        renderInputError(errorMessages.missingFields, missingFields)
-      } else if (!validateEmail(inputs.email.value)) {
-        renderInputError(errorMessages.email, [inputs.email])
-      } else if (!inputs.password.value || inputs.password.value.length <= 7) {
+      if (!inputs.password.value || inputs.password.value.length <= 7) {
         renderInputError(errorMessages.password, [inputs.password])
       } else if (inputs.password.value && inputs.password.value !== inputs.passwordCheck.value) {
         const errorInputs = [inputs.passwordCheck]
@@ -670,15 +724,25 @@
 
     return false
   }
-  const confirmValidCode = () => {
-    const inputElements = Object.values({ registrationCode: inputs.registrationCode })
+  const confirmValidStep1Form = () => {
+    const inputElements = [inputs.email, inputs.registrationCode]
     resetFields(inputElements)
-    if (!inputs.registrationCode.value) {
-      const missingFields = inputElements.filter(inputs => !inputs.value)
+    let valid = true
+    const missingFields = inputElements.filter(inputs => !inputs.value)
+    if (missingFields.length !== 0) {
       renderInputError(errorMessages.missingFields, missingFields)
-    } else if (!validateRegistrationCode(inputs.registrationCode.value)) {
-      renderInputError(errorMessages.registrationCode, [inputs.registrationCode])
-    } else return true
+      valid = false
+    } else {
+      if (!validateEmail(inputs.email.value)) {
+        renderInputError(errorMessages.email, [inputs.email])
+        valid = false
+      }
+      if (!validateRegistrationCode(inputs.registrationCode.value)) {
+        renderInputError(errorMessages.registrationCode, [inputs.registrationCode])
+        valid = false
+      }
+    }
+    return valid
   }
   const confirmValidPassPhrase = () => {
     const inputElements = Object.values({ seedPassphrase: inputs.seedPassphrase })
