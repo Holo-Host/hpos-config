@@ -14,11 +14,7 @@ repository:
 collaborators: []
 
 teams:
-  - name: central
-    permission: push
-  - name: happy
-    permission: push
-  - name: hydra
+  - name: holo-hosting
     permission: push
 
 branches:
@@ -38,8 +34,7 @@ branches:
       restrictions:
         users: []
         teams:
-        - central
-        - happy
+        - holo-hosting
   - name: master
     protection:
       required_pull_request_reviews:
@@ -56,5 +51,4 @@ branches:
       restrictions:
         users: []
         teams:
-        - central
-        - happy
+        - holo-hosting
