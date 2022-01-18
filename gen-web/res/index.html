@@ -65,6 +65,10 @@
       <div class="step-display step0">
         <ul class="notes">
           <li class="note">
+            <img id="important-icon" src="assets/icons/important-icon.svg" class="note-icon" />
+            <div>If you have multiple HoloPorts, you must register them all during this Quickstart session</div>
+          </li>
+          <li class="note">
             <img id="world-icon" src="assets/icons/world-icon.svg" class="note-icon" />
             <div>Power on and connect your HoloPort to
               the Internet</div>
@@ -138,9 +142,9 @@
         <p class="step-display step2">Make your passphrase as strong as possible. It should be long, include a mix of many different types of characters, and be hard to guess.</p>
         <p class="step-display step2">You can optionally turn off your internet while doing this for added security.</p>
         <p class="step-display step3">Click the button below to generate and save your seed file. You will need to save it to your hard drive or to a USB drive that is <strong><u>NOT</u></strong> the same USB drive used for your HoloPort.</p>
-        <p class="step-display step4">Enter the email address you used to register with Holo, and create a Host Console password for your <span id="current-holoport-descriptor">primary</span> HoloPort.</p>
+        <p class="step-display step4">Create a Host Console password for your <span id="current-holoport-descriptor">primary</span> HoloPort.</p>
         <p class="step-display step5">Click the button below to download the configuration file, and then move the file to the HoloPort USB drive. The filename must be <span id="download-file"></span> for your HoloPort to read it.</p>
-        <p class="step-display step6">Safely eject the USB drive from your computer and insert it into the associated HoloPort.</p>
+        <p class="step-display step6">Safely eject the USB from your computer, power on your HoloPort, and insert the USB into the associated HoloPort when the LED light is solid blue. </p>
         <p class="step-display step7">Do you have additional HoloPorts that you’d like to register at this time?</p>
       </div>
       <span id="form-error-message" class="error-red"></span>
@@ -165,7 +169,7 @@
           <input id="seed-passphrase" class="input" name="seed-passphrase" type="text"/>
         </div>
         <span id="seed-passphrase-error-message" class="error-red"></span>
-        <p><span class="bold">Tip:</span> Write down or store your passphrase in a password manager.</p>
+        <p class="step-footnote"><span class="bold">Tip:</span> Write down or store your passphrase in a password manager.</p>
       </div>
 
 
@@ -201,12 +205,13 @@
             class="button-text">Save Configuration File</span></a>
       </div>
 
-      <div class="step-display step6">
+      <div class="column step-display step6">
         <div class="image-block">
           <div class="image-block-item">
             <img src="assets/icons/holoport-device-icon.svg" class="display-image-holoport" />
           </div>
         </div>
+        <p class="step-footnote"><span class="bold">Note:</span> If you have an additional HoloPort to register, you must continue to the next page to add it.</p>
       </div>
 
       <div class="step-display step7">
