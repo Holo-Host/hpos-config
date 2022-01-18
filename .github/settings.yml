@@ -16,6 +16,8 @@ collaborators: []
 teams:
   - name: holo-hosting
     permission: push
+  - name: hydra
+    permission: push
 
 branches:
   - name: develop
