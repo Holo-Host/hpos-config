@@ -17,7 +17,7 @@
 html {
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 19px;
   color: #24292e;
 }
 
@@ -133,10 +133,6 @@ h1 {
   font-weight: bold;
   font-size: 24px;
   line-height: 28px;
-}
-
-h2 {
-  letter-spacing: initial;
 }
 
 ul {
@@ -439,7 +435,8 @@ body.step0 .bookend-header {
   color: #00838D;
 }
 
-.step-description {
+.step-description,
+.step-footnote {
   font-size: 18px;
   line-height: 25px;
   color: #000000;
@@ -630,7 +627,6 @@ button {
   font-size: 16px;
   color: #00838d;
   background-color: #ffffff;
-  margin: 8px;
   width: 151px;
   height: 42px;
   box-sizing: border-box;
@@ -728,13 +724,6 @@ body.step0 .next-button {
   font-weight: bold;
 }
 
-#back-button3-confirmation,
-#close-notice {
-  width: 14vw;
-  min-width: 7rem;
-  max-width: 12rem;
-}
-
 /* Link Elements */
 
 .help-link {
@@ -751,15 +740,24 @@ body.step0 .next-button {
   font-size: 16px;
 }
 
-body.step0 .help-link a,
-body.step-exit-single .help-link a
-body.step-exit-multiple .help-link a {
-  color: #00838d;
+body.step0 .help-link,
+body.step-exit-single .help-link
+body.step-exit-multiple .help-link {
+  color: #333333;
 }
 
 a {
   font-weight: 700;
   color: inherit;
+}
+
+.help-button {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.help-button img {
+  width: 14px;
 }
 
 /*Progress Bar Component*/
@@ -886,27 +884,45 @@ a {
   transform: rotate(-45deg);
 }
 
+.modal-wrapper {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 101;
+
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+}
+
 #modal-passphrase-intro, #modal-passphrase-outro, #change-seed-modal {
   display: none;
 }
 
 .modal-body {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: auto;
+  width: 490px;
+  box-sizing: border-box;
+
+  color: #000000;
+
   background-color: white;
   border-radius: 5px;
-  padding: 50px 40px;
+  padding: 35px 50px 40px 50px;
   display: flex;
   align-items: center;
   flex-direction: column;
-  z-index: 101;
   text-align: center;
 }
 
 .modal-body div {
   margin-bottom: 30px;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 30px;
 }
 
 .modal-overlay {
