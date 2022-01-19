@@ -135,10 +135,6 @@ h1 {
   line-height: 28px;
 }
 
-h2 {
-  letter-spacing: initial;
-}
-
 ul {
   margin: 0;
 }
@@ -631,7 +627,6 @@ button {
   font-size: 16px;
   color: #00838d;
   background-color: #ffffff;
-  margin: 8px;
   width: 151px;
   height: 42px;
   box-sizing: border-box;
@@ -896,27 +891,45 @@ a {
   transform: rotate(-45deg);
 }
 
+.modal-wrapper {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  z-index: 101;
+
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+}
+
 #modal-passphrase-intro, #modal-passphrase-outro, #change-seed-modal {
   display: none;
 }
 
 .modal-body {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin: auto;
+  width: 490px;
+  box-sizing: border-box;
+
+  color: #000000;
+
   background-color: white;
   border-radius: 5px;
-  padding: 50px 40px;
+  padding: 35px 50px 40px 50px;
   display: flex;
   align-items: center;
   flex-direction: column;
-  z-index: 101;
   text-align: center;
 }
 
 .modal-body div {
   margin-bottom: 30px;
+}
+
+.modal-title {
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 30px;
 }
 
 .modal-overlay {

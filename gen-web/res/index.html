@@ -259,45 +259,52 @@
   <div id="modal-overlay-loader"></div>
 
   <div id="change-seed-modal">
-    <div class="modal-body">
-      <h2>You’ve already generated your Seed File!</h2>
-      <p>If you go back, a new seed file will have to be generated, and you will need to save it securely again.</p>
-      <div class="buttons">
-        <button id="back-button3-confirmation" class="btn button-font previous-button"><span>Go back</span></button>
-        <button id="close-notice" class="btn button-font cancel-button"><span>Cancel</span></button>
+    <div class="modal-overlay"></div>
+    <div class="modal-wrapper">
+      <div class="modal-body">
+        <p class="modal-title">You’ve already generated your Seed File!</p>
+
+        <p>If you go back, a new seed file will have to be generated, and you will need to save it securely again.</p>
+        <div class="buttons">
+          <button id="back-button3-confirmation" class="btn button-font previous-button"><span>Go back</span></button>
+          <button id="close-notice" class="btn button-font cancel-button"><span>Cancel</span></button>
+        </div>
       </div>
     </div>
-    <div class="modal-overlay"></div>
   </div>
 
   <div id="modal-passphrase-intro">
-    <div class="modal-body">
-      <img class="exclamation" src="assets/icons/important-purple-icon.svg" />
-
-      <h2>Important!</h2>
-
-      <div>The next two steps are where you create and save your seed file, which is the basis of your identity. <a class="help-button" href="https://holo.host/faq-tag/registration-quickstart/" target="_blank"><img src="assets/icons/question-purple-icon.svg" /></a></div>
-      <div>It is super important for you to <strong>save the seed file and the passphrase you create here somewhere safe&mdash;and somewhere you will remember</strong>. It will be used in the future if you need to regenerate passwords or if you need to register additional HoloPorts. You can disconnect from the Internet now if you would like, and continue using Quickstart.</div>
-
-      <button id="close-modal-intro" class="btn button-font confirm-button"><span>I understand</span></button>
-    </div>
     <div class="modal-overlay"></div>
+    <div class="modal-wrapper">
+      <div class="modal-body">
+        <img class="exclamation" src="assets/icons/important-purple-icon.svg" />
+
+        <p class="modal-title">Important!</p>
+
+        <div>The next two steps are where you create and save your seed file, which is the basis of your identity. <a class="help-button" href="https://holo.host/faq-tag/registration-quickstart/" target="_blank"><img src="assets/icons/question-purple-icon.svg" /></a></div>
+        <div>It is super important for you to <strong>save the seed file and the passphrase you create here somewhere safe&mdash;and somewhere you will remember</strong>. It will be used in the future if you need to regenerate passwords or if you need to register additional HoloPorts. You can disconnect from the Internet now if you would like, and continue using Quickstart.</div>
+
+        <button id="close-modal-intro" class="btn button-font confirm-button"><span>I understand</span></button>
+      </div>
+    </div>
   </div>
 
   <div id="modal-passphrase-outro">
-    <div class="modal-body">
-      <img class="exclamation" src="assets/icons/important-purple-icon.svg" />
+    <div class="modal-overlay"></div>
+    <div class="modal-wrapper">
+      <div class="modal-body">
+        <img class="exclamation" src="assets/icons/important-purple-icon.svg" />
 
-      <h2>Important!</h2>
+        <p class="modal-title">Important!</p>
 
-      <div>Did you remember to write down your passphrase in a safe and memorable place?</div>
+        <div>Did you remember to write down your passphrase in a safe and memorable place?</div>
 
-      <div class="buttons">
-        <button id="has-not-written-passphrase" class="btn button-font modal-button"><span>Go back</span></button>
-        <button id="has-written-passphrase" class="btn button-font confirm-button"><span>Yes</span></button>
+        <div class="buttons">
+          <button id="has-not-written-passphrase" class="btn button-font modal-button"><span>Go back</span></button>
+          <button id="has-written-passphrase" class="btn button-font confirm-button"><span>Yes</span></button>
+        </div>
       </div>
     </div>
-    <div class="modal-overlay"></div>
   </div>
 
   <script src="main.js"></script>
