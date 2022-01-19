@@ -17,7 +17,7 @@
 html {
   font-family: 'Nunito Sans', sans-serif;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 19px;
   color: #24292e;
 }
 
@@ -761,6 +761,15 @@ body.step-exit-multiple .help-link {
 a {
   font-weight: 700;
   color: inherit;
+}
+
+.help-button {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.help-button img {
+  width: 14px;
 }
 
 /*Progress Bar Component*/
