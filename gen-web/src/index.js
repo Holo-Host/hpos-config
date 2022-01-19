@@ -99,7 +99,7 @@
           break
         case 1:
           if (!verifyInputData()) return buttons.nextStep.disabled = true
-          user.registrationCode = inputs.registrationCode.value
+          user.registrationCode = inputs.registrationCode.value.trim()
           user.email = inputs.email.value
 
           const { cancelled, result } = await click.loadNextStep(verifyRegistrationCode({ registration_code: user.registrationCode, email: user.email }))
@@ -542,7 +542,6 @@
     if (!inputValidity) return buttons.nextStep.disabled = true
 
     /* Set user config */
-    user.registrationCode = inputs.registrationCode.value
     user.email = inputs.email.value
     user.password = inputs.password.value
 
@@ -609,7 +608,7 @@
    * @param {Object} seed {derivationPath, deviceRoot, pubKey}
   */
   const generateBlob = (user, seed) => {
-    const configData = config(user.email, user.password, user.registrationCode.trim(), seed.derivationPath.toString(), seed.deviceRoot, seed.pubKey)
+    const configData = config(user.email, user.password, user.registrationCode, seed.derivationPath.toString(), seed.deviceRoot, seed.pubKey)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
 
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
