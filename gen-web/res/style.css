@@ -724,13 +724,6 @@ body.step0 .next-button {
   font-weight: bold;
 }
 
-#back-button3-confirmation,
-#close-notice {
-  width: 14vw;
-  min-width: 7rem;
-  max-width: 12rem;
-}
-
 /* Link Elements */
 
 .help-link {
