@@ -512,6 +512,10 @@
 
   // Verifies a registration code by contacting the Holo Membrane Proof Service.
   // Returns `true` if successful. Returns a string for user error feedback if applicable. Otherwise throws.
+  //
+  // This verification step is not necessary for any tech or security reason, since HoloPort setup will fail
+  // with an invalid registration code. The purpose is simply to prevent users from wasting time setting up a
+  // HoloPort with the wrong code.
   const verifyRegistrationCode = async ({ registration_code, email }) => {
     const url = new URL(`${MEMBRANE_PROOF_SERVICE_URL}/verify-registration-code/`)
     url.searchParams.append('registration_code', registration_code)
