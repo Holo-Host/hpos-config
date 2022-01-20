@@ -19,7 +19,7 @@ Quickstart UI is written in vanilla JS and does not use any web framework. The c
 
 ### Membrane Proof Service
 
-After the user enters a Registration Code, Quickstart makes a request to a Membrane Proof Service. (See [this function](https://github.com/Holo-Host/hpos-config/blob/8c25e644dd60b544af4dc2a9e93144aabdc5df97/gen-web/src/index.js#L515)) When working with Quickstart, you need to choose which Membrane Proof Service to use.
+After the user enters a Registration Code, Quickstart makes a request to a Membrane Proof Service (see [this function](https://github.com/Holo-Host/hpos-config/blob/8c25e644dd60b544af4dc2a9e93144aabdc5df97/gen-web/src/index.js#L515)). When working with Quickstart, you need to choose which Membrane Proof Service to use.
 
 - You can spin up a local copy of the [`membrane-proof-service`](https://github.com/Holo-Host/holo-nixpkgs/tree/develop/overlays/holo-nixpkgs/membrane-proof-service), and use it through `http://localhost:8800`
     - [Setup instructions for membrane-proof-service](https://github.com/Holo-Host/holo-nixpkgs/blob/e9f7eea48954a7937b36d58a41616457557b3b59/overlays/holo-nixpkgs/membrane-proof-service/README.md#development)
@@ -57,4 +57,5 @@ cd ..
 git rm assets/ *.js *.wasm *.css *.png *.html
 mv gen-web/dist/* .
 git commit -a -m "Deploy $COMMIT_HASH (https://test-membrane-proof-service.holo.host/)"
+git push
 ```
