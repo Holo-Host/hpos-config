@@ -26,4 +26,4 @@ jobs:
     - name: Prepare Nix environment
       run: nix-shell --command "echo Completed"
     - name: Run all tests
-      run: nix-shell --run 'cd gen-web; npm install; MEMBRANE_PROOF_SERVICE_URL=https://membrane-proof-service.holo.host/ npm run build; wrangler publish'
+      run: nix-shell --run 'cd gen-web; yarn install; MEMBRANE_PROOF_SERVICE_URL=https://membrane-proof-service.holo.host/ yarn build; wrangler publish'
