@@ -3,8 +3,7 @@ use ed25519_dalek::*;
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
-
-const SEED_SIZE: usize = 32;
+pub const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
 where
@@ -19,7 +18,7 @@ where
         .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
 }
 
-fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
+pub fn seed_from_base64<'de, D>(deserializer: D) -> Result<Seed, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -63,6 +62,17 @@ pub enum Config {
         seed: Seed,
         settings: Settings,
     },
+    #[serde(rename = "v2")]
+    V2 {
+        /// This is the Device Seed Bundle as a base64 string which is compatible with lair-keystore >=v0.0.8
+        device_bundle: String,
+        /// Derivation path of the seed in this config that was generated for a Master Seed
+        derivation_path: String,
+        /// Holo registration code is used to identify and authenticate its users
+        registration_code: String,
+        /// The pub-key in settings is the holoport key that is used for verifying login signatures
+        settings: Settings,
+    },
 }
 
 impl Config {
@@ -71,17 +81,10 @@ impl Config {
         password: String,
         maybe_seed: Option<Seed>,
     ) -> Result<(Self, PublicKey), Error> {
-        let seed = match maybe_seed {
-            None => OsRng::new()?.gen::<Seed>(),
-            Some(s) => s,
-        };
-
-        let holochain_secret_key = SecretKey::from_bytes(&seed)?;
-        let holochain_public_key = PublicKey::from(&holochain_secret_key);
-
-        let admin_keypair = admin_keypair_from(holochain_public_key, &email, &password)?;
+        let (seed, admin_keypair, holochain_public_key) =
+            generate_keypair(email.clone(), password, maybe_seed)?;
         let admin = Admin {
-            email: email.clone(),
+            email: email,
             public_key: admin_keypair.public,
         };
 
@@ -94,10 +97,51 @@ impl Config {
         ))
     }
 
-    pub fn admin_public_key(&self) -> PublicKey {
-        let Config::V1 { seed: _, settings } = self;
-        settings.admin.public_key
+    pub fn new_v2(
+        email: String,
+        password: String,
+        registration_code: String,
+        derivation_path: String,
+        device_bundle: String,
+        device_pub_key: PublicKey,
+    ) -> Result<(Self, PublicKey), Error> {
+        let admin_keypair = admin_keypair_from(device_pub_key, &email, &password)?;
+        let admin = Admin {
+            email: email,
+            public_key: admin_keypair.public,
+        };
+        Ok((
+            Config::V2 {
+                device_bundle,
+                derivation_path,
+                registration_code,
+                settings: Settings { admin: admin },
+            },
+            device_pub_key,
+        ))
     }
+
+    pub fn admin_public_key(&self) -> PublicKey {
+        match self {
+            Config::V1 { settings, .. } | Config::V2 { settings, .. } => settings.admin.public_key,
+        }
+    }
+}
+
+fn generate_keypair(
+    email: String,
+    password: String,
+    maybe_seed: Option<Seed>,
+) -> Result<(Seed, Keypair, PublicKey), Error> {
+    let master_seed = match maybe_seed {
+        None => OsRng::new()?.gen::<Seed>(),
+        Some(s) => s,
+    };
+    let master_secret_key = SecretKey::from_bytes(&master_seed)?;
+    let master_public_key = PublicKey::from(&master_secret_key);
+
+    let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
+    Ok((master_seed, admin_keypair, master_public_key))
 }
 
 pub fn admin_keypair_from(

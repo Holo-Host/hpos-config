@@ -1,21 +1,23 @@
 [package]
 name = "hpos-config-core"
-version = "0.0.0"
+version = "0.1.1"
 authors = [
   "Perry Kundert <perry@hardconsulting.com>",
-  "Yegor Timoshenko <yegortimoshenko@transumption.com>"
+  "Yegor Timoshenko <yegortimoshenko@transumption.com>",
+  "zo-el <joelulahanna@gmail.com>"
 ]
 edition = "2018"
 repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]
 arrayref = "0.3.5"
-base64 = "0.10.1"
-ed25519-dalek = { version = "1.0.0-pre.1", features = ["nightly", "serde"] }
+base64 = "0.13.0"
+blake2b_simd = {version = "0.5.10"}
+ed25519-dalek = { version = "1.0.1", features = ["serde"] }
 failure = "0.1.5"
 lazy_static = "1.2"
 rand = "0.6.5"
-serde = { version = "1.0.89", features = ["derive"] }
+serde = { version = "1.0.123", features = ["derive"] }
 url = "2.1.0"
 
 [dependencies.argon2min]

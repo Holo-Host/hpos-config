@@ -1,8 +1,9 @@
 [package]
 name = "hpos-config-gen-cli"
-version = "0.0.0"
+version = "0.1.0"
 authors = [
-  "Yegor Timoshenko <yegortimoshenko@transumption.com>"
+  "Yegor Timoshenko <yegortimoshenko@transumption.com>",
+  "zo-el <joelulahanna@gmail.com>"
 ]
 edition = "2018"
 repository = "https://github.com/Holo-Host/hpos-config"
@@ -10,7 +11,9 @@ repository = "https://github.com/Holo-Host/hpos-config"
 [dependencies]
 docopt = "1.0.2"
 failure = "0.1.5"
+ed25519-dalek = { version = "1.0.1", features = ["serde"] }
 hpos-config-core = { path = "../core" }
-serde = { version = "1.0.89", features = ["derive"] }
-serde_json = "1.0.39"
+rand = "0.6.5"
+serde = { version = "1.0.123", features = ["derive"] }
+serde_json = "1.0.64"
 sha2 = "0.8.0"

@@ -14,9 +14,7 @@ repository:
 collaborators: []
 
 teams:
-  - name: central
-    permission: push
-  - name: happy
+  - name: holo-hosting
     permission: push
   - name: hydra
     permission: push
@@ -27,7 +25,7 @@ branches:
       required_pull_request_reviews:
         required_approving_review_count: 1
         dismiss_stale_reviews: false
-        require_code_owner_reviews: true
+        require_code_owner_reviews: false
         dismissal_restrictions:
           users: []
           teams: []
@@ -38,14 +36,13 @@ branches:
       restrictions:
         users: []
         teams:
-        - central
-        - happy
+        - holo-hosting
   - name: master
     protection:
       required_pull_request_reviews:
         required_approving_review_count: 2
         dismiss_stale_reviews: true
-        require_code_owner_reviews: true
+        require_code_owner_reviews: false
         dismissal_restrictions:
           users: []
           teams: []
@@ -56,5 +53,4 @@ branches:
       restrictions:
         users: []
         teams:
-        - central
-        - happy
+        - holo-hosting
