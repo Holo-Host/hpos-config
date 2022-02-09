@@ -1,11 +1,9 @@
 {
-
   "name": "quickstart",
   "version": "1.0.0",
   "scripts": {
     "start": "MEMBRANE_PROOF_SERVICE_URL=http://localhost:8800 webpack serve --mode development --open",
-    "build": "webpack --mode production",
-    "dev": "webpack --mode development",
+    "build": "MEMBRANE_PROOF_SERVICE_URL=https://test-membrane-proof-service.holo.host webpack",
     "serve": "webpack serve"
   },
   "devDependencies": {
