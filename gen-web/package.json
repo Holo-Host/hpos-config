@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "start": "MEMBRANE_PROOF_SERVICE_URL=http://localhost:8800 webpack serve --mode development --open",
-    "build": "MEMBRANE_PROOF_SERVICE_URL=https://test-membrane-proof-service.holo.host webpack",
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development",
     "serve": "webpack serve"
   },
   "devDependencies": {
