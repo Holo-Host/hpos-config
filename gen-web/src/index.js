@@ -100,7 +100,7 @@
         case 1:
           if (!verifyInputData()) return buttons.nextStep.disabled = true
           user.registrationCode = inputs.registrationCode.value.trim()
-          user.email = inputs.email.value
+          user.email = inputs.email.value;
 
           const { cancelled, result } = await click.loadNextStep(verifyRegistrationCode({ registration_code: user.registrationCode, email: user.email }))
           if (cancelled) {
@@ -394,12 +394,15 @@
   /* Bind actions to inputs */
   inputs.registrationCode.onfocus = click.activateInput
   inputs.seedPassphrase.onfocus = click.activateInput
-  inputs.email.onfocus = click.activateInput
+  inputs.email.onfocus = click.activateInput;
   inputs.password.onfocus = click.activateInput
   inputs.passwordCheck.onfocus = click.activateInput
   /* Bind check to passwords while typing */
   inputs.password.onkeyup = click.confirmValidInput
   inputs.passwordCheck.onkeyup = click.confirmValidInput
+  /* Set change and input events to auto lower case email */
+  inputs.email.addEventListener('change', _ => { inputs.email.value = inputs.email.value.toLowerCase() });
+  inputs.email.addEventListener('input', _ => { inputs.email.value = inputs.email.value.toLowerCase() });
 
   /** Helper Functions :
   * =============================
@@ -415,7 +418,7 @@
       /* Check for download*/
       verifySeedDownloadComplete()
     } else if (stepTracker === 4) {
-      inlineVariables.emailReadOnly.value = inputs.email.value
+      inlineVariables.emailReadOnly.value = inputs.email.value;
       if (deviceNumber > 0) {
         buttons.prevStep.disabled = true
       }
@@ -546,7 +549,7 @@
     if (!inputValidity) return buttons.nextStep.disabled = true
 
     /* Set user config */
-    user.email = inputs.email.value
+    user.email = inputs.email.value;
     user.password = inputs.password.value
 
     /* Communicate visually that something is happening in the background */
