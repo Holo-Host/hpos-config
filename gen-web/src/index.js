@@ -400,9 +400,6 @@
   /* Bind check to passwords while typing */
   inputs.password.onkeyup = click.confirmValidInput
   inputs.passwordCheck.onkeyup = click.confirmValidInput
-  /* Set change and input events to auto lower case email */
-  inputs.email.addEventListener('change', _ => { inputs.email.value = inputs.email.value.toLowerCase() });
-  inputs.email.addEventListener('input', _ => { inputs.email.value = inputs.email.value.toLowerCase() });
 
   /** Helper Functions :
   * =============================
