@@ -1,12 +1,14 @@
 account_id = "18ff2b4e6205b938652998cfca0d8cff"
 zone_id = "35f34e8f9d04ef8c87283ea9fb812989"
-
-name = "hpos-config-gen-web"
-route = "quickstart.holo.host/*"
-
+name = "devnet-quickstart"
+route = "devnet-quickstart.holo.host/*"
 type = "webpack"
 webpack_config = "webpack.config.js"
 
 [site]
 bucket = "./dist"
 entry-point = "workers-site"
+
+[env.mainnet]
+name = "quickstart"
+route = "quickstart.holo.host/*"

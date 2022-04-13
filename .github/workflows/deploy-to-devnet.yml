@@ -1,0 +1,24 @@
+name: Continuous Deployment to devNet
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy
+    defaults:
+      run:
+        working-directory: gen-web
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm ci
+      - name: Build site
+        env:
+          MEMBRANE_PROOF_SERVICE_URL: "https://devnet-membrane-proof-service.holo.host/"
+        run: 'npm run build --if-present'
+      - name: Publish to devNet
+        uses: cloudflare/wrangler-action@1.1.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          workingDirectory: 'gen-web'
