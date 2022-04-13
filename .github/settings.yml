@@ -32,7 +32,7 @@ branches:
       required_status_checks:
         strict: true
         contexts: []
-      enforce_admins: true
+      enforce_admins: false
       restrictions:
         users: []
         teams:
