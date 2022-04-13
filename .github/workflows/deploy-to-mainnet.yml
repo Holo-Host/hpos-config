@@ -23,3 +23,5 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: 'gen-web'
           environment: mainnet
+        env:
+          MEMBRANE_PROOF_SERVICE_URL: "https://membrane-proof-service.holo.host/"
