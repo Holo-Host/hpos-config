@@ -22,7 +22,7 @@ module.exports = {
       template: './res/index.html'
     }),
     new webpack.DefinePlugin({
-      'process.env':{
+      'process.env': {
         'MEMBRANE_PROOF_SERVICE_URL': JSON.stringify(process.env.MEMBRANE_PROOF_SERVICE_URL),
       }
     })
@@ -32,22 +32,22 @@ module.exports = {
   },
   entry: './src/index.js',
   output: {
-      path: path.resolve(__dirname, 'dist'),
-      filename: 'bundle.js'
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
   },
   devServer: {
-      contentBase: './dist'
+    contentBase: './dist'
   },
   module: {
-      rules: [
-          {
-              test: /\.js$/, //using regex to tell babel exactly what files to transcompile
-              exclude: /node_modules/, // files to be ignored
-              use: {
-                  loader: 'babel-loader' // specify the loader
-              }
-          }
-      ]
+    rules: [
+      {
+        test: /\.js$/, //using regex to tell babel exactly what files to transcompile
+        exclude: /node_modules/, // files to be ignored
+        use: {
+          loader: 'babel-loader' // specify the loader
+        }
+      }
+    ]
   },
   resolve: {
     fallback: {
