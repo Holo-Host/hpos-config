@@ -12,3 +12,4 @@ entry-point = "workers-site"
 [env.production]
 name = "quickstart"
 route = "quickstart.holo.host/*"
+
