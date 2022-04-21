@@ -402,7 +402,11 @@
   inputs.passwordCheck.onkeyup = click.confirmValidInput
   /* Set change and input events to auto lower case email */
   inputs.email.addEventListener('change', _ => { inputs.email.value = inputs.email.value.toLowerCase() });
-  inputs.email.addEventListener('input', _ => { inputs.email.value = inputs.email.value.toLowerCase() });
+  inputs.email.addEventListener('input', _ => {
+    setTimeout(() => {
+      inputs.email.value = inputs.email.value.toLowerCase()
+    }, 1000);
+  });
 
   /** Helper Functions :
   * =============================
