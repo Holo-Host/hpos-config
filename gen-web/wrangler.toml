@@ -2,16 +2,21 @@ account_id = "18ff2b4e6205b938652998cfca0d8cff"
 zone_id = "35f34e8f9d04ef8c87283ea9fb812989"
 name = "devnet-quickstart"
 route = "devnet-quickstart.holo.host/*"
-type = "javascript"
+type = "webpack"
 
-# [build] section is necessary because of a type = "javascript"
-# Do not change the type to "webpack" because wrangler is using internally
-# webpack v4 which is incompatible with webpack v^5.59 used in this project
-[build]
-command = "echo 'Deploying build of quickstart from dist directory'"
-
-[build.upload]
-format = "service-worker"
+# There is one thing that is really tricky here:
+# Build of a worker-site is a two-stage process, both stages are using webpack.
+# Let's call them `static-asset-build` and `worker-site-build`.
+# `static-asset-build` is invoked by `npm run build` and outputs static files into `./dist/`.
+# It is using webpack config from `webpack.config.js` file and is executed by webpack version
+# listed in `package.json` (in our case v^5.59.1)
+# `worker-site-build` is invoked by wrangler. It takes files from bucket (here "./dist") and merges
+# them with files from `workers-site` directory to build a single .js file for worker.
+# It is using default webpack config and is executed by webpack v4.
+# That's the reason why type is set to "webpack" in this .toml file
+#
+# Now you have to be careful. If you add a line `webpack_config = "webpack.config.js"` to wrangler's configuration
+# a `worker-site-build` will use this config and entire build will fail.
 
 [site]
 bucket = "./dist"
