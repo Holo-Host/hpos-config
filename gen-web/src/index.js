@@ -100,7 +100,7 @@
         case 1:
           if (!verifyInputData()) return buttons.nextStep.disabled = true
           user.registrationCode = inputs.registrationCode.value.trim()
-          user.email = inputs.email.value
+          user.email = inputs.email.value.toLowerCase()
 
           const { cancelled, result } = await click.loadNextStep(verifyRegistrationCode({ registration_code: user.registrationCode, email: user.email }))
           if (cancelled) {
@@ -402,7 +402,11 @@
   inputs.passwordCheck.onkeyup = click.confirmValidInput
   /* Set change and input events to auto lower case email */
   inputs.email.addEventListener('change', _ => { inputs.email.value = inputs.email.value.toLowerCase() });
-  inputs.email.addEventListener('input', _ => { inputs.email.value = inputs.email.value.toLowerCase() });
+  inputs.email.addEventListener('input', _ => {
+    setTimeout(() => {
+      inputs.email.value = inputs.email.value.toLowerCase()
+    }, 500);
+  });
 
   /** Helper Functions :
   * =============================
@@ -418,7 +422,7 @@
       /* Check for download*/
       verifySeedDownloadComplete()
     } else if (stepTracker === 4) {
-      inlineVariables.emailReadOnly.value = inputs.email.value
+      inlineVariables.emailReadOnly.value = inputs.email.value.toLowerCase()
       if (deviceNumber > 0) {
         buttons.prevStep.disabled = true
       }
@@ -549,7 +553,7 @@
     if (!inputValidity) return buttons.nextStep.disabled = true
 
     /* Set user config */
-    user.email = inputs.email.value
+    user.email = inputs.email.value.toLowerCase()
     user.password = inputs.password.value
 
     /* Communicate visually that something is happening in the background */
@@ -739,7 +743,7 @@
       renderInputError(errorMessages.missingFields, missingFields)
       valid = false
     } else {
-      if (!validateEmail(inputs.email.value)) {
+      if (!validateEmail(inputs.email.value.toLowerCase())) {
         renderInputError(errorMessages.email, [inputs.email])
         valid = false
       }
