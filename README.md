@@ -24,7 +24,7 @@ After the user enters a Registration Code, Quickstart makes a request to a Membr
 - You can spin up a local copy of the [`membrane-proof-service`](https://github.com/Holo-Host/holo-nixpkgs/tree/develop/overlays/holo-nixpkgs/membrane-proof-service), and use it through `http://localhost:8800`
     - [Setup instructions for membrane-proof-service](https://github.com/Holo-Host/holo-nixpkgs/blob/e9f7eea48954a7937b36d58a41616457557b3b59/overlays/holo-nixpkgs/membrane-proof-service/README.md#development)
     - [See this file for email and registration code](https://github.com/Holo-Host/holo-nixpkgs/blob/develop/overlays/holo-nixpkgs/membrane-proof-service/tests/test-preload-db.js), which you'll need when walking through the UI.
-- You can use the development instance of `membrane-proof-service` (currently deployed at <https://test-membrane-proof-service.holo.host/>).
+- You can use the development instance of `membrane-proof-service` (currently deployed at <https://devnet-membrane-proof-service.holo.host/>).
 
 ### Serving the UI
 

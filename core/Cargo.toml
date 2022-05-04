@@ -19,14 +19,12 @@ lazy_static = "1.2"
 rand = "0.6.5"
 serde = { version = "1.0.123", features = ["derive"] }
 url = "2.1.0"
+base36 = "=0.0.1"
 
 [dependencies.argon2min]
 git = "https://github.com/Holo-Host/argon2min"
-branch = "2019-10-13-holo-config"
+rev = "28e765e4369e19bc0126bb46acaacadf1303de22"
 
-[dependencies.base36]
-git = "https://github.com/transumption-unstable/base36"
-branch = "2019-12-18-nix"
 
 [features]
 wasm-bindgen = ["rand/wasm-bindgen"]
