@@ -520,6 +520,7 @@
     const url = new URL(`${MEMBRANE_PROOF_SERVICE_URL}/verify-registration-code/`)
     url.searchParams.append('registration_code', registration_code)
     url.searchParams.append('email', email)
+    url.searchParams.append('role', 'host')
     const response = await fetch(url,
     {
       method: 'GET',
