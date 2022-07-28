@@ -1,7 +1,7 @@
 account_id = "18ff2b4e6205b938652998cfca0d8cff"
-zone_id = "35f34e8f9d04ef8c87283ea9fb812989"
+zone_id = "82b670b6a3c86e0f1913b2a9d1cce729"
 name = "devnet-quickstart"
-route = "devnet-quickstart.holo.host/*"
+route = "quickstart.dev.holotest.net/*"
 type = "webpack"
 
 # There is one thing that is really tricky here:
@@ -23,5 +23,10 @@ bucket = "./dist"
 entry-point = "workers-site"
 
 [env.mainnet]
+zone_id = "35f34e8f9d04ef8c87283ea9fb812989"
 name = "quickstart"
 route = "quickstart.holo.host/*"
+
+[env.qa]
+name = "qa-quickstart"
+route = "quickstart.qa.holotest.net/*"
