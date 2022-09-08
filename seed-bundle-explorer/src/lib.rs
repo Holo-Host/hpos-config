@@ -92,11 +92,11 @@ pub async fn unlock(
 #[derive(thiserror::Error, Debug)]
 pub enum SeedExplorerError {
     #[error(transparent)]
+    OneErr(#[from] hc_seed_bundle::dependencies::one_err::OneErr),
+    #[error(transparent)]
     Ed25519Error(#[from] ed25519::Error),
     #[error(transparent)]
     DecodeError(#[from] base64::DecodeError),
-    #[error(transparent)]
-    OneErr(#[from] one_err::OneErr),
     #[error("Seed hash unsupported cipher type")]
     UnsupportedCipher,
     #[error("Password required to unlock seed")]
