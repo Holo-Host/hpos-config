@@ -20,7 +20,7 @@ jobs:
       - run: npm ci
       - name: Build site
         env:
-          MEMBRANE_PROOF_SERVICE_URL: "https://membrane-proof-service.holo.host/"
+          MEMBRANE_PROOF_SERVICE_URL: "https://hbs.holo.host"
         run: 'npm run build --if-present'
       - name: Publish site
         uses: cloudflare/wrangler-action@1.1.0
