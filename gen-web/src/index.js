@@ -523,11 +523,11 @@
       headers: {
         'Content-Type': 'application/json'
       },
-      body: {
+      body: JSON.stringify({
         role: 'host',
         email: email,
         code: registration_code
-      }
+      })
     })
     if (response.status === 201) {
       return true
