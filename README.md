@@ -54,11 +54,11 @@ COMMIT_HASH="$(git rev-parse HEAD)"
 cd gen-web
 yarn install
 rm -r dist/
-MEMBRANE_PROOF_SERVICE_URL=https://test-membrane-proof-service.holo.host/ yarn build
+MEMBRANE_PROOF_SERVICE_URL=https://hbs.dev.holotest.net yarn build
 git checkout gh-pages
 cd ..
 git rm assets/ *.js *.wasm *.css *.png *.html
 mv gen-web/dist/* .
-git commit -a -m "Deploy $COMMIT_HASH (https://test-membrane-proof-service.holo.host/)"
+git commit -a -m "Deploy $COMMIT_HASH (https://hbs.dev.holotest.net)"
 git push
 ```
