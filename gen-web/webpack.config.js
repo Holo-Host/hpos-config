@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 if (!process.env.MEMBRANE_PROOF_SERVICE_URL) {
-  throw new Error('Please define MEMBRANE_PROOF_SERVICE_URL environment variable. Typically https://membrane-proof-service.holo.host')
+  throw new Error('Please define MEMBRANE_PROOF_SERVICE_URL environment variable. Typically https://hbs.holo.host')
 }
 
 module.exports = {
