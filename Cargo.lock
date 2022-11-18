@@ -717,9 +717,9 @@ checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 
 [[package]]
 name = "hc_seed_bundle"
-version = "0.1.3"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "994c05b93a9979e43e083d8f701c03931f1659530854e6bdd25e3feba505cc72"
+checksum = "aa14c35079167a5e3f8a33f32c43ab080d33dfd495d99c2f4075441b2e7faa91"
 dependencies = [
  "futures",
  "one_err",
@@ -1146,9 +1146,9 @@ checksum = "e82dad04139b71a90c080c8463fe0dc7902db5192d939bd0950f074d014339e1"
 
 [[package]]
 name = "one_err"
-version = "0.0.6"
+version = "0.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d51009bb58a2085ad156097b3b88d28298f67ac809ada5656420e46dc38f3a0"
+checksum = "f0d1dc4f1802a40f90e919bdd12a7234711eab770740a5ede06b5dbac85da57b"
 dependencies = [
  "indexmap",
  "libc",
@@ -1797,9 +1797,9 @@ dependencies = [
 
 [[package]]
 name = "sodoken"
-version = "0.0.5"
+version = "0.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd5c4b4bc5e7c01f4c7efd42f6284487a8e38042e50c0ce82bcce97c8f976806"
+checksum = "ae3bf98be2047aa6a146e372c5b342cdcfd15612041c695bdcaf6604e6bcac42"
 dependencies = [
  "libc",
  "libsodium-sys-stable",
