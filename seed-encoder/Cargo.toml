@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = [
   "Joel U <joelulahanna@gmail.com>"
 ]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]

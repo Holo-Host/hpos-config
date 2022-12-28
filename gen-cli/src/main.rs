@@ -3,7 +3,7 @@ use hpos_config_core::{config::Seed, public_key, Config};
 use docopt::Docopt;
 use ed25519_dalek::*;
 use failure::Error;
-use rand::{rngs::OsRng, Rng};
+use rand::Rng;
 use serde::*;
 use sha2::{Digest, Sha512Trunc256};
 use std::{env, fs::File, io, path::PathBuf};
@@ -39,7 +39,7 @@ fn main() -> Result<(), Error> {
         .unwrap_or_else(|e| e.exit());
 
     let seed = match args.flag_seed_from {
-        None => OsRng::new()?.gen::<Seed>(),
+        None => rand::thread_rng().gen::<Seed>(),
         Some(path) => {
             let mut hasher = Sha512Trunc256::new();
             let mut file = File::open(path)?;

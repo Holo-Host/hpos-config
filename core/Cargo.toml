@@ -6,7 +6,7 @@ authors = [
   "Yegor Timoshenko <yegortimoshenko@transumption.com>",
   "zo-el <joelulahanna@gmail.com>"
 ]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]
