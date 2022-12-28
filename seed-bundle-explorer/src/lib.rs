@@ -24,6 +24,30 @@ pub async fn holoport_public_key(
     }
 }
 
+/// get key for the device bundle in the config
+pub async fn holoport_key(
+    config: &Config,
+    passphrase: Option<String>,
+) -> SeedExplorerResult<Keypair> {
+    match config {
+        Config::V1 { seed, .. } => {
+            let secret = SecretKey::from_bytes(seed)?;
+            Ok(Keypair {
+                public: PublicKey::from(&secret),
+                secret,
+            })
+        }
+        Config::V2 { device_bundle, .. } => {
+            /*
+                decode base64 string to locked device bundle
+                password is pass for now
+                unlock it and get the signPubKey
+            */
+            unlock(device_bundle, passphrase).await
+        }
+    }
+}
+
 /// encode the ed25519 keypair making it compatible with lair (<v0.0.6)
 pub async fn encoded_ed25519_keypair(
     config: &Config,
