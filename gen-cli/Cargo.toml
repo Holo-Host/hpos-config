@@ -1,6 +1,6 @@
 [package]
 name = "hpos-config-gen-cli"
-version = "0.1.1"
+version = "0.2.0"
 authors = [
   "Yegor Timoshenko <yegortimoshenko@transumption.com>",
   "zo-el <joelulahanna@gmail.com>"

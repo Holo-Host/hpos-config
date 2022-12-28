@@ -1,6 +1,6 @@
 [package]
 name = "hpos-config-into-base36-id"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
   "Yegor Timoshenko <yegortimoshenko@transumption.com>",
   "Joel U <joelulahanna@gmail.com>"
