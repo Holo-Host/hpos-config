@@ -1,12 +1,12 @@
-name: Continuous Deployment to devNet
+name: Continuous Deployment to QA
 on:
   push:
     branches:
-      - develop
+      - QA
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    name: Deploy devnet-quickstart
+    name: Deploy qa-quickstart
     defaults:
       run:
         working-directory: gen-web
@@ -20,10 +20,11 @@ jobs:
       - run: npm ci
       - name: Build site
         env:
-          MEMBRANE_PROOF_SERVICE_URL: "https://hbs.dev.holotest.net"
+          MEMBRANE_PROOF_SERVICE_URL: 'https://hbs.qa.holotest.net'
         run: 'npm run build --if-present'
       - name: Publish site
         uses: cloudflare/wrangler-action@1.1.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: 'gen-web'
+          environment: QA
