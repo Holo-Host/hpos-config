@@ -1,10 +1,10 @@
 [package]
 name = "hpos-config-is-valid"
-version = "0.0.1"
+version = "0.2.0"
 authors = [
   "Sam Rose <sam.rose@holo.host>"
 ]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]
