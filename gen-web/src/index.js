@@ -529,7 +529,7 @@
         code: registration_code
       })
     })
-    if (response.status === 201) {
+    if (response.status === 201 || response.status === 200) {
       return true
     }
     if (response.status !== 500) {
