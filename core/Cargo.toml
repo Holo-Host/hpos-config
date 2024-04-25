@@ -11,13 +11,13 @@ repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]
 arrayref = "0.3.5"
-base64 = "0.13.0"
+base64 = { workspace = true }
 blake2b_simd = {version = "1.0.0"}
-ed25519-dalek = { version = "1.0.1", features = ["serde"] }
-failure = "0.1.5"
+ed25519-dalek = { workspace = true, features = ["serde"] }
+failure = { workspace = true }
 lazy_static = "1.2"
 rand = "0.6.5"
-serde = { version = "1.0.123", features = ["derive"] }
+serde = { workspace = true }
 url = "2.1.0"
 base36 = "=0.0.1"
 
