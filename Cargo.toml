@@ -11,7 +11,7 @@ members = [
 ]
 
 [workspace.dependencies]
-ed25519-dalek = "1.0.1"
+ed25519-dalek = "2.1.1"
 anyhow = "1.0"
 serde_json = "1.0.64"
 tokio = "1.12.0"
