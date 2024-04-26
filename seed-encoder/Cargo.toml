@@ -1,6 +1,6 @@
 [package]
 name = "hpos-config-seed-encoder"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
   "Joel U <joelulahanna@gmail.com>"
 ]

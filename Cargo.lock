@@ -871,7 +871,7 @@ checksum = "fed44880c466736ef9a5c5b5facefb5ed0785676d0c02d612db14e54f0d84286"
 
 [[package]]
 name = "hpos-config-core"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "argon2min",
  "arrayref",
@@ -888,7 +888,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-gen-cli"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "docopt",
  "ed25519-dalek",
@@ -902,7 +902,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-gen-web"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "arrayref",
  "base64 0.13.1",
@@ -917,7 +917,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-into-base36-id"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anyhow",
  "ed25519-dalek",
@@ -930,7 +930,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-is-valid"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anyhow",
  "hpos-config-core",
@@ -939,7 +939,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-seed-bundle-explorer"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "base64 0.13.1",
  "ed25519-dalek",
@@ -955,7 +955,7 @@ dependencies = [
 
 [[package]]
 name = "hpos-config-seed-encoder"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "anyhow",
  "ed25519-dalek",
