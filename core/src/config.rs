@@ -73,6 +73,22 @@ pub enum Config {
         /// The pub-key in settings is the holoport key that is used for verifying login signatures
         settings: Settings,
     },
+    #[serde(rename = "v3")]
+    V3 {
+        /// This is the Device Seed Bundle as a base64 string which is compatible with lair-keystore >=v0.0.8
+        /// And is encoded with a password that will be needed to be used to decrypt it
+        device_bundle: String,
+        // The revocation key is usually the /0 derivation path of the master seed
+        revocation_pub_key: String,
+        // /1 derivation path of the device bundle
+        holoport_id: String,
+        /// Derivation path of the seed in this config that was generated for a Master Seed
+        derivation_path: String,
+        /// Holo registration code is used to identify and authenticate its users
+        registration_code: String,
+        /// The pub-key in settings is the holoport key that is used for verifying login signatures
+        settings: Settings,
+    },
 }
 
 impl Config {
