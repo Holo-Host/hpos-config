@@ -21,6 +21,7 @@ pub async fn holoport_public_key(
             let Keypair { public, .. } = unlock(device_bundle, passphrase).await?;
             Ok(public)
         }
+        Config::V3 { holoport_id, .. } => Ok(holoport_id.to_owned()),
     }
 }
 
@@ -37,7 +38,7 @@ pub async fn holoport_key(
                 secret,
             })
         }
-        Config::V2 { device_bundle, .. } => {
+        Config::V2 { device_bundle, .. } | Config::V3 { device_bundle, .. } => {
             /*
                 decode base64 string to locked device bundle
                 password is pass for now
@@ -58,7 +59,7 @@ pub async fn encoded_ed25519_keypair(
             let secret_key = SecretKey::from_bytes(seed)?;
             Ok(encrypt_key(&secret_key, &PublicKey::from(&secret_key)))
         }
-        Config::V2 { device_bundle, .. } => {
+        Config::V2 { device_bundle, .. } | Config::V3 { device_bundle, .. } => {
             /*
                 decode base64 string to locked device bundle
                 password is pass for now
@@ -80,6 +81,7 @@ pub fn decoded_to_ed25519_keypair(blob: &String) -> SeedExplorerResult<Keypair> 
     })
 }
 
+// todo: we need to update this for production
 /// For now lair does not take in any encrypted bytes so we pass back an empty encrypted byte string
 pub fn encrypt_key(seed: &SecretKey, public_key: &PublicKey) -> String {
     let mut encrypted_key = vec![

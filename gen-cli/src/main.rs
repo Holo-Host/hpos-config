@@ -28,6 +28,8 @@ struct Args {
     flag_email: String,
     flag_password: String,
     flag_registration_code: String,
+    flag_revocation_pub_key: String,
+    flag_holoport_id: PublicKey,
     flag_derivation_path: String,
     flag_device_bundle: String,
     flag_seed_from: Option<PathBuf>,
@@ -52,10 +54,12 @@ fn main() -> Result<(), Error> {
 
     let secret_key = SecretKey::from_bytes(&seed)?;
 
-    let (config, public_key) = Config::new_v2(
+    let (config, public_key) = Config::new(
         args.flag_email,
         args.flag_password,
         args.flag_registration_code,
+        args.flag_revocation_pub_key,
+        args.flag_holoport_id,
         args.flag_derivation_path,
         args.flag_device_bundle,
         PublicKey::from(&secret_key),

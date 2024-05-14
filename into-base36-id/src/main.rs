@@ -2,9 +2,9 @@ use anyhow::{Context, Result};
 use ed25519_dalek::*;
 use hpos_config_core::*;
 use hpos_config_seed_bundle_explorer::unlock;
+use std::fs::File;
 use std::path::PathBuf;
 use structopt::StructOpt;
-use std::fs::File;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -24,8 +24,10 @@ async fn main() -> Result<()> {
         ..
     } = Cli::from_args();
 
-    let config_file =
-        File::open(&config_path).context(format!("failed to open file {}", &config_path.to_string_lossy()))?;
+    let config_file = File::open(&config_path).context(format!(
+        "failed to open file {}",
+        &config_path.to_string_lossy()
+    ))?;
     match serde_json::from_reader(config_file)? {
         Config::V1 { seed, .. } => {
             let secret_key = SecretKey::from_bytes(&seed)?;
@@ -42,6 +44,9 @@ async fn main() -> Result<()> {
                         &config_path.to_string_lossy()
                     ))?;
             println!("{}", public_key::to_base36_id(&public));
+        }
+        Config::V3 { holoport_id, .. } => {
+            println!("{}", public_key::to_base36_id(&holoport_id));
         }
     }
 

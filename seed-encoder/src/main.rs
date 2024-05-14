@@ -2,8 +2,8 @@
 //! seed, this is used by the `--load_ed25519_keypair_from_seed` in lair
 //!
 
+use anyhow::{Context, Result};
 use ed25519_dalek::*;
-use anyhow::{ Context, Result };
 use hpos_config_core::*;
 use hpos_config_seed_bundle_explorer::{encrypt_key, unlock};
 use std::path::PathBuf;
@@ -26,7 +26,10 @@ async fn main() -> Result<()> {
         password,
     } = Cli::from_args();
     use std::fs::File;
-    let config_file = File::open(&config_path).context(format!("failed to open file {}", &config_path.to_string_lossy()))?;
+    let config_file = File::open(&config_path).context(format!(
+        "failed to open file {}",
+        &config_path.to_string_lossy()
+    ))?;
     match serde_json::from_reader(config_file)? {
         Config::V1 { seed, .. } => {
             let secret_key = SecretKey::from_bytes(&seed)?;
@@ -44,6 +47,8 @@ async fn main() -> Result<()> {
                     ))?;
             println!("{}", encrypt_key(&secret, &public));
         }
+        // todo!("V3 not implemented"),
+        Config::V3 { .. } => todo!("V3 not implemented"),
     }
 
     Ok(())

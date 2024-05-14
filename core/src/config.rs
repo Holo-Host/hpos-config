@@ -1,7 +1,6 @@
 use arrayref::array_ref;
 use ed25519_dalek::*;
 use failure::Error;
-use rand::{rngs::OsRng, Rng};
 use serde::*;
 pub const SEED_SIZE: usize = 32;
 
@@ -81,7 +80,7 @@ pub enum Config {
         // The revocation key is usually the /0 derivation path of the master seed
         revocation_pub_key: String,
         // /1 derivation path of the device bundle
-        holoport_id: String,
+        holoport_id: PublicKey,
         /// Derivation path of the seed in this config that was generated for a Master Seed
         derivation_path: String,
         /// Holo registration code is used to identify and authenticate its users
@@ -95,28 +94,9 @@ impl Config {
     pub fn new(
         email: String,
         password: String,
-        maybe_seed: Option<Seed>,
-    ) -> Result<(Self, PublicKey), Error> {
-        let (seed, admin_keypair, holochain_public_key) =
-            generate_keypair(email.clone(), password, maybe_seed)?;
-        let admin = Admin {
-            email: email,
-            public_key: admin_keypair.public,
-        };
-
-        Ok((
-            Config::V1 {
-                seed,
-                settings: Settings { admin },
-            },
-            holochain_public_key,
-        ))
-    }
-
-    pub fn new_v2(
-        email: String,
-        password: String,
         registration_code: String,
+        revocation_pub_key: String,
+        holoport_id: PublicKey,
         derivation_path: String,
         device_bundle: String,
         device_pub_key: PublicKey,
@@ -127,9 +107,11 @@ impl Config {
             public_key: admin_keypair.public,
         };
         Ok((
-            Config::V2 {
+            Config::V3 {
                 device_bundle,
                 derivation_path,
+                revocation_pub_key,
+                holoport_id,
                 registration_code,
                 settings: Settings { admin: admin },
             },
@@ -139,26 +121,28 @@ impl Config {
 
     pub fn admin_public_key(&self) -> PublicKey {
         match self {
-            Config::V1 { settings, .. } | Config::V2 { settings, .. } => settings.admin.public_key,
+            Config::V1 { settings, .. }
+            | Config::V2 { settings, .. }
+            | Config::V3 { settings, .. } => settings.admin.public_key,
         }
     }
 }
 
-fn generate_keypair(
-    email: String,
-    password: String,
-    maybe_seed: Option<Seed>,
-) -> Result<(Seed, Keypair, PublicKey), Error> {
-    let master_seed = match maybe_seed {
-        None => OsRng::new()?.gen::<Seed>(),
-        Some(s) => s,
-    };
-    let master_secret_key = SecretKey::from_bytes(&master_seed)?;
-    let master_public_key = PublicKey::from(&master_secret_key);
+// fn generate_keypair(
+//     email: String,
+//     password: String,
+//     maybe_seed: Option<Seed>,
+// ) -> Result<(Seed, Keypair, PublicKey), Error> {
+//     let master_seed = match maybe_seed {
+//         None => OsRng::new()?.gen::<Seed>(),
+//         Some(s) => s,
+//     };
+//     let master_secret_key = SecretKey::from_bytes(&master_seed)?;
+//     let master_public_key = PublicKey::from(&master_secret_key);
 
-    let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
-    Ok((master_seed, admin_keypair, master_public_key))
-}
+//     let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
+//     Ok((master_seed, admin_keypair, master_public_key))
+// }
 
 pub fn admin_keypair_from(
     holochain_public_key: PublicKey,
