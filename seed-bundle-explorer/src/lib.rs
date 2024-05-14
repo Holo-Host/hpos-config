@@ -21,6 +21,7 @@ pub async fn holoport_public_key(
             let secret = unlock(device_bundle, passphrase).await?;
             Ok(secret.verifying_key())
         }
+        Config::V3 { holoport_id, .. } => Ok(holoport_id.to_owned()),
     }
 }
 
@@ -30,8 +31,14 @@ pub async fn holoport_key(
     passphrase: Option<String>,
 ) -> SeedExplorerResult<SigningKey> {
     match config {
-        Config::V1 { seed, .. } => Ok(SigningKey::from_bytes(seed)),
-        Config::V2 { device_bundle, .. } => {
+        Config::V1 { seed, .. } => {
+            let secret = SecretKey::from_bytes(seed)?;
+            Ok(Keypair {
+                public: PublicKey::from(&secret),
+                secret,
+            })
+        }
+        Config::V2 { device_bundle, .. } | Config::V3 { device_bundle, .. } => {
             /*
                 decode base64 string to locked device bundle
                 password is pass for now
@@ -52,7 +59,7 @@ pub async fn encoded_ed25519_keypair(
             let secret_key = SigningKey::from_bytes(seed);
             Ok(encrypt_key(&secret_key, &VerifyingKey::from(&secret_key)))
         }
-        Config::V2 { device_bundle, .. } => {
+        Config::V2 { device_bundle, .. } | Config::V3 { device_bundle, .. } => {
             /*
                 decode base64 string to locked device bundle
                 password is pass for now
@@ -81,6 +88,7 @@ pub fn decoded_to_ed25519_keypair(blob: &String) -> SeedExplorerResult<SigningKe
     Ok(SigningKey::from_bytes(&decoded_key_bytes))
 }
 
+// todo: we need to update this for production
 /// For now lair does not take in any encrypted bytes so we pass back an empty encrypted byte string
 pub fn encrypt_key(seed: &SigningKey, public_key: &VerifyingKey) -> String {
     let mut encrypted_key = vec![

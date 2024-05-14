@@ -3,7 +3,7 @@
 //!
 
 use anyhow::{Context, Result};
-use ed25519_dalek::SigningKey;
+use ed25519_dalek::*;
 use hpos_config_core::*;
 use hpos_config_seed_bundle_explorer::{encrypt_key, unlock};
 use std::path::PathBuf;
@@ -46,6 +46,8 @@ async fn main() -> Result<()> {
                 ))?;
             println!("{}", encrypt_key(&secret, &secret.verifying_key()));
         }
+        // todo!("V3 not implemented"),
+        Config::V3 { .. } => todo!("V3 not implemented"),
     }
 
     Ok(())
