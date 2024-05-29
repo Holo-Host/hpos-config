@@ -614,6 +614,8 @@
    * @param {Object} seed {derivationPath, deviceRoot, pubKey}
   */
   const generateBlob = (user, seed) => {
+    // todo: update this fn by passing the revocation_pub_key
+    // todo: seed pubkey should be derived from the seed, not the deviceRoot pubKey itself 
     const configData = config(user.email, user.password, user.registrationCode, seed.derivationPath.toString(), seed.deviceRoot, seed.pubKey)
     const configBlob = new Blob([configData.config], { type: 'application/json' })
 
