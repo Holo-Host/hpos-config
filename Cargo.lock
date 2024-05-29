@@ -980,6 +980,7 @@ dependencies = [
 name = "hpos-config-seed-bundle-explorer"
 version = "0.2.1"
 dependencies = [
+ "base36",
  "base64 0.13.1",
  "ed25519-dalek",
  "hc_seed_bundle",

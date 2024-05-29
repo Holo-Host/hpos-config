@@ -16,8 +16,7 @@ fn config_raw(
     email: String,
     password: String,
     registration_code: String,
-    revocation_pub_key: String,
-    holoport_id: Vec<u8>,
+    revocation_pub_key: Vec<u8>,
     derivation_path: String,
     device_bundle: String,
     device_pub_key: String,
@@ -36,14 +35,13 @@ fn config_raw(
     =======*/
     let device_pub_key: PublicKey = base64::decode_config(&device_pub_key, base64::URL_SAFE_NO_PAD)
         .map(|bytes| PublicKey::from_bytes(&bytes))??;
-    let holoport_id = PublicKey::from_bytes(&holoport_id)?;
+    let revocation_pub_key = PublicKey::from_bytes(&revocation_pub_key)?;
     let (config, public_key) = Config::new(
         //>>>>>>> 1feccc9 (wip: v3)
         email,
         password,
         registration_code,
         revocation_pub_key,
-        holoport_id,
         derivation_path,
         device_bundle,
         device_pub_key,
@@ -63,8 +61,7 @@ pub fn config(
     email: String,
     password: String,
     registration_code: String,
-    revocation_pub_key: String,
-    holoport_id: Vec<u8>,
+    revocation_pub_key: Vec<u8>,
     derivation_path: String,
     device_bundle: String,
     device_pub_key: String,
@@ -74,7 +71,6 @@ pub fn config(
         password,
         registration_code,
         revocation_pub_key,
-        holoport_id,
         derivation_path,
         device_bundle,
         device_pub_key,

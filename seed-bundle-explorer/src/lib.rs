@@ -21,7 +21,10 @@ pub async fn holoport_public_key(
             let secret = unlock(device_bundle, passphrase).await?;
             Ok(secret.verifying_key())
         }
-        Config::V3 { holoport_id, .. } => Ok(holoport_id.to_owned()),
+        Config::V3 { holoport_id, .. } => {
+            let value = base36::decode(&holoport_id).unwrap();
+            Ok(PublicKey::from_bytes(&value)?)
+        }
     }
 }
 

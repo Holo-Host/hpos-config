@@ -2,6 +2,8 @@ use arrayref::array_ref;
 use ed25519_dalek::{Digest, Sha512, SigningKey, VerifyingKey};
 use failure::Error;
 use serde::*;
+
+use crate::public_key;
 pub const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<VerifyingKey, D::Error>
@@ -80,12 +82,12 @@ pub enum Config {
         /// This is the Device Seed Bundle as a base64 string which is compatible with lair-keystore >=v0.0.8
         /// And is encoded with a password that will be needed to be used to decrypt it
         device_bundle: String,
-        // The revocation key is usually the /0 derivation path of the master seed
-        revocation_pub_key: String,
-        // /1 derivation path of the device bundle
-        holoport_id: PublicKey,
         /// Derivation path of the seed in this config that was generated for a Master Seed
-        derivation_path: String,
+        device_derivation_path: String,
+        // The revocation key is usually the /0 derivation path of the master seed
+        revocation_pub_key: PublicKey,
+        // /1 derivation path of the device bundle base36 encoded
+        holoport_id: String,
         /// Holo registration code is used to identify and authenticate its users
         registration_code: String,
         /// The pub-key in settings is the holoport key that is used for verifying login signatures
@@ -98,9 +100,8 @@ impl Config {
         email: String,
         password: String,
         registration_code: String,
-        revocation_pub_key: String,
-        holoport_id: PublicKey,
-        derivation_path: String,
+        revocation_pub_key: PublicKey,
+        device_derivation_path: String,
         device_bundle: String,
         device_pub_key: VerifyingKey,
     ) -> Result<(Self, VerifyingKey), Error> {
@@ -109,10 +110,11 @@ impl Config {
             email,
             public_key: admin_keypair.verifying_key(),
         };
+        let holoport_id = public_key::to_base36_id(&device_pub_key);
         Ok((
             Config::V3 {
                 device_bundle,
-                derivation_path,
+                device_derivation_path,
                 revocation_pub_key,
                 holoport_id,
                 registration_code,
