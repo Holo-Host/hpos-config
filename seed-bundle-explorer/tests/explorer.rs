@@ -24,8 +24,7 @@ mod tests {
             email,
             password,
             registration_code,
-            "revocation_pub_key".to_string(),
-            PublicKey::from_bytes(&vec![0; 32]).unwrap(),
+            PublicKey::from_bytes([0; 32].as_ref()).unwrap(),
             derivation_path,
             device_bundle,
             get_mock_pub_key()?,
@@ -34,12 +33,11 @@ mod tests {
         Ok(config)
     }
     fn get_mock_pub_key() -> Result<PublicKey, String> {
-        let device_pub_key: String = "To4PzBU8BcVghpjGjnYjLQnP_mkT9uBJ2v969Cs7-xw".to_string();
-        Ok(
-            base64::decode_config(&device_pub_key, base64::URL_SAFE_NO_PAD)
-                .map(|bytes| PublicKey::from_bytes(&bytes))
-                .unwrap()
-                .unwrap(),
-        )
+        let device_pub_key: String =
+            "4099r424lmhpjhqsrf253fq8pkuladttqq0k1vkf96bsiy9lnf".to_string();
+        Ok(base36::decode(&device_pub_key)
+            .map(|bytes| PublicKey::from_bytes(&bytes))
+            .unwrap()
+            .unwrap())
     }
 }
