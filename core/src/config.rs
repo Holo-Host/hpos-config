@@ -85,6 +85,10 @@ pub enum Config {
         /// Derivation path of the seed in this config that was generated for a Master Seed
         device_derivation_path: String,
         // The revocation key is usually the /0 derivation path of the master seed
+        #[serde(
+            deserialize_with = "public_key_from_base64",
+            serialize_with = "to_base64"
+        )]
         revocation_pub_key: PublicKey,
         // /1 derivation path of the device bundle base36 encoded
         holoport_id: String,
