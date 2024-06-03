@@ -21,5 +21,4 @@ one_err = "0.0.8"
 
 [dev-dependencies]
 tokio = { version = "1.12.0", features = [ "full" ] }
-hc_seed_bundle = "0.1.5"
 base64 = "0.13.0"

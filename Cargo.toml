@@ -9,3 +9,5 @@ members = [
   "seed-bundle-explorer",
   "is-valid"
 ]
+
+resolver = "2"
