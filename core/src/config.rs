@@ -89,6 +89,8 @@ pub enum Config {
         revocation_pub_key: PublicKey,
         // /1 derivation path of the device bundle base36 encoded
         holoport_id: String,
+        // This is a HoloHash version of the holoport_id
+        initial_host_pub_key: String,
         /// Holo registration code is used to identify and authenticate its users
         registration_code: String,
         /// The pub-key in settings is the holoport key that is used for verifying login signatures
@@ -118,6 +120,7 @@ impl Config {
                 device_derivation_path,
                 revocation_pub_key,
                 holoport_id,
+                initial_host_pub_key: public_key::to_holochain_encoded_agent_key(&device_pub_key),
                 registration_code,
                 settings: Settings { admin: admin },
             },
@@ -133,22 +136,6 @@ impl Config {
         }
     }
 }
-
-// fn generate_keypair(
-//     email: String,
-//     password: String,
-//     maybe_seed: Option<Seed>,
-// ) -> Result<(Seed, Keypair, PublicKey), Error> {
-//     let master_seed = match maybe_seed {
-//         None => OsRng::new()?.gen::<Seed>(),
-//         Some(s) => s,
-//     };
-//     let master_secret_key = SecretKey::from_bytes(&master_seed)?;
-//     let master_public_key = PublicKey::from(&master_secret_key);
-
-//     let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
-//     Ok((master_seed, admin_keypair, master_public_key))
-// }
 
 pub fn admin_keypair_from(
     holochain_public_key: PublicKey,

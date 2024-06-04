@@ -58,6 +58,7 @@ mod tests {
             device_derivation_path,
             revocation_pub_key,
             holoport_id,
+            initial_host_pub_key: _,
             registration_code,
             settings,
         } = hpos_config.0
