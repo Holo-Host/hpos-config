@@ -1,5 +1,5 @@
-use ed25519_dalek::PublicKey;
-use failure::Error;
+use ed25519_dalek::VerifyingKey;
+use failure::{format_err, Error};
 use hpos_config_core::{public_key, Config};
 use serde::*;
 use wasm_bindgen::prelude::*;
@@ -20,8 +20,14 @@ fn config_raw(
     device_bundle: String,
     device_pub_key: String,
 ) -> Result<JsValue, Error> {
-    let device_pub_key: PublicKey = base64::decode_config(&device_pub_key, base64::URL_SAFE_NO_PAD)
-        .map(|bytes| PublicKey::from_bytes(&bytes))??;
+    let bytes: [u8; 32] =
+        match (base64::decode_config(device_pub_key, base64::URL_SAFE_NO_PAD)?)[0..32].try_into() {
+            Ok(b) => b,
+            Err(_) => return Err(format_err!("Device pub key is not 32 bytes in size")),
+        };
+
+    let device_pub_key: VerifyingKey = VerifyingKey::from_bytes(&bytes)?;
+
     let (config, public_key) = Config::new_v2(
         email,
         password,

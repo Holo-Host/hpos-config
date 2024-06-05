@@ -1,20 +1,23 @@
 use arrayref::array_ref;
-use ed25519_dalek::*;
+use ed25519_dalek::{Digest, Sha512, SigningKey, VerifyingKey};
 use failure::Error;
 use rand::{rngs::OsRng, Rng};
 use serde::*;
 pub const SEED_SIZE: usize = 32;
 
-fn public_key_from_base64<'de, D>(deserializer: D) -> Result<PublicKey, D::Error>
+fn public_key_from_base64<'de, D>(deserializer: D) -> Result<VerifyingKey, D::Error>
 where
     D: Deserializer<'de>,
 {
     String::deserialize(deserializer)
         .and_then(|s| {
-            base64::decode_config(&s, base64::STANDARD_NO_PAD)
+            base64::decode_config(s, base64::STANDARD_NO_PAD)
                 .map_err(|err| de::Error::custom(err.to_string()))
         })
-        .map(|bytes| PublicKey::from_bytes(&bytes))
+        .map(|bytes| match bytes[0..32].try_into() {
+            Ok(b) => VerifyingKey::from_bytes(&b).map_err(|e| e.to_string()),
+            Err(_) => Err("Public key is not 32 bytes long".to_string()),
+        })
         .and_then(|maybe_key| maybe_key.map_err(|err| de::Error::custom(err.to_string())))
 }
 
@@ -23,8 +26,8 @@ where
     D: Deserializer<'de>,
 {
     String::deserialize(deserializer)
-        .and_then(|s| base64::decode(&s).map_err(|err| de::Error::custom(err.to_string())))
-        .map(|bytes| array_ref!(bytes, 0, SEED_SIZE).clone())
+        .and_then(|s| base64::decode(s).map_err(|err| de::Error::custom(err.to_string())))
+        .map(|bytes| *array_ref!(bytes, 0, SEED_SIZE))
 }
 
 fn to_base64<T, S>(x: &T, serializer: S) -> Result<S::Ok, S::Error>
@@ -46,7 +49,7 @@ pub struct Admin {
         deserialize_with = "public_key_from_base64",
         serialize_with = "to_base64"
     )]
-    pub public_key: PublicKey,
+    pub public_key: VerifyingKey,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -80,12 +83,12 @@ impl Config {
         email: String,
         password: String,
         maybe_seed: Option<Seed>,
-    ) -> Result<(Self, PublicKey), Error> {
+    ) -> Result<(Self, VerifyingKey), Error> {
         let (seed, admin_keypair, holochain_public_key) =
             generate_keypair(email.clone(), password, maybe_seed)?;
         let admin = Admin {
-            email: email,
-            public_key: admin_keypair.public,
+            email,
+            public_key: admin_keypair.verifying_key(),
         };
 
         Ok((
@@ -103,25 +106,25 @@ impl Config {
         registration_code: String,
         derivation_path: String,
         device_bundle: String,
-        device_pub_key: PublicKey,
-    ) -> Result<(Self, PublicKey), Error> {
+        device_pub_key: VerifyingKey,
+    ) -> Result<(Self, VerifyingKey), Error> {
         let admin_keypair = admin_keypair_from(device_pub_key, &email, &password)?;
         let admin = Admin {
-            email: email,
-            public_key: admin_keypair.public,
+            email,
+            public_key: admin_keypair.verifying_key(),
         };
         Ok((
             Config::V2 {
                 device_bundle,
                 derivation_path,
                 registration_code,
-                settings: Settings { admin: admin },
+                settings: Settings { admin },
             },
             device_pub_key,
         ))
     }
 
-    pub fn admin_public_key(&self) -> PublicKey {
+    pub fn admin_public_key(&self) -> VerifyingKey {
         match self {
             Config::V1 { settings, .. } | Config::V2 { settings, .. } => settings.admin.public_key,
         }
@@ -132,23 +135,23 @@ fn generate_keypair(
     email: String,
     password: String,
     maybe_seed: Option<Seed>,
-) -> Result<(Seed, Keypair, PublicKey), Error> {
+) -> Result<(Seed, SigningKey, VerifyingKey), Error> {
     let master_seed = match maybe_seed {
         None => OsRng::new()?.gen::<Seed>(),
         Some(s) => s,
     };
-    let master_secret_key = SecretKey::from_bytes(&master_seed)?;
-    let master_public_key = PublicKey::from(&master_secret_key);
+    let master_secret_key = SigningKey::from_bytes(&master_seed);
+    let master_public_key = VerifyingKey::from(&master_secret_key);
 
     let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
     Ok((master_seed, admin_keypair, master_public_key))
 }
 
 pub fn admin_keypair_from(
-    holochain_public_key: PublicKey,
+    holochain_public_key: VerifyingKey,
     email: &str,
     password: &str,
-) -> Result<Keypair, Error> {
+) -> Result<SigningKey, Error> {
     // This allows to use email addresses shorter than 8 bytes.
     let salt = Sha512::digest(email.as_bytes());
     let mut hash = [0; SEED_SIZE];
@@ -161,11 +164,5 @@ pub fn admin_keypair_from(
         ARGON2_ADDITIONAL_DATA,
     );
 
-    let secret_key = SecretKey::from_bytes(&hash)?;
-    let public_key = PublicKey::from(&secret_key);
-
-    Ok(Keypair {
-        public: public_key,
-        secret: secret_key,
-    })
+    Ok(SigningKey::from_bytes(&hash))
 }

@@ -1,6 +1,6 @@
 [package]
 name = "hpos-config-is-valid"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
   "Sam Rose <sam.rose@holo.host>"
 ]
@@ -8,6 +8,6 @@ edition = "2021"
 repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]
-anyhow = "1.0"
+anyhow = { workspace = true }
 hpos-config-core = { path = "../core" }
-serde_json = "1.0.64"
+serde_json = { workspace = true }

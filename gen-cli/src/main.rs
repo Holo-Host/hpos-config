@@ -8,7 +8,7 @@ use serde::*;
 use sha2::{Digest, Sha512Trunc256};
 use std::{env, fs::File, io, path::PathBuf};
 
-const USAGE: &'static str = "
+const USAGE: &str = "
 Usage: hpos-config-gen-cli --email EMAIL --password STRING --registration-code STRING --derivation-path STRING --device-bundle STRING [--seed-from PATH]
        hpos-config-gen-cli --help
 
@@ -35,7 +35,7 @@ struct Args {
 
 fn main() -> Result<(), Error> {
     let args: Args = Docopt::new(USAGE)
-        .and_then(|d| d.argv(env::args().into_iter()).deserialize())
+        .and_then(|d| d.argv(env::args()).deserialize())
         .unwrap_or_else(|e| e.exit());
 
     let seed = match args.flag_seed_from {
@@ -50,7 +50,7 @@ fn main() -> Result<(), Error> {
         }
     };
 
-    let secret_key = SecretKey::from_bytes(&seed)?;
+    let secret_key = SigningKey::from_bytes(&seed);
 
     let (config, public_key) = Config::new_v2(
         args.flag_email,
@@ -58,7 +58,7 @@ fn main() -> Result<(), Error> {
         args.flag_registration_code,
         args.flag_derivation_path,
         args.flag_device_bundle,
-        PublicKey::from(&secret_key),
+        VerifyingKey::from(&secret_key),
     )?;
     eprintln!("{}", public_key::to_url(&public_key)?);
     println!("{}", serde_json::to_string_pretty(&config)?);

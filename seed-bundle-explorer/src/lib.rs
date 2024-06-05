@@ -1,4 +1,4 @@
-use ed25519_dalek::{ed25519, Keypair, PublicKey, SecretKey};
+use ed25519_dalek::{ed25519, SigningKey, VerifyingKey};
 use hc_seed_bundle::*;
 use hpos_config_core::Config;
 
@@ -6,11 +6,11 @@ use hpos_config_core::Config;
 pub async fn holoport_public_key(
     config: &Config,
     passphrase: Option<String>,
-) -> SeedExplorerResult<PublicKey> {
+) -> SeedExplorerResult<VerifyingKey> {
     match config {
         Config::V1 { seed, .. } => {
-            let secret_key = SecretKey::from_bytes(seed)?;
-            Ok(PublicKey::from(&secret_key))
+            let secret_key = SigningKey::from_bytes(seed);
+            Ok(VerifyingKey::from(&secret_key))
         }
         Config::V2 { device_bundle, .. } => {
             /*
@@ -18,8 +18,8 @@ pub async fn holoport_public_key(
                 password is pass for now
                 unlock it and get the signPubKey
             */
-            let Keypair { public, .. } = unlock(device_bundle, passphrase).await?;
-            Ok(public)
+            let secret = unlock(device_bundle, passphrase).await?;
+            Ok(secret.verifying_key())
         }
     }
 }
@@ -28,15 +28,9 @@ pub async fn holoport_public_key(
 pub async fn holoport_key(
     config: &Config,
     passphrase: Option<String>,
-) -> SeedExplorerResult<Keypair> {
+) -> SeedExplorerResult<SigningKey> {
     match config {
-        Config::V1 { seed, .. } => {
-            let secret = SecretKey::from_bytes(seed)?;
-            Ok(Keypair {
-                public: PublicKey::from(&secret),
-                secret,
-            })
-        }
+        Config::V1 { seed, .. } => Ok(SigningKey::from_bytes(seed)),
         Config::V2 { device_bundle, .. } => {
             /*
                 decode base64 string to locked device bundle
@@ -55,8 +49,8 @@ pub async fn encoded_ed25519_keypair(
 ) -> SeedExplorerResult<String> {
     match config {
         Config::V1 { seed, .. } => {
-            let secret_key = SecretKey::from_bytes(seed)?;
-            Ok(encrypt_key(&secret_key, &PublicKey::from(&secret_key)))
+            let secret_key = SigningKey::from_bytes(seed);
+            Ok(encrypt_key(&secret_key, &VerifyingKey::from(&secret_key)))
         }
         Config::V2 { device_bundle, .. } => {
             /*
@@ -65,23 +59,30 @@ pub async fn encoded_ed25519_keypair(
                 unlock it and get the signPubKey
                 Pass the Seed and PublicKey into `encrypt_key(seed, pubKey)`
             */
-            let Keypair { public, secret } = unlock(device_bundle, passphrase).await?;
-            Ok(encrypt_key(&secret, &public))
+            let secret = unlock(device_bundle, passphrase).await?;
+            Ok(encrypt_key(&secret, &secret.verifying_key()))
         }
     }
 }
 
 /// decode the ed25519 keypair making it compatible with lair (<v0.0.6)
-pub fn decoded_to_ed25519_keypair(blob: &String) -> SeedExplorerResult<Keypair> {
+pub fn decoded_to_ed25519_keypair(blob: &String) -> SeedExplorerResult<SigningKey> {
     let decoded_key = base64::decode(blob)?;
-    Ok(Keypair {
-        public: PublicKey::from_bytes(&decoded_key[32..64].to_vec())?,
-        secret: SecretKey::from_bytes(&decoded_key[64..].to_vec())?,
-    })
+
+    let decoded_key_bytes: [u8; 32] = match decoded_key[64..].try_into() {
+        Ok(b) => b,
+        Err(_) => {
+            return Err(SeedExplorerError::Generic(
+                "Unable to extract private key starting at position 64".into(),
+            ))
+        }
+    };
+
+    Ok(SigningKey::from_bytes(&decoded_key_bytes))
 }
 
 /// For now lair does not take in any encrypted bytes so we pass back an empty encrypted byte string
-pub fn encrypt_key(seed: &SecretKey, public_key: &PublicKey) -> String {
+pub fn encrypt_key(seed: &SigningKey, public_key: &VerifyingKey) -> String {
     let mut encrypted_key = vec![
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0,
@@ -95,7 +96,7 @@ pub fn encrypt_key(seed: &SecretKey, public_key: &PublicKey) -> String {
 pub async fn unlock(
     device_bundle: &String,
     passphrase: Option<String>,
-) -> SeedExplorerResult<Keypair> {
+) -> SeedExplorerResult<SigningKey> {
     let cipher = base64::decode_config(device_bundle, base64::URL_SAFE_NO_PAD)?;
     match UnlockedSeedBundle::from_locked(&cipher).await?.remove(0) {
         LockedSeedCipher::PwHash(cipher) => {
@@ -104,10 +105,17 @@ pub async fn unlock(
                 .ok_or(SeedExplorerError::PasswordRequired)?;
             let passphrase = sodoken::BufRead::from(passphrase.as_bytes().to_vec());
             let seed = cipher.unlock(passphrase).await?;
-            Ok(Keypair {
-                public: PublicKey::from_bytes(&*seed.get_sign_pub_key().read_lock())?,
-                secret: SecretKey::from_bytes(&*seed.get_seed().read_lock())?,
-            })
+
+            let seed_bytes: [u8; 32] = match (&*seed.get_seed().read_lock())[0..32].try_into() {
+                Ok(b) => b,
+                Err(_) => {
+                    return Err(SeedExplorerError::Generic(
+                        "Seed buffer is not 32 bytes long".into(),
+                    ))
+                }
+            };
+
+            Ok(SigningKey::from_bytes(&seed_bytes))
         }
         _ => Err(SeedExplorerError::UnsupportedCipher),
     }
