@@ -89,7 +89,7 @@ pub enum Config {
             deserialize_with = "public_key_from_base64",
             serialize_with = "to_base64"
         )]
-        revocation_pub_key: PublicKey,
+        revocation_pub_key: VerifyingKey,
         // /1 derivation path of the device bundle base36 encoded
         holoport_id: String,
         /// Holo registration code is used to identify and authenticate its users
@@ -104,7 +104,7 @@ impl Config {
         email: String,
         password: String,
         registration_code: String,
-        revocation_pub_key: PublicKey,
+        revocation_pub_key: VerifyingKey,
         device_derivation_path: String,
         device_bundle: String,
         device_pub_key: VerifyingKey,
@@ -141,13 +141,13 @@ impl Config {
 //     email: String,
 //     password: String,
 //     maybe_seed: Option<Seed>,
-// ) -> Result<(Seed, Keypair, PublicKey), Error> {
+// ) -> Result<(Seed, Keypair, VerifyingKey), Error> {
 //     let master_seed = match maybe_seed {
 //         None => OsRng::new()?.gen::<Seed>(),
 //         Some(s) => s,
 //     };
 //     let master_secret_key = SecretKey::from_bytes(&master_seed)?;
-//     let master_public_key = PublicKey::from(&master_secret_key);
+//     let master_public_key = VerifyingKey::from(&master_secret_key);
 //     let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
 //     Ok((master_seed, admin_keypair, master_public_key))
 // }

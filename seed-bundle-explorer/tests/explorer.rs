@@ -20,11 +20,12 @@ mod tests {
         let registration_code: String = "registration-code".to_string();
         let derivation_path: String = "1".to_string();
         let device_bundle = "k6VoY3NiMJGWonB3xBCZ0R47aR6ctMScaYsrOLwRzSAAAcQY58NsOmNCDbniGsLgUhj5UoHjBrapiiDGxDGAa5Wqzm0pVuXGN106iyMHRk4dOf0iGWj65oCeB8-ZYXJdeflsVDY-DOuJaadfPZQExCyCrWRldmljZV9udW1iZXIAq2dlbmVyYXRlX2J5r3F1aWNrc3RhcnQtdjIuMA".to_string();
+        let rev_key: [u8; 32] = [0 as u8; 32]; // TODO: Fill this in with something
         let (config, _) = Config::new(
             email,
             password,
             registration_code,
-            PublicKey::from_bytes([0; 32].as_ref()).unwrap(),
+            VerifyingKey::from_bytes(&rev_key).unwrap(),
             derivation_path,
             device_bundle,
             get_mock_pub_key()?,

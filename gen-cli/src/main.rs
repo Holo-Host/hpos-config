@@ -28,7 +28,7 @@ struct Args {
     flag_email: String,
     flag_password: String,
     flag_registration_code: String,
-    flag_revocation_pub_key: PublicKey,
+    flag_revocation_pub_key: VerifyingKey,
     flag_derivation_path: String,
     flag_device_bundle: String,
     flag_seed_from: Option<PathBuf>,

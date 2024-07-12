@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
 
-    use ed25519_dalek::PublicKey;
+    use ed25519_dalek::VerifyingKey;
     use hpos_config_core::Config;
 
     #[tokio::test(flavor = "multi_thread")]
@@ -36,8 +36,10 @@ mod tests {
         let email = "joel@holo.host".to_string();
         let password = "password".to_string();
         let registration_code = "registration-code".to_string();
-        let revocation_pub_key = PublicKey::from_bytes(&revocation_pub_key).unwrap();
-        let holoport_id = PublicKey::from_bytes(&holoport_id).unwrap();
+        let rev_key_bytes = revocation_pub_key[0..32].try_into().unwrap();
+        let revocation_pub_key = VerifyingKey::from_bytes(&rev_key_bytes).unwrap();
+        let holoport_id_bytes = holoport_id[0..32].try_into().unwrap();
+        let holoport_id = VerifyingKey::from_bytes(&holoport_id_bytes).unwrap();
         let hpos_config = Config::new(
             email.clone(),
             password,

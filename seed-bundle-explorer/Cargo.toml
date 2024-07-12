@@ -17,8 +17,8 @@ sodoken = "0.0.11"
 rmp-serde = "1.1.0"
 thiserror = "1.0"
 one_err = "0.0.8"
+base36 = "0.0.1"
 
 [dev-dependencies]
 tokio = { workspace = true, features = [ "full" ] }
-hc_seed_bundle = "0.1.5"
-base64 = "0.13.0"
+base64 = { workspace = true }
