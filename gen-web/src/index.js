@@ -652,20 +652,20 @@
     
     let configData
     try {
-      const seedPubkey = seed.pubKey.toString()
-      const deviceRoot = seed.deviceRoot.toString()
+      // const seedPubkey = seed.pubKey.toString()
+      // const deviceRoot = seed.deviceRoot.toString()
       const derivationPath = seed.derivationPath.toString()
-      const revocationPubKey = revocation.signPubKey.toString()
+      // const revocationPubKey = revocation.signPubKey.toString()
 
-      console.log(`user email: ${user.email} type: ${typeof user.email}`)
-      console.log(`user password: ${user.password} type: ${typeof user.password}`)
-      console.log(`user registrationCode: ${user.registrationCode} type: ${typeof user.registrationCode}`)
-      console.log(`revocation signPubKey: ${revocationPubKey} type: ${typeof revocationPubKey}`)
-      console.log(`seed derivationPath: ${derivationPath} type: ${typeof derivationPath}`)
-      console.log(`seed deviceRoot: ${deviceRoot} type: ${typeof deviceRoot}`)
-      console.log(`seed pubKey: ${seedPubkey} type: ${typeof seedPubkey}`)
+      // console.log(`user email: ${user.email} type: ${typeof user.email}`)
+      // console.log(`user password: ${user.password} type: ${typeof user.password}`)
+      // console.log(`user registrationCode: ${user.registrationCode} type: ${typeof user.registrationCode}`)
+      // console.log(`revocation signPubKey: ${revocationPubKey} type: ${typeof revocationPubKey}`)
+      // console.log(`seed derivationPath: ${derivationPath} type: ${typeof derivationPath}`)
+      // console.log(`seed deviceRoot: ${deviceRoot} type: ${typeof deviceRoot}`)
+      // console.log(`seed pubKey: ${seedPubkey} type: ${typeof seedPubkey}`)
 
-      configData = config(user.email, user.password, user.registrationCode, revocationPubKey, derivationPath, deviceRoot, seedPubkey)
+      configData = config(user.email, user.password, user.registrationCode, revocation.signPubKey, derivationPath, seed.deviceRoot, seed.pubKey)
     } catch (e) {
       inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
       throw new Error(`Error generating config data.  Error: ${e}`)
