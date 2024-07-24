@@ -66,7 +66,6 @@
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     formErrorMessage: document.querySelector('#form-error-message'),
     downloadFileName: document.querySelector('#download-file'),
-    currentHoloportDescriptor: document.querySelector('#current-holoport-descriptor')
   }
 
   const nextButtonLoaderColumn = document.querySelector('#next-button-loader-column')
@@ -181,7 +180,7 @@
       /* Communicate visually that something is happening in the background */
       buttons.genSeed.classList.add('disabled')
       buttons.genSeed.disabled = true
-      buttons.genSeed.innerHTML = 'Saving Seed File...'
+      buttons.genSeed.innerHTML = 'Saving Seed and Revocation Key Files...'
 
       setTimeout(async () => {
         try {
@@ -248,7 +247,7 @@
         /* Clean State */
         downloadSeedTracker = true
         buttons.genSeed.disabled = true
-        buttons.genSeed.innerHTML = 'Saved Seed File and revocation key'
+        buttons.genSeed.innerHTML = 'Saved Seed and Revocation Key Files'
         verifySeedDownloadComplete(downloadSeedTracker)
       }, 2000)      
     },
@@ -343,7 +342,6 @@
     loop: () => {
       deviceNumber++
       downloadConfigTracker = false
-      inlineVariables.currentHoloportDescriptor.innerHTML = 'additional'
       updateProgressBar(6, true)
       updateProgressBar(5, true)
       updateUiStep(4)
@@ -550,7 +548,7 @@
   // with an invalid registration code. The purpose is simply to prevent users from wasting time setting up a
   // HoloPort with the wrong code.
   const verifyRegistrationCode = async ({ registration_code, email }) => {
-    return true
+    
     const response = await fetch(`${MEMBRANE_PROOF_SERVICE_URL}/registration/api/v1/verify-registration-code`,
     {
       method: 'POST',
@@ -607,13 +605,6 @@
             hcSeedBundle.parseSecret(pw), 'minimum')
         ])
 
-        // DEV MODE - check pub key for devices:
-        console.log(`PW: [${pw}]`)
-        console.log("Created from master seed: ", master.signPubKey)
-        console.log("Revocation pub key: ", revocation.signPubKey)
-        console.log(`Device ${deviceNumber}: ${toBase64(encodedBytes)}`)
-        console.log(`Device signPubkey: ${pubKey}`)
-
         // pass seed into the blob
         let seed = {
           derivationPath: deviceNumber,
@@ -647,36 +638,19 @@
    * @param {Object} seed {derivationPath, deviceRoot, pubKey}
   */
   const generateBlob = (user, seed) => {
-    // todo: update this fn by passing the revocation_pub_key
-    // todo: seed pubkey should be derived from the seed, not the deviceRoot pubKey itself 
-    
-    let configData
-    try {
-      // const seedPubkey = seed.pubKey.toString()
-      // const deviceRoot = seed.deviceRoot.toString()
-      const derivationPath = seed.derivationPath.toString()
-      // const revocationPubKey = revocation.signPubKey.toString()
-
-      // console.log(`user email: ${user.email} type: ${typeof user.email}`)
-      // console.log(`user password: ${user.password} type: ${typeof user.password}`)
-      // console.log(`user registrationCode: ${user.registrationCode} type: ${typeof user.registrationCode}`)
-      // console.log(`revocation signPubKey: ${revocationPubKey} type: ${typeof revocationPubKey}`)
-      // console.log(`seed derivationPath: ${derivationPath} type: ${typeof derivationPath}`)
-      // console.log(`seed deviceRoot: ${deviceRoot} type: ${typeof deviceRoot}`)
-      // console.log(`seed pubKey: ${seedPubkey} type: ${typeof seedPubkey}`)
-
-      configData = config(user.email, user.password, user.registrationCode, revocation.signPubKey, derivationPath, seed.deviceRoot, seed.pubKey)
-    } catch (e) {
-      inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
-      throw new Error(`Error generating config data.  Error: ${e}`)
-    }
 
     let configBlob
+    let configData
+
     try {
+      const derivationPath = seed.derivationPath.toString()
+
+
+      configData = config(user.email, user.password, user.registrationCode, revocation.signPubKey, derivationPath, seed.deviceRoot, seed.pubKey)
       configBlob = new Blob([configData.config], { type: 'application/json' })
     } catch (e) {
       inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
-      throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)      
+      throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
     }
 
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
