@@ -112,7 +112,7 @@
           <span class="step-number">Step 4:</span> Create Host Console credentials
         </span>
         <span class="step-display step5">
-          <span class="step-number">Step 5:</span> Create your keys and save them
+          <span class="step-number">Step 5:</span> Generate the HoloPort configuration file
         </span>
         <span class="step-display step6">
           <span class="step-number">Step 6:</span> Connect to the Holo Network
@@ -128,7 +128,7 @@
         <p class="step-display step2">You can optionally turn off your internet while doing this for added security.</p>
         <p class="step-display step3">Click the button below to generate and save your master seed file and revocation key. You will need to save it to your hard drive or to a USB drive that is <strong><u>NOT</u></strong> the same USB drive used for your HoloPort.</p>
         <p class="step-display step4">Host Console is where you can manage your HoloPort and hosting settings. Create a Host Console password for your HoloPort.</p>
-        <p class="step-display step5">Click the button below to download the configuration file, and then move the file to the HoloPort USB drive. The filename must be <span id="download-file"></span> for your HoloPort to read it.</p>
+        <p class="step-display step5">Click the button below to download the configuration file that contains your device seed, and then move the file to the HoloPort USB drive. The filename must be <span id="download-file"></span> for your HoloPort to read it.</p>
         <p class="step-display step6">Safely eject the USB from your computer, power on your HoloPort, and insert the USB into the associated HoloPort when the LED light is solid blue. Your HoloPort is now connecting to the Holo network.</p>
         <p class="step-display step7">Do you have additional HoloPorts that you’d like to register at this time?</p>
       </div>
@@ -154,13 +154,12 @@
           <input id="seed-passphrase" class="input" name="seed-passphrase" type="text"/>
         </div>
         <span id="seed-passphrase-error-message" class="error-red"></span>
-        <p class="step-footnote"><span class="bold">Tip:</span> Write down or store your passphrase in a password manager.</p>
       </div>
 
 
       <div class="step-display step3">
         <a id="gen-seed-button" class="btn button-font action-button">
-          <img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span class="button-text">Generate & Save Seed File</span>
+          <img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span class="button-text">Generate & Save Seed & Key File</span>
         </a>
       </div>
 
@@ -268,24 +267,6 @@
         <div>The next two steps are where you create and save your master seed file and revocation key. It is super important for you to <strong>save the downloaded file and the passphrase you create here somewhere safe.</strong> It will be used in the future if you need to regenerate passwords or if you need to register additional HoloPorts.</div>
 
         <button id="close-modal-intro" class="btn button-font confirm-button"><span>I understand</span></button>
-      </div>
-    </div>
-  </div>
-
-  <div id="modal-passphrase-outro">
-    <div class="modal-overlay"></div>
-    <div class="modal-wrapper">
-      <div class="modal-body">
-        <img class="exclamation" src="assets/icons/important-purple-icon.svg" />
-
-        <p class="modal-title">Important!</p>
-
-        <div>Did you remember to write down your passphrase?</div>
-
-        <div class="vert-buttons">
-          <button id="has-written-passphrase" class="btn button-font confirm-button"><span>Yes</span></button>
-          <span id="has-not-written-passphrase" class="button-font modal-button">Go back</span>
-        </div>
       </div>
     </div>
   </div>

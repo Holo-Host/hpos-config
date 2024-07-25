@@ -912,7 +912,7 @@ a {
   display: flex;
 }
 
-#modal-passphrase-intro, #modal-passphrase-outro, #change-seed-modal {
+#modal-passphrase-intro, #change-seed-modal {
   display: none;
 }
 

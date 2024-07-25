@@ -124,9 +124,7 @@
             return
           }
           seedPassphrase = inputs.seedPassphrase.value
-          if (!await confirmPassphraseWritten()) {
-            return
-          }
+
           updateUiStep(3)
           updateProgressBar(2)
           break
@@ -180,7 +178,7 @@
       /* Communicate visually that something is happening in the background */
       buttons.genSeed.classList.add('disabled')
       buttons.genSeed.disabled = true
-      buttons.genSeed.innerHTML = 'Saving Seed and Revocation Key Files...'
+      buttons.genSeed.innerHTML = 'Saving Seed & Key Files...'
 
       setTimeout(async () => {
         try {
@@ -247,7 +245,7 @@
         /* Clean State */
         downloadSeedTracker = true
         buttons.genSeed.disabled = true
-        buttons.genSeed.innerHTML = 'Saved Seed and Revocation Key Files'
+        buttons.genSeed.innerHTML = 'Saved Seed & Key Files'
         verifySeedDownloadComplete(downloadSeedTracker)
       }, 2000)      
     },
@@ -312,9 +310,6 @@
     },
     showModalPassphraseIntro: () => {
       document.querySelector('#modal-passphrase-intro').style.display = 'block'
-    },
-    showModalPassphraseOutro: () => {
-      document.querySelector('#modal-passphrase-outro').style.display = 'block'
     },
     closePassphraseIntro: () => {
       document.querySelector('#modal-passphrase-intro').style.display = 'none'
@@ -524,21 +519,6 @@
       }
       return childListNodes[stepIndex + 1]
     }
-  }
-
-  const confirmPassphraseWritten = async () => {
-    click.showModalPassphraseOutro()
-
-    const confirmed = await new Promise(resolve => {
-      buttons.hasWrittenPassphrase.onclick = () => {
-        resolve(true)
-      }
-      buttons.hasNotWrittenPassphrase.onclick = () => {
-        resolve(false)
-      }
-    })
-    document.querySelector('#modal-passphrase-outro').style.display = 'none'
-    return confirmed
   }
 
   // Verifies a registration code by contacting the Holo Membrane Proof Service.
