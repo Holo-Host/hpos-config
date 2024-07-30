@@ -43,6 +43,9 @@ async fn main() -> Result<()> {
                 ))?;
             println!("{}", public_key::to_base36_id(&secret.verifying_key()));
         }
+        Config::V3 { holoport_id, .. } => {
+            println!("{}", holoport_id);
+        }
     }
 
     Ok(())

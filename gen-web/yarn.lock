@@ -893,13 +893,18 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.6.tgz#d5e0706cf8c6acd8c6032f8d54070af261bbbb2f"
   integrity sha512-ws57AidsDvREKrZKYffXddNkyaF14iHNHm8VQnZH6t99E8gczjNN0GpvcGny0imC80yQ0tHz1xVUKk/KFQSUyA==
 
-"@holochain/hc-seed-bundle@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@holochain/hc-seed-bundle/-/hc-seed-bundle-0.0.3.tgz#34adaa8fcedf255eebdf29960b913e72cab35d69"
-  integrity sha512-cXLfbBMsqO1aQg/RBl66cOOhGZZObXeZ1sVhqBr1Ly/HPXoJDbQJ77BdSz/r8fn3fJE114ch8JK1ekrwAWLM3A==
+"@holochain/hc-seed-bundle@0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@holochain/hc-seed-bundle/-/hc-seed-bundle-0.1.1.tgz#b6fbfd0abaa2da7888ad7fdfaf54771d2423bb4f"
+  integrity sha512-ghHIndoNrhnzYCuN7THGVBHq5RnjNqypmjXK+LJYJ69W9tIAEuzPUymlHfK42sW4jh/LNQ83iqjVPHdJycjV1Q==
   dependencies:
-    libsodium-wrappers "^0.7.9"
-    tiny-msgpack "^1.0.2"
+    "@msgpack/msgpack" "^3.0.0-beta2"
+    libsodium-wrappers-sumo "^0.7.13"
+
+"@msgpack/msgpack@^3.0.0-beta2":
+  version "3.0.0-beta2"
+  resolved "https://registry.yarnpkg.com/@msgpack/msgpack/-/msgpack-3.0.0-beta2.tgz#5bccee30f84df220b33905e3d8249ba96deca0b7"
+  integrity sha512-y+l1PNV0XDyY8sM3YtuMLK5vE3/hkfId+Do8pLo/OPxfxuFAUwcGz3oiiUuV46/aBpwTzZ+mRWVMtlSKbradhw==
 
 "@types/eslint-scope@^3.7.0":
   version "3.7.3"
@@ -3293,6 +3298,18 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
+libsodium-sumo@^0.7.14:
+  version "0.7.14"
+  resolved "https://registry.yarnpkg.com/libsodium-sumo/-/libsodium-sumo-0.7.14.tgz#9a53e09944f092f603a1e1d4446414de0b3fb0fc"
+  integrity sha512-2nDge6qlAjcwyslAhWfVumlkeSNK5+WCfKa2/VEq9prvlT5vP2FR0m0o5hmKaYqfsZ4TQVj5czQsimZvXDB1CQ==
+
+libsodium-wrappers-sumo@^0.7.13:
+  version "0.7.14"
+  resolved "https://registry.yarnpkg.com/libsodium-wrappers-sumo/-/libsodium-wrappers-sumo-0.7.14.tgz#86301f14b37a77d847eb0396f2b83cdb1c47c480"
+  integrity sha512-0lm7ZwN5a95J2yUi8R1rgQeeaVDIWnvNzgVmXmZswis4mC+bQtbDrB+QpJlL4qklaKx3hVpJjoc6ubzJFiv64Q==
+  dependencies:
+    libsodium-sumo "^0.7.14"
+
 libsodium-wrappers@^0.7.9:
   version "0.7.9"
   resolved "https://registry.yarnpkg.com/libsodium-wrappers/-/libsodium-wrappers-0.7.9.tgz#4ffc2b69b8f7c7c7c5594a93a4803f80f6d0f346"
@@ -4799,11 +4816,6 @@ thunky@^1.0.2:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.1.0.tgz#5abaf714a9405db0504732bbccd2cedd9ef9537d"
   integrity sha512-eHY7nBftgThBqOyHGVN+l8gF0BucP09fMo0oO/Lb0w1OF80dJv+lDVpXG60WMQvkcxAkNybKsrEIE3ZtKGmPrA==
-
-tiny-msgpack@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/tiny-msgpack/-/tiny-msgpack-1.0.2.tgz#78cb189e9d27b30de168284555548e298858edb3"
-  integrity sha1-eMsYnp0nsw3haChFVVSOKYhY7bM=
 
 to-fast-properties@^2.0.0:
   version "2.0.0"

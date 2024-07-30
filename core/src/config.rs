@@ -1,8 +1,9 @@
 use arrayref::array_ref;
 use ed25519_dalek::{Digest, Sha512, SigningKey, VerifyingKey};
 use failure::Error;
-use rand::{rngs::OsRng, Rng};
 use serde::*;
+
+use crate::public_key;
 pub const SEED_SIZE: usize = 32;
 
 fn public_key_from_base64<'de, D>(deserializer: D) -> Result<VerifyingKey, D::Error>
@@ -76,35 +77,35 @@ pub enum Config {
         /// The pub-key in settings is the holoport key that is used for verifying login signatures
         settings: Settings,
     },
+    #[serde(rename = "v3")]
+    V3 {
+        /// This is the Device Seed Bundle as a base64 string which is compatible with lair-keystore >=v0.0.8
+        /// And is encoded with a password that will be needed to be used to decrypt it
+        device_bundle: String,
+        /// Derivation path of the seed in this config that was generated for a Master Seed
+        device_derivation_path: String,
+        // The revocation key is usually the /0 derivation path of the master seed
+        #[serde(
+            deserialize_with = "public_key_from_base64",
+            serialize_with = "to_base64"
+        )]
+        revocation_pub_key: VerifyingKey,
+        // /1 derivation path of the device bundle base36 encoded
+        holoport_id: String,
+        /// Holo registration code is used to identify and authenticate its users
+        registration_code: String,
+        /// The pub-key in settings is the holoport key that is used for verifying login signatures
+        settings: Settings,
+    },
 }
 
 impl Config {
     pub fn new(
         email: String,
         password: String,
-        maybe_seed: Option<Seed>,
-    ) -> Result<(Self, VerifyingKey), Error> {
-        let (seed, admin_keypair, holochain_public_key) =
-            generate_keypair(email.clone(), password, maybe_seed)?;
-        let admin = Admin {
-            email,
-            public_key: admin_keypair.verifying_key(),
-        };
-
-        Ok((
-            Config::V1 {
-                seed,
-                settings: Settings { admin },
-            },
-            holochain_public_key,
-        ))
-    }
-
-    pub fn new_v2(
-        email: String,
-        password: String,
         registration_code: String,
-        derivation_path: String,
+        revocation_pub_key: VerifyingKey,
+        device_derivation_path: String,
         device_bundle: String,
         device_pub_key: VerifyingKey,
     ) -> Result<(Self, VerifyingKey), Error> {
@@ -113,10 +114,13 @@ impl Config {
             email,
             public_key: admin_keypair.verifying_key(),
         };
+        let holoport_id = public_key::to_base36_id(&device_pub_key);
         Ok((
-            Config::V2 {
+            Config::V3 {
                 device_bundle,
-                derivation_path,
+                device_derivation_path,
+                revocation_pub_key,
+                holoport_id,
                 registration_code,
                 settings: Settings { admin },
             },
@@ -126,26 +130,27 @@ impl Config {
 
     pub fn admin_public_key(&self) -> VerifyingKey {
         match self {
-            Config::V1 { settings, .. } | Config::V2 { settings, .. } => settings.admin.public_key,
+            Config::V1 { settings, .. }
+            | Config::V2 { settings, .. }
+            | Config::V3 { settings, .. } => settings.admin.public_key,
         }
     }
 }
 
-fn generate_keypair(
-    email: String,
-    password: String,
-    maybe_seed: Option<Seed>,
-) -> Result<(Seed, SigningKey, VerifyingKey), Error> {
-    let master_seed = match maybe_seed {
-        None => OsRng::new()?.gen::<Seed>(),
-        Some(s) => s,
-    };
-    let master_secret_key = SigningKey::from_bytes(&master_seed);
-    let master_public_key = VerifyingKey::from(&master_secret_key);
-
-    let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
-    Ok((master_seed, admin_keypair, master_public_key))
-}
+// fn generate_keypair(
+//     email: String,
+//     password: String,
+//     maybe_seed: Option<Seed>,
+// ) -> Result<(Seed, Keypair, VerifyingKey), Error> {
+//     let master_seed = match maybe_seed {
+//         None => OsRng::new()?.gen::<Seed>(),
+//         Some(s) => s,
+//     };
+//     let master_secret_key = SecretKey::from_bytes(&master_seed)?;
+//     let master_public_key = VerifyingKey::from(&master_secret_key);
+//     let admin_keypair = admin_keypair_from(master_public_key, &email, &password)?;
+//     Ok((master_seed, admin_keypair, master_public_key))
+// }
 
 pub fn admin_keypair_from(
     holochain_public_key: VerifyingKey,
