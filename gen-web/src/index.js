@@ -256,7 +256,7 @@
 
       setTimeout(() => {
         try {
-          filesaver.saveAs(configFileBlob, genConfigFileName(HOLO_PORT_STARTING_DEVICE_NUMBER, deviceID))
+          filesaver.saveAs(configFileBlob, genConfigFileName(deviceID))
         } catch (e) {
           throw new Error(`Error saving config. Error: ${e}`)
         }
@@ -446,7 +446,7 @@
         buttons.prevStep.disabled = true
       }
     } else if (stepTracker === 5) {
-      inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
+      inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceID)
       verifyDownloadComplete()
     }
   }

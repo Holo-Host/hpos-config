@@ -15,19 +15,15 @@ export const toBase64 = (encodedBytes) => {
 }
 
 
-const FILE_PREFIX = "hp"
+const FILE_PREFIX = "hp-config"
 const FILE_TYPE = ".json"
-const HOLO_PORT_STARTING_DEVICE_NUMBER = 1
 
 /**	
  * generate file name based on the device number
  * @param {number} deviceNumber
  * @param {string} pubKey	
  */
-export const genConfigFileName = (deviceNumber, pubKey) => {
-    if (deviceNumber == HOLO_PORT_STARTING_DEVICE_NUMBER) {
-        return `${FILE_PREFIX}-primary-${pubKey.substring(0, 5)}${FILE_TYPE}`
-    } else {
-        return `${FILE_PREFIX}-secondary-${pubKey.substring(0, 5)}${FILE_TYPE}`
-    }
+export const genConfigFileName = (pubKey) => {
+    return `${FILE_PREFIX}-${pubKey.substring(0, 5)}${FILE_TYPE}`
+
 }
