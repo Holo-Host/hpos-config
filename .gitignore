@@ -5,3 +5,4 @@ result
 target/
 worker/
 .cargo/
+.direnv/
