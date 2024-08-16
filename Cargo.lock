@@ -1025,6 +1025,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sodoken",
+ "thiserror",
  "tokio",
  "url",
 ]
@@ -1043,6 +1044,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.8.2",
+ "tokio",
 ]
 
 [[package]]

@@ -21,3 +21,4 @@ structopt = "0.3.25"
 serde = { version = "1.0.123", features = ["derive"] }
 base64 = "0.13.0"
 failure = "0.1.5"
+thiserror = "1.0"
