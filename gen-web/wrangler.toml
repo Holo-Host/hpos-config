@@ -1,8 +1,9 @@
 account_id = "18ff2b4e6205b938652998cfca0d8cff"
 zone_id = "82b670b6a3c86e0f1913b2a9d1cce729"
-name = "dev-quickstart"
-route = "quickstart.dev.holotest.net/*"
+name = "dev-hf-quickstart"
+route = "hf-quickstart.dev.holotest.net/*"
 type = "webpack"
+compatibility_date = "2024-08-19"
 
 # There is one thing that is really tricky here:
 # Build of a worker-site is a two-stage process, both stages are using webpack.
@@ -24,9 +25,9 @@ entry-point = "workers-site"
 
 [env.mainnet]
 zone_id = "35f34e8f9d04ef8c87283ea9fb812989"
-name = "quickstart"
-route = "quickstart.holo.host/*"
+name = "hf-quickstart"
+route = "hf-quickstart.holo.host/*"
 
 [env.QA]
-name = "qa-quickstart"
-route = "quickstart.qa.holotest.net/*"
+name = "qa-hf-quickstart"
+route = "hf-quickstart.qa.holotest.net/*"
