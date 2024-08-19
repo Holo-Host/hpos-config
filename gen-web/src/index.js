@@ -536,7 +536,7 @@
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        role: 'host',
+        role: 'holofuel',
         email: email,
         code: registration_code
       })
