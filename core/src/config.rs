@@ -128,6 +128,14 @@ impl Config {
         ))
     }
 
+    pub fn email(&self) -> String {
+        match self {
+            Config::V1 { settings, .. }
+            | Config::V2 { settings, .. }
+            | Config::V3 { settings, .. } => settings.admin.email.clone(),
+        }
+    }
+
     pub fn admin_public_key(&self) -> VerifyingKey {
         match self {
             Config::V1 { settings, .. }
