@@ -21,26 +21,11 @@
       src="assets/images/holo-banner-white.svg" />
     <p class="greeting step-display step0">Time for Liftoff!</p>
     <p class="greeting step-display step-exit-single step-exit-multiple">You’re all set!</p>
-    <div class="step-display step1 step2 step3 step4 step5 step6">
+    <div class="step-display step5">
       <div class="context">
         <p class="context-header">Context:</b>
-        <p class="step-display step1">
-          A registration code can be used to register either one HoloPort or many HoloPorts during Quickstart. If you don’t have your registration code, please register at <a href="https://register.holo.host/holo" target="_blank">https://register.holo.host/holo</a>
-        </p>
-        <p class="step-display step2">
-          Your passphrase is an important thing to remember since it will decrypt your seed file&mdash;keep it somewhere very safe!
-        </p>
-        <p class="step-display step3">
-          Remember, you will need BOTH the seed and your passphrase to restore any keys that are created from this seed.
-        </p>
-        <p class="step-display step4">
-          Host Console is a web interface where you can manage your HoloPort and hosting settings.
-        </p>
         <p class="step-display step5">
           This is where your public and private keys for your HoloPorts are generated. The keys are the basis of the cryptography in Holochain and Holo. Your private key is stored on an encrypted keystore your HoloPort, and your public key is your address on the Holo network and the first part of your web address for reaching your HoloPort. We also call that your HoloPort ID.
-        </p>
-        <p class="step-display step6">
-          When you insert the USB drive into your HoloPort, it will begin connecting to the Holo network.
         </p>
       </div>
     </div>
@@ -112,7 +97,7 @@
       </div>
       <h1 class="step-title">
         <span class="step-display step1a">
-          Connecting your HoloPort to the Holo network
+          Registering your HoloPort
         </span>
         <span class="step-display step1">
           <span class="step-number">Step 1:</span> Registration Code
@@ -121,13 +106,13 @@
           <span class="step-number">Step 2:</span> Enter a passphrase
         </span>
         <span class="step-display step3">
-          <span class="step-number">Step 3:</span> Generate a seed file
+          <span class="step-number">Step 3:</span> Generate your master seed file and revocation key
         </span>
         <span class="step-display step4">
           <span class="step-number">Step 4:</span> Create Host Console credentials
         </span>
         <span class="step-display step5">
-          <span class="step-number">Step 5:</span> Create your keys and save them
+          <span class="step-number">Step 5:</span> Generate the HoloPort configuration file
         </span>
         <span class="step-display step6">
           <span class="step-number">Step 6:</span> Connect to the Holo Network
@@ -139,12 +124,12 @@
       <div class="step-description">
         <p class="step-display step1a">If you do not have a registration code you need to begin at <a href="https://register.holo.host/holo" target="_blank">https://register.holo.host/holo</a>. Otherwise, click the “next” button and enter the registration code you received in your email.</p>
         <p class="step-display step1">Enter your email address and the registration code you received.</p>
-        <p class="step-display step2">Make your passphrase as strong as possible. It should be long, include a mix of many different types of characters, and be hard to guess.</p>
+        <p class="step-display step2">Make your passphrase as strong as possible. It should be long, include a mix of many different types of characters, and be hard to guess. Save it somewhere safe.</p>
         <p class="step-display step2">You can optionally turn off your internet while doing this for added security.</p>
-        <p class="step-display step3">Click the button below to generate and save your seed file. You will need to save it to your hard drive or to a USB drive that is <strong><u>NOT</u></strong> the same USB drive used for your HoloPort.</p>
-        <p class="step-display step4">Create a Host Console password for your <span id="current-holoport-descriptor">primary</span> HoloPort.</p>
-        <p class="step-display step5">Click the button below to download the configuration file, and then move the file to the HoloPort USB drive. The filename must be <span id="download-file"></span> for your HoloPort to read it.</p>
-        <p class="step-display step6">Safely eject the USB from your computer, power on your HoloPort, and insert the USB into the associated HoloPort when the LED light is solid blue. </p>
+        <p class="step-display step3">Click the button below to generate and save your master seed file and revocation key. You will need to save it to your hard drive or to a USB drive that is <strong><u>NOT</u></strong> the same USB drive used for your HoloPort.</p>
+        <p class="step-display step4">Host Console is where you can manage your HoloPort and hosting settings. Create a Host Console password for your HoloPort.</p>
+        <p class="step-display step5">Click the button below to download the configuration file that contains your device seed, and then move the file to the HoloPort USB drive. The filename must be <span id="download-file"></span> for your HoloPort to read it.</p>
+        <p class="step-display step6">Safely eject the USB from your computer, power on your HoloPort, and insert the USB into the associated HoloPort when the LED light is solid blue. Your HoloPort is now connecting to the Holo network.</p>
         <p class="step-display step7">Do you have additional HoloPorts that you’d like to register at this time?</p>
       </div>
       <span id="form-error-message" class="error-red"></span>
@@ -169,13 +154,12 @@
           <input id="seed-passphrase" class="input" name="seed-passphrase" type="text"/>
         </div>
         <span id="seed-passphrase-error-message" class="error-red"></span>
-        <p class="step-footnote"><span class="bold">Tip:</span> Write down or store your passphrase in a password manager.</p>
       </div>
 
 
       <div class="step-display step3">
         <a id="gen-seed-button" class="btn button-font action-button">
-          <img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span class="button-text">Generate & Save Seed File</span>
+          <img src="assets/icons/wifi-cloud-icon-white.svg" class="image-block-icon inline-icon" /><span class="button-text">Generate & Save Seed & Key File</span>
         </a>
       </div>
 
@@ -211,7 +195,6 @@
             <img src="assets/icons/holoport-device-icon.svg" class="display-image-holoport" />
           </div>
         </div>
-        <p class="step-footnote"><span class="bold">Note:</span> If you have an additional HoloPort to register, you must continue to the next page to add it.</p>
       </div>
 
       <div class="step-display step7">
@@ -281,28 +264,9 @@
 
         <p class="modal-title">Important!</p>
 
-        <div>The next two steps are where you create and save your seed file, which is the basis of your identity. <a class="help-button" href="https://holo.host/faq-tag/registration-quickstart/" target="_blank"><img src="assets/icons/question-purple-icon.svg" /></a></div>
-        <div>It is super important for you to <strong>save the seed file and the passphrase you create here somewhere safe&mdash;and somewhere you will remember</strong>. It will be used in the future if you need to regenerate passwords or if you need to register additional HoloPorts. You can disconnect from the Internet now if you would like, and continue using Quickstart.</div>
+        <div>The next two steps are where you create and save your master seed file and revocation key. It is super important for you to <strong>save the downloaded file and the passphrase you create here somewhere safe.</strong> It will be used in the future if you need to regenerate passwords or if you need to register additional HoloPorts.</div>
 
         <button id="close-modal-intro" class="btn button-font confirm-button"><span>I understand</span></button>
-      </div>
-    </div>
-  </div>
-
-  <div id="modal-passphrase-outro">
-    <div class="modal-overlay"></div>
-    <div class="modal-wrapper">
-      <div class="modal-body">
-        <img class="exclamation" src="assets/icons/important-purple-icon.svg" />
-
-        <p class="modal-title">Important!</p>
-
-        <div>Did you remember to write down your passphrase in a safe and memorable place?</div>
-
-        <div class="buttons">
-          <button id="has-not-written-passphrase" class="btn button-font modal-button"><span>Go back</span></button>
-          <button id="has-written-passphrase" class="btn button-font confirm-button"><span>Yes</span></button>
-        </div>
       </div>
     </div>
   </div>

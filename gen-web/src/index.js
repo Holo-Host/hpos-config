@@ -11,8 +11,12 @@
     validatePassphrae } = await import('./validation')
   const { genConfigFileName, toBase64 } = await import('./utils')
   const SEED_FILE_NAME = 'master-seed'
+  const REVOCATION_KEY_FILE_NAME = 'revocation-key'
 
   const MEMBRANE_PROOF_SERVICE_URL = process.env.MEMBRANE_PROOF_SERVICE_URL
+
+  const REVOCATION_KEY_DEVICE_NUMBER = 0
+  const HOLO_PORT_STARTING_DEVICE_NUMBER = 1
 
   let stepTracker = 0
   let signalKeyGen = false
@@ -21,7 +25,8 @@
   let downloadSeedTracker = false
   let configFileBlob = ''
   let master
-  let deviceNumber = 0
+  let revocation
+  let deviceNumber = HOLO_PORT_STARTING_DEVICE_NUMBER
   let deviceID
   let genSeedStartingHtml
   let downloadStartingHtml
@@ -61,7 +66,6 @@
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     formErrorMessage: document.querySelector('#form-error-message'),
     downloadFileName: document.querySelector('#download-file'),
-    currentHoloportDescriptor: document.querySelector('#current-holoport-descriptor')
   }
 
   const nextButtonLoaderColumn = document.querySelector('#next-button-loader-column')
@@ -120,9 +124,7 @@
             return
           }
           seedPassphrase = inputs.seedPassphrase.value
-          if (!await confirmPassphraseWritten()) {
-            return
-          }
+
           updateUiStep(3)
           updateProgressBar(2)
           break
@@ -176,7 +178,7 @@
       /* Communicate visually that something is happening in the background */
       buttons.genSeed.classList.add('disabled')
       buttons.genSeed.disabled = true
-      buttons.genSeed.innerHTML = 'Saving Seed File...'
+      buttons.genSeed.innerHTML = 'Saving Seed & Key Files...'
 
       setTimeout(async () => {
         try {
@@ -187,15 +189,9 @@
           master = hcSeedBundle.UnlockedSeedBundle.newRandom({
             bundleType: 'master'
           })
-          master.setAppData({
-            generate_by: "quickstart-v2.0"
-          })
+
           // we need the passphrase as a Uint8Array
-
           const pw = (new TextEncoder()).encode(seedPassphrase)
-
-          // clear passphrase from memory
-          seedPassphrase = null
 
           const encodedBytes = master.lock([
             new hcSeedBundle.SeedCipherPwHash(
@@ -206,18 +202,52 @@
           console.log("Created master seed: ", master.signPubKey)
 
           const seedBlob = new Blob([toBase64(encodedBytes)], { type: 'text/plain' })
+
           filesaver.saveAs(seedBlob, SEED_FILE_NAME)
 
         } catch (e) {
           throw new Error(`Error saving config. Error: ${e}`)
         }
 
+      }, 1000)
+
+      setTimeout(async () => {
+        try {
+          // setup bundler
+          await hcSeedBundle.seedBundleReady
+
+          // we need the passphrase as a Uint8Array
+          const pw = (new TextEncoder()).encode(seedPassphrase)
+
+          // clear passphrase from memory
+          seedPassphrase = null
+
+          revocation = master.derive(REVOCATION_KEY_DEVICE_NUMBER, {
+            bundleType: 'revocation'
+          })
+
+          const revocationBytes = revocation.lock([
+            new hcSeedBundle.SeedCipherPwHash(
+              hcSeedBundle.parseSecret(pw), 'minimum')
+          ])
+
+          // DEV MODE - check pub key for devices:
+          console.log("Created revocation seed: ", revocation.signPubKey)
+
+          const revocationBlob = new Blob([toBase64(revocationBytes)], { type: 'text/plain' })
+
+          filesaver.saveAs(revocationBlob, REVOCATION_KEY_FILE_NAME)
+
+        } catch (e) {
+          throw new Error(`Error saving revocation key. Error: ${e}`)
+        }
+
         /* Clean State */
         downloadSeedTracker = true
         buttons.genSeed.disabled = true
-        buttons.genSeed.innerHTML = 'Saved Seed File'
+        buttons.genSeed.innerHTML = 'Saved Seed & Key Files'
         verifySeedDownloadComplete(downloadSeedTracker)
-      }, 1000)
+      }, 2000)      
     },
     download: async () => {
       /* Communicate visually that something is happening in the background */
@@ -226,7 +256,7 @@
 
       setTimeout(() => {
         try {
-          filesaver.saveAs(configFileBlob, genConfigFileName(deviceNumber, deviceID))
+          filesaver.saveAs(configFileBlob, genConfigFileName(deviceID))
         } catch (e) {
           throw new Error(`Error saving config. Error: ${e}`)
         }
@@ -281,9 +311,6 @@
     showModalPassphraseIntro: () => {
       document.querySelector('#modal-passphrase-intro').style.display = 'block'
     },
-    showModalPassphraseOutro: () => {
-      document.querySelector('#modal-passphrase-outro').style.display = 'block'
-    },
     closePassphraseIntro: () => {
       document.querySelector('#modal-passphrase-intro').style.display = 'none'
     },
@@ -297,7 +324,7 @@
       downloadSeedTracker = false
       configFileBlob = ''
       master = undefined
-      deviceNumber = 0
+      deviceNumber = HOLO_PORT_STARTING_DEVICE_NUMBER
       deviceID = undefined
       updateProgressBar(3, rewind)
       updateUiStep(2)
@@ -310,7 +337,6 @@
     loop: () => {
       deviceNumber++
       downloadConfigTracker = false
-      inlineVariables.currentHoloportDescriptor.innerHTML = 'additional'
       updateProgressBar(6, true)
       updateProgressBar(5, true)
       updateUiStep(4)
@@ -416,11 +442,11 @@
       verifySeedDownloadComplete()
     } else if (stepTracker === 4) {
       inlineVariables.emailReadOnly.value = inputs.email.value.toLowerCase()
-      if (deviceNumber > 0) {
+      if (deviceNumber > HOLO_PORT_STARTING_DEVICE_NUMBER) {
         buttons.prevStep.disabled = true
       }
     } else if (stepTracker === 5) {
-      inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceNumber, deviceID)
+      inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceID)
       verifyDownloadComplete()
     }
   }
@@ -452,7 +478,7 @@
         document.body.className = 'step1a'
         break
       case -1:
-        if (deviceNumber === 0) {
+        if (deviceNumber === HOLO_PORT_STARTING_DEVICE_NUMBER) {
           document.body.className = 'step-exit-single'
         } else {
           document.body.className = 'step-exit-multiple'
@@ -495,21 +521,6 @@
     }
   }
 
-  const confirmPassphraseWritten = async () => {
-    click.showModalPassphraseOutro()
-
-    const confirmed = await new Promise(resolve => {
-      buttons.hasWrittenPassphrase.onclick = () => {
-        resolve(true)
-      }
-      buttons.hasNotWrittenPassphrase.onclick = () => {
-        resolve(false)
-      }
-    })
-    document.querySelector('#modal-passphrase-outro').style.display = 'none'
-    return confirmed
-  }
-
   // Verifies a registration code by contacting the Holo Membrane Proof Service.
   // Returns `true` if successful. Returns a string for user error feedback if applicable. Otherwise throws.
   //
@@ -517,6 +528,7 @@
   // with an invalid registration code. The purpose is simply to prevent users from wasting time setting up a
   // HoloPort with the wrong code.
   const verifyRegistrationCode = async ({ registration_code, email }) => {
+    
     const response = await fetch(`${MEMBRANE_PROOF_SERVICE_URL}/registration/api/v1/verify-registration-code`,
     {
       method: 'POST',
@@ -564,10 +576,7 @@
         const deviceRoot = master.derive(deviceNumber, {
           bundleType: 'deviceRoot'
         })
-        deviceRoot.setAppData({
-          device_number: deviceNumber,
-          generate_by: "quickstart-v2.0"
-        })
+
         // encrypts it with password: pass
         let pubKey = deviceRoot.signPubKey
         const pw = (new TextEncoder()).encode('pass')
@@ -575,11 +584,6 @@
           new hcSeedBundle.SeedCipherPwHash(
             hcSeedBundle.parseSecret(pw), 'minimum')
         ])
-
-        // DEV MODE - check pub key for devices:
-        console.log("Created from master seed: ", master.signPubKey)
-        console.log(`Device ${deviceNumber}: ${toBase64(encodedBytes)}`)
-        console.log(`Device signPubkey: ${pubKey}`)
 
         // pass seed into the blob
         let seed = {
@@ -614,10 +618,20 @@
    * @param {Object} seed {derivationPath, deviceRoot, pubKey}
   */
   const generateBlob = (user, seed) => {
-    // todo: update this fn by passing the revocation_pub_key
-    // todo: seed pubkey should be derived from the seed, not the deviceRoot pubKey itself 
-    const configData = config(user.email, user.password, user.registrationCode, seed.derivationPath.toString(), seed.deviceRoot, seed.pubKey)
-    const configBlob = new Blob([configData.config], { type: 'application/json' })
+
+    let configBlob
+    let configData
+
+    try {
+      const derivationPath = seed.derivationPath.toString()
+
+
+      configData = config(user.email, user.password, user.registrationCode, revocation.signPubKey, derivationPath, seed.deviceRoot, seed.pubKey)
+      configBlob = new Blob([configData.config], { type: 'application/json' })
+    } catch (e) {
+      inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
+      throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
+    }
 
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
     // console.log('Optional HoloPort url : ', configData.url)
