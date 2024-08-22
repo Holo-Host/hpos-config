@@ -7,7 +7,11 @@ use crate::{
 };
 use hc_seed_bundle::{LockedSeedCipher, UnlockedSeedBundle};
 
+// TODO: what should this be?
 pub const DEFAULT_DERIVATION_PATH_V2: u32 = 3;
+
+// TODO: what should this be?
+pub const DEFAULT_DERIVATION_PATH_V3: u32 = 3;
 
 pub fn get_seed_from_bundle(device_bundle: &UnlockedSeedBundle) -> Result<Seed, failure::Error> {
     let mut seed = Seed::default();
@@ -48,7 +52,7 @@ pub async fn generate_device_bundle(
         .await
         .unwrap();
 
-    let derivation_path = maybe_derivation_path.unwrap_or(DEFAULT_DERIVATION_PATH_V2);
+    let derivation_path = maybe_derivation_path.unwrap_or(DEFAULT_DERIVATION_PATH_V3);
 
     let device_bundle = master.derive(derivation_path).await.unwrap();
 
@@ -107,7 +111,7 @@ pub async fn unlock(device_bundle: &str, passphrase: &str) -> SeedExplorerResult
 }
 
 #[cfg(test)]
-mod tests {
+pub(crate) mod tests {
     use failure::ResultExt;
 
     use super::*;
@@ -115,7 +119,7 @@ mod tests {
     const PASSPHRASE: &str = "p4ssw0rd";
     const WRONG_PASSPHRASE: &str = "wr0ngp4ssw0rd";
 
-    async fn generate() -> String {
+    pub(crate) async fn generate_base64() -> String {
         let (device_bundle, _) = generate_device_bundle(PASSPHRASE, None).await.unwrap();
 
         base64::encode_config(&device_bundle, base64::URL_SAFE_NO_PAD)
@@ -123,7 +127,7 @@ mod tests {
 
     #[tokio::test(flavor = "multi_thread")]
     async fn unlock_correct_password_succeeds() {
-        let encoded_device_bundle = generate().await;
+        let encoded_device_bundle = generate_base64().await;
 
         unlock(&encoded_device_bundle, WRONG_PASSPHRASE)
             .await
@@ -142,7 +146,7 @@ mod tests {
 
     #[tokio::test(flavor = "multi_thread")]
     async fn unlock_wrong_password_fails() {
-        let encoded_device_bundle = generate().await;
+        let encoded_device_bundle = generate_base64().await;
         unlock(&encoded_device_bundle, WRONG_PASSPHRASE)
             .await
             .context(format!(
