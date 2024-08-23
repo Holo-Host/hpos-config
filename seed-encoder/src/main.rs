@@ -46,8 +46,16 @@ async fn main() -> Result<()> {
                 ))?;
             println!("{}", encrypt_key(&secret, &secret.verifying_key()));
         }
-        // todo!("V3 not implemented"),
-        Config::V3 { .. } => todo!("V3 not implemented"),
+        Config::V3 { device_bundle, .. } => {
+            // take in password
+            let secret = unlock(&device_bundle, Some(password))
+                .await
+                .context(format!(
+                    "unable to unlock the device bundle from {}",
+                    &config_path.to_string_lossy()
+                ))?;
+            println!("{}", encrypt_key(&secret, &secret.verifying_key()));
+        }
     }
 
     Ok(())

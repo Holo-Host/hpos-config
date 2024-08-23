@@ -1,45 +1,65 @@
 use hpos_config_core::{config::Seed, public_key, Config};
 
-use docopt::Docopt;
+use clap::Parser;
 use ed25519_dalek::*;
 use failure::Error;
 use rand::Rng;
-use serde::*;
 use sha2::{Digest, Sha512Trunc256};
-use std::{env, fs::File, io, path::PathBuf};
+use std::{fs::File, io};
 
-const USAGE: &str = "
-Usage: hpos-config-gen-cli --email EMAIL --password STRING --registration-code STRING --derivation-path STRING --device-bundle STRING [--seed-from PATH]
-       hpos-config-gen-cli --help
-
-Creates HoloPortOS config file that contains seed and admin email/password.
-
-Options:
-  --email EMAIL                 HoloPort admin email address
-  --password STRING             HoloPort admin password
-  --registration-code CODE      HoloPort admin password
-  --derivation-path STRING      Derivation path of the seed
-  --device-bundle STRING        Device Bundle
-  --seed-from PATH              Use SHA-512 hash of given file truncated to 256 bits as seed
-";
-
-#[derive(Deserialize)]
-struct Args {
-    flag_email: String,
-    flag_password: String,
-    flag_registration_code: String,
-    flag_revocation_pub_key: VerifyingKey,
-    flag_derivation_path: String,
-    flag_device_bundle: String,
-    flag_seed_from: Option<PathBuf>,
+#[derive(Parser, Clone)]
+#[command(about = "Creates HoloPortOS config file that contains seed and admin email/password.")]
+struct ClapArgs {
+    #[arg(
+        long,
+        value_parser,
+        value_name = "EMAIL",
+        help = "HoloPort admin email address"
+    )]
+    email: String,
+    #[arg(
+        long,
+        value_parser,
+        value_name = "PASSWORD",
+        help = "HoloPort admin password"
+    )]
+    password: String,
+    #[arg(
+        long,
+        value_parser,
+        value_name = "CODE",
+        help = "HoloPort registration code"
+    )]
+    registration_code: String,
+    #[arg(long, value_parser, value_name = "STRING", help = "Revocation key")]
+    revocation_key: Option<String>,
+    #[arg(
+        long,
+        value_parser,
+        value_name = "PATH",
+        help = "Derivation path of the seed"
+    )]
+    derivation_path: String,
+    #[arg(
+        long,
+        value_parser,
+        value_name = "STRING",
+        help = "HoloPort Device bundle"
+    )]
+    device_bundle: String,
+    #[arg(
+        long,
+        value_parser,
+        value_name = "PATH",
+        help = "Use SHA-512 hash of given file, truncated to 256 bits, as seed"
+    )]
+    seed_from: Option<String>,
 }
 
 fn main() -> Result<(), Error> {
-    let args: Args = Docopt::new(USAGE)
-        .and_then(|d| d.argv(env::args()).deserialize())
-        .unwrap_or_else(|e| e.exit());
+    let args = ClapArgs::parse();
 
-    let seed = match args.flag_seed_from {
+    let seed = match args.seed_from {
         None => rand::thread_rng().gen::<Seed>(),
         Some(path) => {
             let mut hasher = Sha512Trunc256::new();
@@ -52,14 +72,21 @@ fn main() -> Result<(), Error> {
     };
 
     let secret_key = SigningKey::from_bytes(&seed);
+    let revocation_key = match &args.revocation_key {
+        None => VerifyingKey::from(&secret_key),
+        Some(rk) => {
+            let public_key_bytes: &[u8; PUBLIC_KEY_LENGTH] = rk.as_bytes().try_into()?;
+            VerifyingKey::from_bytes(public_key_bytes)?
+        }
+    };
 
     let (config, public_key) = Config::new(
-        args.flag_email,
-        args.flag_password,
-        args.flag_registration_code,
-        args.flag_revocation_pub_key,
-        args.flag_derivation_path,
-        args.flag_device_bundle,
+        args.email,
+        args.password,
+        args.registration_code,
+        revocation_key,
+        args.derivation_path,
+        args.device_bundle,
         VerifyingKey::from(&secret_key),
     )?;
     eprintln!("{}", public_key::to_url(&public_key)?);

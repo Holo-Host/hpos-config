@@ -93,6 +93,8 @@ pub enum Config {
         // /1 derivation path of the device bundle base36 encoded
         holoport_id: String,
         /// Holo registration code is used to identify and authenticate its users
+        // This is a HoloHash version of the holoport_id
+        initial_host_pub_key: String,
         registration_code: String,
         /// The pub-key in settings is the holoport key that is used for verifying login signatures
         settings: Settings,
@@ -121,11 +123,20 @@ impl Config {
                 device_derivation_path,
                 revocation_pub_key,
                 holoport_id,
+                initial_host_pub_key: public_key::to_holochain_encoded_agent_key(&device_pub_key),
                 registration_code,
                 settings: Settings { admin },
             },
             device_pub_key,
         ))
+    }
+
+    pub fn email(&self) -> String {
+        match self {
+            Config::V1 { settings, .. }
+            | Config::V2 { settings, .. }
+            | Config::V3 { settings, .. } => settings.admin.email.clone(),
+        }
     }
 
     pub fn admin_public_key(&self) -> VerifyingKey {
