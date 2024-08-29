@@ -1,6 +1,7 @@
 use ed25519_dalek::{ed25519, SigningKey, VerifyingKey};
 use hc_seed_bundle::*;
 use hpos_config_core::Config;
+use log::debug;
 
 /// get pub key for the device bundle in the config
 pub async fn holoport_public_key(
@@ -112,21 +113,27 @@ pub async fn unlock(
     device_bundle: &String,
     passphrase: Option<String>,
 ) -> SeedExplorerResult<SigningKey> {
+    debug!("Base64 decoding device bundle.");
     let cipher = base64::decode_config(device_bundle, base64::URL_SAFE_NO_PAD)?;
+    debug!("Matching device bundle cipher.");
     match UnlockedSeedBundle::from_locked(&cipher).await?.remove(0) {
         LockedSeedCipher::PwHash(cipher) => {
             let passphrase = passphrase
                 .as_ref()
                 .ok_or(SeedExplorerError::PasswordRequired)?;
+            debug!("PwHash cipher used and password present.");
             let passphrase = sodoken::BufRead::from(passphrase.as_bytes().to_vec());
+            debug!("Unlocking seed with passphrase.");
             let seed = cipher.unlock(passphrase).await?;
 
+            debug!("Casting seed to 32-byte slice.");
             let seed_bytes: [u8; 32] = match (&*seed.get_seed().read_lock())[0..32].try_into() {
                 Ok(b) => b,
                 Err(_) => {
+                    debug!("Seed not 32 bytes: {:?}", &seed.get_seed());
                     return Err(SeedExplorerError::Generic(
                         "Seed buffer is not 32 bytes long".into(),
-                    ))
+                    ));
                 }
             };
 
