@@ -1,5 +1,11 @@
 # hpos-config
 
+## Ownership Info
+Codeowner: @zo-el
+Codeowner - gen-web (quickstart UI): @mateuszRybczonek
+Consulted: None
+Informed: None
+
 This repo contains
 - A web UI called Quickstart
 - A Rust library called `hpos-config-core`

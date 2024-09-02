@@ -579,6 +579,17 @@ body.step6 .image-block-item {
   align-items: self-end;
 }
 
+.modal-body div.vert-buttons {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  height: 105px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  margin-bottom: 0px;
+}
+
 .lower-right {
   margin-top: auto;
   margin-left: auto;
@@ -633,8 +644,14 @@ button {
 }
 
 .modal-button {
-  color: #5C4DA6;
-  border-color: #5C4DA6;
+  color: #313C59;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 16px;
+  background-color: #ffffff;
+  width: 151px;
+  height: 42px;
+  box-sizing: border-box;  
 }
 
 .action-button,
@@ -895,7 +912,7 @@ a {
   display: flex;
 }
 
-#modal-passphrase-intro, #modal-passphrase-outro, #change-seed-modal {
+#modal-passphrase-intro, #change-seed-modal {
   display: none;
 }
 
