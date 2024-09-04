@@ -1,4 +1,4 @@
-use ed25519_dalek::PublicKey;
+use ed25519_dalek::VerifyingKey;
 use failure::Error;
 use hpos_config_core::{public_key, Config};
 use serde::*;
@@ -16,16 +16,28 @@ fn config_raw(
     email: String,
     password: String,
     registration_code: String,
+    revocation_pub_key: Vec<u8>,
     derivation_path: String,
     device_bundle: String,
-    device_pub_key: String,
+    device_pub_key: Vec<u8>,
 ) -> Result<JsValue, Error> {
-    let device_pub_key: PublicKey = base64::decode_config(&device_pub_key, base64::URL_SAFE_NO_PAD)
-        .map(|bytes| PublicKey::from_bytes(&bytes))??;
-    let (config, public_key) = Config::new_v2(
+    let device_pub_key: VerifyingKey = VerifyingKey::from_bytes(
+        &device_pub_key
+            .try_into()
+            .expect("Expected a Vec of length 32"),
+    )?;
+
+    let revocation_pub_key = VerifyingKey::from_bytes(
+        &revocation_pub_key
+            .try_into()
+            .expect("Expected a Vec of length 32"),
+    )?;
+
+    let (config, public_key) = Config::new(
         email,
         password,
         registration_code,
+        revocation_pub_key,
         derivation_path,
         device_bundle,
         device_pub_key,
@@ -45,14 +57,16 @@ pub fn config(
     email: String,
     password: String,
     registration_code: String,
+    revocation_pub_key: Vec<u8>,
     derivation_path: String,
     device_bundle: String,
-    device_pub_key: String,
+    device_pub_key: Vec<u8>,
 ) -> Result<JsValue, JsValue> {
     match config_raw(
         email,
         password,
         registration_code,
+        revocation_pub_key,
         derivation_path,
         device_bundle,
         device_pub_key,

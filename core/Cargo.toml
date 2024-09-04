@@ -1,23 +1,23 @@
 [package]
 name = "hpos-config-core"
-version = "0.1.2"
+version = "0.2.1"
 authors = [
   "Perry Kundert <perry@hardconsulting.com>",
   "Yegor Timoshenko <yegortimoshenko@transumption.com>",
   "zo-el <joelulahanna@gmail.com>"
 ]
-edition = "2018"
+edition = "2021"
 repository = "https://github.com/Holo-Host/hpos-config"
 
 [dependencies]
 arrayref = "0.3.5"
-base64 = "0.13.0"
+base64 = { workspace = true }
 blake2b_simd = {version = "1.0.0"}
-ed25519-dalek = { version = "1.0.1", features = ["serde"] }
-failure = "0.1.5"
+ed25519-dalek = { workspace = true, features = ["serde", "digest"] }
+failure = { workspace = true }
 lazy_static = "1.2"
 rand = "0.6.5"
-serde = { version = "1.0.123", features = ["derive"] }
+serde = { workspace = true }
 url = "2.1.0"
 base36 = "=0.0.1"
 
@@ -28,3 +28,9 @@ rev = "28e765e4369e19bc0126bb46acaacadf1303de22"
 
 [features]
 wasm-bindgen = ["rand/wasm-bindgen"]
+
+[dev-dependencies]
+tokio = { version = "1.12.0", features = [ "full" ] }
+hc_seed_bundle = "0.2.3"
+sodoken = "=0.0.11"
+serde_json = "1.0.117"
