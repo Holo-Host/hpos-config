@@ -6,5 +6,6 @@ fn main() -> Result<()> {
     match serde_json::from_reader(stdin())? {
         Config::V1 { .. } => Ok(()),
         Config::V2 { .. } => Ok(()),
+        Config::V3 { .. } => Ok(()),
     }
 }

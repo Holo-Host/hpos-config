@@ -1,13 +1,13 @@
-use ed25519_dalek::PublicKey;
+use ed25519_dalek::VerifyingKey;
 use failure::*;
 use url::Url;
 
-pub fn to_base36_id(public_key: &PublicKey) -> String {
+pub fn to_base36_id(public_key: &VerifyingKey) -> String {
     base36::encode(&public_key.to_bytes())
 }
 
-pub fn to_url(public_key: &PublicKey) -> Fallible<Url> {
-    let url = format!("https://{}.holohost.net", to_base36_id(&public_key));
+pub fn to_url(public_key: &VerifyingKey) -> Fallible<Url> {
+    let url = format!("https://{}.holohost.net", to_base36_id(public_key));
     Ok(Url::parse(&url)?)
 }
 
@@ -36,12 +36,12 @@ pub fn holo_dht_location_bytes(data: &[u8]) -> Vec<u8> {
 pub(crate) const AGENT_PREFIX: &[u8] = &[0x84, 0x20, 0x24]; // uhCAk [132, 32, 36]
 
 /// convert public key to holochain compatible format
-pub fn to_holochain_encoded_agent_key(public_key: &PublicKey) -> String {
+pub fn to_holochain_encoded_agent_key(public_key: &VerifyingKey) -> String {
     let x: [u8; 32] = public_key.to_bytes();
     format!(
         "u{}",
         base64::encode_config(
-            &[AGENT_PREFIX, &x, &holo_dht_location_bytes(x.as_ref())].concat(),
+            [AGENT_PREFIX, &x, &holo_dht_location_bytes(x.as_ref())].concat(),
             base64::URL_SAFE_NO_PAD
         )
     )

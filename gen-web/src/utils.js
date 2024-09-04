@@ -15,7 +15,7 @@ export const toBase64 = (encodedBytes) => {
 }
 
 
-const FILE_PREFIX = "hp"
+const FILE_PREFIX = "hp-config"
 const FILE_TYPE = ".json"
 
 /**	
@@ -23,10 +23,7 @@ const FILE_TYPE = ".json"
  * @param {number} deviceNumber
  * @param {string} pubKey	
  */
-export const genConfigFileName = (deviceNumber, pubKey) => {
-    if (deviceNumber == 0) {
-        return `${FILE_PREFIX}-primary-${pubKey.substring(0, 5)}${FILE_TYPE}`
-    } else {
-        return `${FILE_PREFIX}-secondary-${pubKey.substring(0, 5)}${FILE_TYPE}`
-    }
+export const genConfigFileName = (pubKey) => {
+    return `${FILE_PREFIX}-${pubKey.substring(0, 5)}${FILE_TYPE}`
+
 }
