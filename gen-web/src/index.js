@@ -50,6 +50,7 @@
   const inputs = {
     registrationCode: document.querySelector('#registration-code'),
     seedPassphrase: document.querySelector('#seed-passphrase'),
+    confirmPassphrase: document.querySelector('#confirm-passphrase'),
     email: document.querySelector('#email'),
     password: document.querySelector('#password'),
     passwordCheck: document.querySelector('#password-check'),
@@ -61,6 +62,7 @@
     emailInputArea: document.querySelector('#email-form-item'),
     registrationCodeInputArea: document.querySelector('#registration-code-form-item'),
     seedPassphraseInputArea: document.querySelector('#seed-passphrase-form-item'),
+    confirmPassphraseInputArea: document.querySelector('#confirm-passphrase-form-item'),
     emailReadOnly: document.querySelector('#email-read-only'),
     passwordInputArea: document.querySelector('#password-form-item'),
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
@@ -73,6 +75,7 @@
   const errorMessages = {
     missingFields: 'Please complete missing fields.',
     seedPassphrase: 'Your passphrase needs to be at least 20 characters in length',
+    confirmPassphrase: 'Passphrases do not match',
     registrationCode: 'Invalid code',
     email: 'Invalid email format',
     password: 'Your password needs to be at least 8 characters in length',
@@ -88,6 +91,7 @@
 
   // global variable used to pass seed passphrase between steps 2 and 3
   let seedPassphrase
+  let confirmPassphrase
 
   /** Actions executed at button click
   * ======================================
@@ -124,6 +128,7 @@
             return
           }
           seedPassphrase = inputs.seedPassphrase.value
+          confirmPassphrase = inputs.confirmPassphrase.value
 
           updateUiStep(3)
           updateProgressBar(2)
@@ -247,7 +252,7 @@
         buttons.genSeed.disabled = true
         buttons.genSeed.innerHTML = 'Saved Seed & Key Files'
         verifySeedDownloadComplete(downloadSeedTracker)
-      }, 2000)      
+      }, 2000)
     },
     download: async () => {
       /* Communicate visually that something is happening in the background */
@@ -414,12 +419,14 @@
   /* Bind input actions to inputArea actions */
   inlineVariables.registrationCodeInputArea.onclick = e => { inputs.registrationCode.focus(); return click.activateInput(e) }
   inlineVariables.seedPassphraseInputArea.onclick = e => { inputs.seedPassphrase.focus(); return click.activateInput(e) }
+  inlineVariables.confirmPassphraseInputArea.onclick = e => { inputs.confirmPassphrase.focus(); return click.activateInput(e) }
   inlineVariables.emailInputArea.onclick = e => { inputs.email.focus(); return click.activateInput(e) }
   inlineVariables.passwordInputArea.onclick = e => { inputs.password.focus(); return click.activateInput(e) }
   inlineVariables.passwordCheckInputArea.onclick = e => { inputs.passwordCheck.focus(); return click.activateInput(e) }
   /* Bind actions to inputs */
   inputs.registrationCode.onfocus = click.activateInput
   inputs.seedPassphrase.onfocus = click.activateInput
+  inputs.confirmPassphrase.onfocus = click.activateInput
   inputs.email.onfocus = click.activateInput
   inputs.password.onfocus = click.activateInput
   inputs.passwordCheck.onfocus = click.activateInput
@@ -528,7 +535,6 @@
   // with an invalid registration code. The purpose is simply to prevent users from wasting time setting up a
   // HoloPort with the wrong code.
   const verifyRegistrationCode = async ({ registration_code, email }) => {
-    
     const response = await fetch(`${MEMBRANE_PROOF_SERVICE_URL}/registration/api/v1/verify-registration-code`,
     {
       method: 'POST',
@@ -683,6 +689,7 @@
   */
   const resetFields = (inputElements) => {
     inlineVariables.formErrorMessage.innerHTML = ''
+
     for (let inputElement of inputElements) {
       inputElement.classList.remove('error-red')
       document.querySelector(`#${inputElement.id}-error-message`).innerHTML = ''
@@ -766,14 +773,19 @@
     return valid
   }
   const confirmValidPassPhrase = () => {
-    const inputElements = Object.values({ seedPassphrase: inputs.seedPassphrase })
+    const inputElements = Object.values({ seedPassphrase: inputs.seedPassphrase, confirmPassphrase: inputs.confirmPassphrase })
     resetFields(inputElements)
+
     if (!inputs.seedPassphrase.value) {
       const missingFields = inputElements.filter(inputs => !inputs.value)
       renderInputError(errorMessages.missingFields, missingFields)
     } else if (!validatePassphrae(inputs.seedPassphrase.value)) {
       renderInputError(errorMessages.seedPassphrase, [inputs.seedPassphrase])
-    } else return true
+    } else if (inputs.seedPassphrase.value !== inputs.confirmPassphrase.value) {
+      renderInputError(errorMessages.confirmPassphrase, [inputs.confirmPassphrase])
+    } else {
+      return true
+    }
   }
 
 })()
