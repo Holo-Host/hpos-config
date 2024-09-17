@@ -235,7 +235,9 @@ form > .input-container:not(:first-child) {
   margin-bottom: 10px;
 }
 
-
+.confirm-passphrase {
+  margin-top: 30px;
+}
 
 /* Image & Icon Elements */
 .holo-banner {
@@ -651,7 +653,7 @@ button {
   background-color: #ffffff;
   width: 151px;
   height: 42px;
-  box-sizing: border-box;  
+  box-sizing: border-box;
 }
 
 .action-button,
