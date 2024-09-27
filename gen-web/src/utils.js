@@ -23,5 +23,7 @@ const FILE_TYPE = ".json"
  * @param {string} pubKey	
  * @param {Object } [opts] { isBackup: bool }
  */
-export const genConfigFileName = (pubKey, { isBackup }) =>
-    `${FILE_PREFIX}-${pubKey.substring(0, 5)}${isBackup ? '-backup' : ''}${FILE_TYPE}`
+export const genConfigFileName = (pubKey, opts = {}) => {
+    const { isBackup } = opts
+    return `${FILE_PREFIX}-${pubKey.substring(0, 5)}${isBackup ? '-backup' : ''}${FILE_TYPE}`
+}
