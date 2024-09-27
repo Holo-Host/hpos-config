@@ -739,7 +739,7 @@ body.step0 .next-button {
   left: 0;
 }
 
-#download-file {
+#download-file, #download-file-again, #backup-download-file {
   font-weight: bold;
 }
 

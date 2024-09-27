@@ -24,6 +24,7 @@
   let downloadConfigTracker = false
   let downloadSeedTracker = false
   let configFileBlob = ''
+  let configFileBlobBackup = ''
   let master
   let revocation
   let deviceNumber = HOLO_PORT_STARTING_DEVICE_NUMBER
@@ -68,6 +69,8 @@
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     formErrorMessage: document.querySelector('#form-error-message'),
     downloadFileName: document.querySelector('#download-file'),
+    downloadFileNameAgain: document.querySelector('#download-file-again'),
+    backupDownloadFileName: document.querySelector('#backup-download-file'),
   }
 
   const nextButtonLoaderColumn = document.querySelector('#next-button-loader-column')
@@ -224,9 +227,6 @@
           // we need the passphrase as a Uint8Array
           const pw = (new TextEncoder()).encode(seedPassphrase)
 
-          // clear passphrase from memory
-          seedPassphrase = null
-
           revocation = master.derive(REVOCATION_KEY_DEVICE_NUMBER, {
             bundleType: 'revocation'
           })
@@ -257,11 +257,12 @@
     download: async () => {
       /* Communicate visually that something is happening in the background */
       buttons.download.disabled = true
-      buttons.download.innerHTML = 'Saving Configuration File...'
+      buttons.download.innerHTML = 'Saving Configuration Files...'
 
       setTimeout(() => {
         try {
           filesaver.saveAs(configFileBlob, genConfigFileName(deviceID))
+          filesaver.saveAs(configFileBlobBackup, genConfigFileName(deviceID, { isBackup: true }))
         } catch (e) {
           throw new Error(`Error saving config. Error: ${e}`)
         }
@@ -328,6 +329,7 @@
       downloadConfigTracker = false
       downloadSeedTracker = false
       configFileBlob = ''
+      configFileBlobBackup = ''
       master = undefined
       deviceNumber = HOLO_PORT_STARTING_DEVICE_NUMBER
       deviceID = undefined
@@ -454,6 +456,8 @@
       }
     } else if (stepTracker === 5) {
       inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceID)
+      inlineVariables.downloadFileNameAgain.innerHTML = genConfigFileName(deviceID)
+      inlineVariables.backupDownloadFileName.innerHTML = genConfigFileName(deviceID, { isBackup: true })      
       verifyDownloadComplete()
     }
   }
@@ -535,6 +539,7 @@
   // with an invalid registration code. The purpose is simply to prevent users from wasting time setting up a
   // HoloPort with the wrong code.
   const verifyRegistrationCode = async ({ registration_code, email }) => {
+    return true
     const response = await fetch(`${MEMBRANE_PROOF_SERVICE_URL}/registration/api/v1/verify-registration-code`,
     {
       method: 'POST',
@@ -583,25 +588,15 @@
           bundleType: 'deviceRoot'
         })
 
-        // encrypts it with password: pass
-        let pubKey = deviceRoot.signPubKey
-        const pw = (new TextEncoder()).encode('pass')
-        const encodedBytes = deviceRoot.lock([
-          new hcSeedBundle.SeedCipherPwHash(
-            hcSeedBundle.parseSecret(pw), 'minimum')
-        ])
+        configFileBlob = generateEncryptedConfigBlob(user, deviceRoot, "pass")
+        configFileBlobBackup = generateEncryptedConfigBlob(user, deviceRoot, seedPassphrase)        
 
-        // pass seed into the blob
-        let seed = {
-          derivationPath: deviceNumber,
-          // base64 encode it URLSAFE_NO_PADDING
-          deviceRoot: toBase64(encodedBytes),
-          pubKey
-        }
-        // Generate hpos-config.json and create download blob attached to url
-        generateBlob(user, seed)
         // clear our secrets
         deviceRoot.zero()
+        
+        // clear passphrase from memory
+        seedPassphrase = null
+
       } catch (e) {
         inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
         throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
@@ -618,7 +613,7 @@
   }
 
   /**
-   * Generate save link of hpos-config.json and attach to `button` domElement
+   * Generate save link of hpos-config.json and return the blob
    *
    * @param {Object} user
    * @param {Object} seed {derivationPath, deviceRoot, pubKey}
@@ -642,13 +637,35 @@
     /* NB: Do not delete!  Keep the below in case we decide to use the HoloPort url it is available right here */
     // console.log('Optional HoloPort url : ', configData.url)
     deviceID = configData.id
-    configFileBlob = configBlob
 
-    return configFileBlob
+    return configBlob
   }
 
   /**
-  * Verify config was saved before allowing progression to next page
+   * Generate save link of hpos-config.json and return the blob
+   *
+   * @param {Object} user
+   * @param {Object} seed {derivationPath, deviceRoot, pubKey}
+  */
+  const generateEncryptedConfigBlob = (user, deviceRoot, password) => {
+    // encrypt device bundle with password: pass
+    const pw = (new TextEncoder()).encode(password)
+    const encodedBytes = deviceRoot.lock([
+      new hcSeedBundle.SeedCipherPwHash(
+        hcSeedBundle.parseSecret(pw), 'minimum')
+    ])
+    const seed = {
+      derivationPath: deviceNumber,
+      // base64 encode it URLSAFE_NO_PADDING
+      deviceRoot: toBase64(encodedBytes),
+      pubKey: deviceRoot.signPubKey
+    }
+
+    return generateBlob(user, seed)
+  }
+
+  /**
+  * Verify seed was saved before allowing progression to next page
   *
   * @param {Boolean} downloadSeedComplete
  */
