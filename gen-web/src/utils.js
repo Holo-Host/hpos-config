@@ -20,10 +20,8 @@ const FILE_TYPE = ".json"
 
 /**	
  * generate file name based on the device number
- * @param {number} deviceNumber
  * @param {string} pubKey	
+ * @param {Object } [opts] { isBackup: bool }
  */
-export const genConfigFileName = (pubKey) => {
-    return `${FILE_PREFIX}-${pubKey.substring(0, 5)}${FILE_TYPE}`
-
-}
+export const genConfigFileName = (pubKey, { isBackup }) =>
+    `${FILE_PREFIX}-${pubKey.substring(0, 5)}${isBackup ? '-backup' : ''}${FILE_TYPE}`
