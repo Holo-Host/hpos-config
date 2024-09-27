@@ -535,6 +535,7 @@
   // with an invalid registration code. The purpose is simply to prevent users from wasting time setting up a
   // HoloPort with the wrong code.
   const verifyRegistrationCode = async ({ registration_code, email }) => {
+    
     const response = await fetch(`${MEMBRANE_PROOF_SERVICE_URL}/registration/api/v1/verify-registration-code`,
     {
       method: 'POST',
