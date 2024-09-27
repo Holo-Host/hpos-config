@@ -69,6 +69,8 @@
     passwordCheckInputArea: document.querySelector('#password-check-form-item'),
     formErrorMessage: document.querySelector('#form-error-message'),
     downloadFileName: document.querySelector('#download-file'),
+    downloadFileNameAgain: document.querySelector('#download-file-again'),
+    backupDownloadFileName: document.querySelector('#backup-download-file'),
   }
 
   const nextButtonLoaderColumn = document.querySelector('#next-button-loader-column')
@@ -224,9 +226,6 @@
 
           // we need the passphrase as a Uint8Array
           const pw = (new TextEncoder()).encode(seedPassphrase)
-
-          // clear passphrase from memory
-          seedPassphrase = null
 
           revocation = master.derive(REVOCATION_KEY_DEVICE_NUMBER, {
             bundleType: 'revocation'
@@ -457,6 +456,8 @@
       }
     } else if (stepTracker === 5) {
       inlineVariables.downloadFileName.innerHTML = genConfigFileName(deviceID)
+      inlineVariables.downloadFileNameAgain.innerHTML = genConfigFileName(deviceID)
+      inlineVariables.backupDownloadFileName.innerHTML = genConfigFileName(deviceID, { isBackup: true })      
       verifyDownloadComplete()
     }
   }
@@ -592,6 +593,10 @@
 
         // clear our secrets
         deviceRoot.zero()
+        
+        // clear passphrase from memory
+        seedPassphrase = null
+
       } catch (e) {
         inlineVariables.formErrorMessage.innerHTML = errorMessages.generateConfig
         throw new Error(`Error executing generateBlob with an error.  Error: ${e}`)
