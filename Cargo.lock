@@ -1090,6 +1090,7 @@ dependencies = [
  "ed25519-dalek",
  "hc_seed_bundle",
  "hpos-config-core",
+ "log",
  "one_err",
  "rmp-serde",
  "serde_json",
